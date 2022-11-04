@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as anima
 import numpy as np
+import datetime
 from random import uniform
 
 def vis_1_23D(x_s, y_s, t_s):
@@ -30,17 +31,17 @@ def vis_1_23D(x_s, y_s, t_s):
     #plt.savefig('F_2.png')
     return plt
 
-def vis_N_2D(galaxy, inum, delta_v):
+def vis_N_2D(galaxy, inum, delta_cur):
+    plt.clf()
     plt.style.use('dark_background')
-    #plt.axes(xlim=(-10, 2), ylim=(-5, 5))
+    plt.axes(xlim=(-7, 7), ylim=(-7, 7))
+    plt.figure(figsize=(10,10))
     plt.grid(True, color = 'w', alpha = 0.125)
     plt.plot(0, 0, marker="s", c="y")
 
-    de = 1
-    # plt.plot(galaxy[3].makeXY()[0], galaxy[3].makeXY()[1], alpha = 0.4, marker=" ", c='b')
     for dot in galaxy:
         plt.plot(galaxy[dot.i].makeXY()[0], galaxy[dot.i].makeXY()[1], alpha = 0.4, marker=" ", c= dot.col)
-    plt.savefig(str(inum)+'_'+str(delta_v) +'.png')
+    plt.savefig('/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Progons/'+str(inum)+' delta='+str(delta_cur)+'_'+str(datetime.datetime.now())+'.png', dpi = 200)
     #plt.show()
     return plt
 
