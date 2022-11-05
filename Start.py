@@ -58,12 +58,13 @@ def format_objects(index, c_file):
 
 mode = find_value_by_name('Mode', config)
 # force_function =
+method = find_value_by_name('Method', config)
 
 N = count_objects('obj_', config)
 
 end_time = int(float( find_value_by_name('End_time', config) ))
 time_step = float( find_value_by_name('Time_step', config) )
-time_duration = int( find_value_by_name('Time_duration', config) )
+time_direction = int( find_value_by_name('Time_direction', config) )
 pulse_table = bool(int( find_value_by_name('Pulse_table', config) ))
 
 objects = format_objects('obj_', config)
@@ -72,8 +73,8 @@ if mode == 'Simulation':
     print('mode =', mode)
     delta_cur = 0
     inum = 's'
-    print('N =',N,'  time_duration =',time_duration,'  end_time =',end_time,'  time_step =',time_step,'  delta_cur =',delta_cur,'  inum =',inum,'  pulse_table =',pulse_table)
-    nbl.simul(objects, N, time_duration, end_time, time_step, delta_cur, inum, pulse_table) #+force_function
+    print('N =',N,'  time_direction =',time_direction,'  end_time =',end_time,'  time_step =',time_step,'  delta_cur =',delta_cur,'  inum =',inum,'  pulse_table =',pulse_table)
+    nbl.simul(objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table) #+force_function
 
 if mode == 'Progons':
     print('mode = ', mode)
