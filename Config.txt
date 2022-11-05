@@ -1,10 +1,10 @@
 Mode--------------(Simulation) #Simulation/Progons/Field
 Force function----() #f[r, v]  f - vec, r - vec, v - vec, сила, действующая между двумя телами
-Method------------() #Eiler, Eiler_Reverse, Midpoint, Adams,
+Method------------(Eiler) #Eil11er, Eiler_Reverse, Midpoint, Adams,
 
-End_time----------(4.5e+1)
-Time_step---------(1e-4)
-Time_duration-----(+1)
+End_time----------(4.5e+6) #float
+Time_step---------(1e-5) #float
+Time_direction-----(+1) #+-1
 Pulse_table------(0) #True/False
 
 progons_per_delta-()
