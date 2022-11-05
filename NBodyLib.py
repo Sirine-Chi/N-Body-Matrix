@@ -70,6 +70,7 @@ G = 0.0001184069#09138
 def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
     simulation_time = time.time()
     enn = int(end/dt)
+    dt = dur*dt
     class Star:
         def __init__(self, m, r0, v0, i, galaxy, col, *args, **kwargs): #ПРОБЛЕМА мы берём коррдинаты ещё неинициализированных объектов
             self.col = col
@@ -128,6 +129,7 @@ def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
 
         def iter(self, galaxy, n, dt, i):
             self.t.append(self.t[n-1]+(dt*dur))
+            #def f()
             def f(r):
                 self.fn=[]
                 for ot in galaxy:
