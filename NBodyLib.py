@@ -55,25 +55,18 @@ def dsum(v_list):
     for i in v_list:
         vly.append(i[1])
     return v([sum(vlx), sum(vly)]) #сумма двумерных векторов
+
 #CONSTANTS
 G = 0.0001184069#09138
+#ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
 
-# N = 4
-#Parametries
-# dur = 1
-# end = 4.5*(10**2) #4.5*10**9
-# dt = dur * 1*10**-4 #10**-4
-#
-# pulse_table = False
-# inum = 's'
-
-def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
+def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table):
     simulation_time = time.time()
     enn = int(end/dt)
-    dt = dur*dt
-    class Star:
-        def __init__(self, m, r0, v0, i, galaxy, col, *args, **kwargs): #ПРОБЛЕМА мы берём коррдинаты ещё неинициализированных объектов
-            self.col = col
+    dt = dir*dt
+    class Object:
+        def __init__(self, m, r0, v0, i, system, colour, *args, **kwargs): #ПРОБЛЕМА мы берём коррдинаты ещё неинициализированных объектов
+            self.colour = colour
             self.m = m
             self.r0 = r0
             self.v0 = v0
@@ -83,17 +76,23 @@ def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
             self.a = []
             self.f = []
             self.t = []
+
+            def f12(obj1, obj2, n): #силa, действующая на 1 от 2
+                f12 = v( unvec(obj2.r[n-1]-obj1.r[n-1]) * obj1.m*obj2.m*G / (dist(obj2.r[n-1], obj1.r[n-1])**2) )
+                return f12
+            def f(obj, system, n):
+                obj.fn=[]
+                for other in system:
+                    if obj != other:
+                        obj.fn.append(f12(obj, other, n))
+                return dsum(obj.fn)
+
             if pulse_table == True:
                 self.Ps = []
             self.r.append(v(r0))
             self.v.append(v(v0))
             self.t.append(0)
-            self.f0s=[]
-            for other in galaxy:
-                if self.i != other.i:
-                    #self.f0s.append(v(   -unvec(other.r[0]- self.r[0])*( dist(other.r[0], self.r[0])**(-6) - dist(other.r[0], self.r[0])**(-12))  ))
-                    self.f0s.append(v( unvec(other.r[0]-self.r[0]) * (self.m*other.m*G / dist(other.r[0], self.r[0])**2) ))
-            self.f.append(dsum(self.f0s))
+            self.f.append( f(self, system, 1) )
             self.a.append(self.f[0]/self.m)
             if pulse_table == True:
                 self.Ps.append(v(  self.v[0]*self.m  ))
@@ -102,67 +101,74 @@ def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
             self.r.append(v(self.r[0]+dt*self.v[0]))
             self.v.append(v(self.v[0]+dt*self.a[0]))
             self.t.append(1)
-            self.f1s=[]
-            for oth in galaxy:
-                if self.i != oth.i:
-                    self.f1s.append(v( unvec(oth.r[1]-self.r[1]) * (self.m*oth.m*G / dist(oth.r[1], self.r[1])**2) ))
-            self.f.append(dsum(self.f1s))
+            self.f.append( f(self, system, 2) )
             self.a.append(self.f[1]/self.m)
             if pulse_table == True:
                 self.Ps.append(v(  self.v[1]*self.m  ))
 
-        def printstar(self):
+        def print_object(self):
             print("id="+str(self.i), self.m, "f"+str(self.f), "v"+str(self.v), "r"+str(self.r), "t"+str(self.t))
-        def print_s_cor(self):
+        def print_object_coor(self):
             print("id="+str(self.i), self.r)
         def makeXY(self):
             # devider = 1
             # devider = int(devider)
             x_s0=[]
             y_s0=[]
-            for i in galaxy[self.i].r:
+            for i in system[self.i].r:
                 x_s0.append(i[0])
                 y_s0.append(i[1])
                 # x_s0 = x_s0[::devider]
                 # y_s0 = y_s0[::devider]
             return [x_s0, y_s0]
 
-        def iter(self, galaxy, n, dt, i):
-            self.t.append(self.t[n-1]+(dt*dur))
-            #def f()
-            def f(r):
-                self.fn=[]
-                for ot in galaxy:
-                    if self.i != ot.i:
-                        self.fn.append(v( unvec(ot.r[n-1]-self.r[n-1]) * (self.m*ot.m*G / dist(ot.r[n-1], self.r[n-1])**2) ))
-                        #self.fn.append(v(   -unvec(ot.r[n-1]- self.r[n-1])*(dist(ot.r[n-1], self.r[n-1])**-6 - dist(ot.r[n-1], self.r[n-1])**-12)  ))
-                return dsum(self.fn)
-            self.f.append(f(self.r[n-1]))
+        def iteration(self, system, n, dt):
+            def f12(obj1, obj2, n): #силa, действующая на 1 от 2
+                return v( unvec(obj2.r[n-1]-obj1.r[n-1]) * obj1.m*obj2.m*G / (dist(obj2.r[n-1], obj1.r[n-1])**2) )
+            def f(obj, system, n):
+                obj.fn=[]
+                for other in system:
+                    if obj != other:
+                        obj.fn.append(f12(obj, other, n))
+                return dsum(obj.fn)
+                obj.fn.clear()
+
+            self.t.append(self.t[n-1]+dt)
+            self.f.append(f(self, system, n))
             self.a.append(self.f[n]/self.m)
-            self.v.append(v( self.v[n-1]+dt*self.a[n] )) # Eiler
-            #self.v.append(v( self.v[n-1]+dt*self.a[n-1] )) # Eiler anvis
-            #self.v.append(v( self.v[n-1]+ dt*f( self.r[n-1]+ dt/2*f(self.r[n-1]) )/self.m )) # Midpoint
-            #self.v.append(v( self.v[n-1] + dt/2*(3*self.a[n-1] - self.a[n-2]) )) # Adams
+            if method == 'Eiler':
+                self.v.append(v( self.v[n-1]+dt*self.a[n] )) # Eiler
+            elif method == 'Eiler_Reverse':
+                self.v.append(v( self.v[n-1]+dt*self.a[n-1] )) # Eiler anvis
+            elif method == 'Midpoint':
+                self.v.append(v( self.v[n-1]+ dt*f( self.r[n-1]+ dt/2*f(self.r[n-1]) )/self.m )) # Midpoint
+            elif method == 'Adams':
+                self.v.append(v( self.v[n-1] + dt/2*(3*self.a[n-1] - self.a[n-2]) )) # Adams
+
             if pulse_table == True:
                 self.Ps.append(v(  self.v[n]*self.m  ))
-            self.r.append(v( self.r[n-1]+dt*self.v[n])) #Eiler
+
+            if method == 'Eiler':
+                self.r.append(v( self.r[n-1]+dt*self.v[n])) #Eiler
             #self.r[n] = self.r[n] - galaxy[0].r[n]
-            #self.r.append(v( self.r[n-1]+ dt/2*(self.v[n-1]+self.v[n-2]) )) #midpoint
-            #self.r.append(v( self.r[n-1] + dt/2*(3*self.v[n-1] - self.v[n-2]) )) # Adams
+            elif method == 'Midpoint':
+                self.r.append(v( self.r[n-1]+ dt/2*(self.v[n-1]+self.v[n-2]) )) #midpoint
+            elif method == 'Adams':
+                self.r.append(v( self.r[n-1] + dt/2*(3*self.v[n-1] - self.v[n-2]) )) # Adams
 
             # if n > 3:
             #     del self.r[0]
 
         def reper(self, n):
-            self.r[n] = self.r[n] - galaxy[0].r[n]
+            self.r[n] = self.r[n] - system[0].r[n]
 
-    class star(Star):
+    class object(Object):
         pass
 
-    galaxy = []
+    system = []
     #galaxy = gen.SS03(galaxy)
     for ob in objects:
-        galaxy.append(star( ob[1], ob[2], ob[3], ob[4], galaxy, ob[6].replace("'", '') ))
+        system.append(object( ob[1], ob[2], ob[3], ob[4], system, ob[6].replace("'", '') ))
 
     #galaxy.append(Star(M/2, [1, 0], [1, 3**0.5], 0, galaxy))
     #galaxy.append(Star(M/2, [-1, 0], [1, -(3**0.5)], 1, galaxy))
@@ -180,17 +186,18 @@ def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
 
     #--define function for pulse---
     if pulse_table == True:
-        def Pn(galaxy, n):
+        def Pn(system, n):
             ps = []
-            for st in galaxy:
-                ps.append(st.Ps[n-1])
+            for ob in system:
+                ps.append(ob.Ps[n-1])
             return scal(dsum(ps))
 
     #---Iterator---
     for n in range (2, enn):
-        dtn = dt
-        for ss in galaxy:
-            ss.iter(galaxy, n, dtn, ss.i)
+        #dtn = dt #FOR DYNAMIC TIME STEP!!!
+        # Star.iter(galaxy, n, dt)
+        for ss in system:
+            ss.iteration(system, n, dt)
             ss.reper(n)
             #ss.printstar() #вывести всё про точку
 
@@ -214,24 +221,49 @@ def simul(objects, N, dur, end, dt, delta_cur, inum, pulse_table):
     print('Finished!', 'simulation time')
     print("--- %s seconds ---" % (time.time() - simulation_time))
 
-    Vis.vis_N_2D(galaxy, inum, delta_cur)
+    Vis.vis_N_2D(system, inum, delta_cur)
     #Vis.vis_N_3D(galaxy).show
     #Vis.vis_N_anim(galaxy, enn).save('Galaxy.gif', writer='imagemagic', fps=60)
 
-#------PROGONS------
-delta_start = 0.2
-delta_end = 0.3
-k = 3 #количество симуляций
-delta_step = 0.01
-
-def progons(N, dur, end, dt, delta_step, k, delta_start, delta_end, pulse_table):
+def progons(method, objects, N, dir, end, dt, delta_step, k, delta_start, delta_end, pulse_table):
     progons_global_time = time.time()
 
     delta_cur = delta_start
     while delta_cur <= delta_end:
         for inum in range (0, k):
-            simul(N, dur, end, dt, delta_cur, inum, pulse_table)
+            simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table)
         delta_cur = float(delta_cur) + delta_step
 
     print('progons_global_time')
     print("--- %s seconds ---" % (time.time() - progons_global_time))
+
+def net(step):
+    dots = []
+    for x in range(-10, 10):
+        for y in range(-10, 10):
+            dots.append([x, y])
+            y += step
+        x += step
+    return dots
+
+def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
+    u_ob = G*obj.m / dist(coor, obj.r[n])
+    return u_ob
+def U(coor, galaxy, n): #потенциал, создаваемый всеми в точке coor /на шаге n
+    c_us = []
+    for obj in galaxy:
+        c_us.append(u(coor, obj, n))
+    U = sum(c_us)
+    return U
+
+def u_in_net(coor, galaxy, n, step):
+    U_s = []
+    U_3d_s = []
+    net = net(step)
+    for coor in net:
+        U_s.append(U(coor, galaxy, n))
+        U_3d_s.append(coor[0], coor[1], U(coor, galaxy, n))
+    return U_s
+
+def Field(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, step):
+    simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table)
