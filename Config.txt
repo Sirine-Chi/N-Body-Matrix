@@ -1,32 +1,18 @@
 Mode--------------(Simulation) #Simulation/Progons/Field
 Force function----() #f[r, v]  f - vec, r - vec, v - vec, сила, действующая между двумя телами
-Method------------(Eiler) #Eil11er, Eiler_Reverse, Midpoint, Adams,
+Method------------(Eiler) #Eiler, Eiler_Reverse, Midpoint, Adams,
 
-End_time----------(4.5e+6) #float
+End_time----------(0.83e+0) #float
 Time_step---------(1e-5) #float
 Time_direction-----(+1) #+-1
 Pulse_table------(0) #True/False
 
-progons_per_delta-()
-delta_start-------()
-delta_end---------()
-delta_step--------()
+Progons_per_delta-(3)
+Delta_start-------(0.2)
+Delta_end---------(0.4)
+Delta_step--------(0.01)
 
 obj_(Sun, 332840, [0, 0], [0, 0], 0, system, 'y')
 obj_(Earth, 1, [1, 0], [0, 6.174482], 1, system, 'b')
 obj_(Jupiter, 317.83, [5.367, 0], [0, 2.622], 2, system, 'r')
 obj_(Moon, 0.0123, [0.9974305, 0], [0, 6.402482], 3, system, 'w')
-
-
-
-
-
-
-v( unvec(ot.r[n-1]-self.r[n-1]) * (self.m*ot.m*G / dist(ot.r[n-1], self.r[n-1])**2) )
-
-def f(r):
-    self.fn=[]
-    for ot in galaxy:
-        if self.i != ot.i:
-            self.fn.append(v( unvec(ot.r[n-1]-self.r[n-1]) * (self.m*ot.m*G / dist(ot.r[n-1], self.r[n-1])**2) ))
-    return dsum(self.fn)
