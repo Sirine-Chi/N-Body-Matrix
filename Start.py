@@ -75,7 +75,7 @@ if mode == 'Simulation':
     delta_cur = 0
     inum = 's'
     print('N =',N,'  time_direction =',time_direction,'  end_time =',end_time,'  time_step =',time_step,'  delta_cur =',delta_cur,'  inum =',inum,'  pulse_table =',pulse_table)
-    nbl.simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table) #+force_function
+    nbl.simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table, 0) #+force_function
 
 if mode == 'Progons':
     print('mode =', mode, '  method =', method)
@@ -90,6 +90,10 @@ if mode == 'Progons':
     print('Delta step =',delta_step,'  Delta start =',delta_start,'  Delta end =',delta_end,'Progons per delta =',progons_per_delta)
     nbl.progons(method, objects, N, time_direction, end_time, time_step, delta_step, progons_per_delta, delta_start, delta_end, pulse_table) #+force_function
 
-# if mode == 'Field':
-#     print('mode = ', mode)
-    #nbl.field_simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table)
+if mode == 'Field':
+    print('mode = ', mode, '  method =', method)
+    delta_cur = 0
+    inum = 's'
+    print('N =',N,'  time_direction =',time_direction,'  end_time =',end_time,'  time_step =',time_step,'  delta_cur =',delta_cur,'  inum =',inum,'  pulse_table =',pulse_table)
+
+    nbl.simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table, 1)
