@@ -60,7 +60,34 @@ def dsum(v_list):
 G = 0.0001184069#09138
 #ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
 
-def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table):
+def net(step):
+    dots = []
+    for x in range(-10, 10):
+        for y in range(-10, 10):
+            dots.append([x, y])
+            y += step
+        x += step
+    return dots
+
+def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
+    u_ob = G*obj.m / dist(coor, obj.r[n])
+    return u_ob
+def U(coor, galaxy, n): #потенциал, создаваемый всеми в точке coor /на шаге n
+    c_us = []
+    for obj in galaxy:
+        c_us.append(u(coor, obj, n))
+    U = sum(c_us)
+    return U
+def u_in_net(system, n, step):
+    U_s = []
+    U_3d_s = []
+    net_dots = net(step)
+    for coor in net_dots:
+        U_s.append(U(coor, system, n))
+        U_3d_s.append([coor[0], coor[1], U(coor, system, n)])
+    return U_s
+
+def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field):
     simulation_time = time.time()
     enn = int(end/dt)
     dt = dir*dt
@@ -96,6 +123,11 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table):
             self.a.append(self.f[0]/self.m)
             if pulse_table == True:
                 self.Ps.append(v(  self.v[0]*self.m  ))
+
+            if field == 1:
+                inum = 'f'
+                delta_cur = 0
+                Vis.vis_field(system, u_in_net(system, 0, 1), inum, delta_cur) #0 is case of n
 
             #FOR ADAMS
             self.r.append(v(self.r[0]+dt*self.v[0]))
@@ -231,39 +263,8 @@ def progons(method, objects, N, dir, end, dt, delta_step, k, delta_start, delta_
     delta_cur = delta_start
     while delta_cur <= delta_end:
         for inum in range (0, k):
-            simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table)
+            simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, 0)
         delta_cur = float(delta_cur) + delta_step
 
     print('progons_global_time')
     print("--- %s seconds ---" % (time.time() - progons_global_time))
-
-def net(step):
-    dots = []
-    for x in range(-10, 10):
-        for y in range(-10, 10):
-            dots.append([x, y])
-            y += step
-        x += step
-    return dots
-
-def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
-    u_ob = G*obj.m / dist(coor, obj.r[n])
-    return u_ob
-def U(coor, galaxy, n): #потенциал, создаваемый всеми в точке coor /на шаге n
-    c_us = []
-    for obj in galaxy:
-        c_us.append(u(coor, obj, n))
-    U = sum(c_us)
-    return U
-
-def u_in_net(coor, galaxy, n, step):
-    U_s = []
-    U_3d_s = []
-    net = net(step)
-    for coor in net:
-        U_s.append(U(coor, galaxy, n))
-        U_3d_s.append(coor[0], coor[1], U(coor, galaxy, n))
-    return U_s
-
-def Field(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, step):
-    simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table)
