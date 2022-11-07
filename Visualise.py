@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as anima
+# from NBodyLib import U
 import numpy as np
 import datetime
+import os
 from random import uniform
 
 def vis_1_23D(x_s, y_s, t_s):
@@ -37,12 +39,44 @@ def vis_N_2D(system, inum, delta_cur):
     plt.axes(xlim=(-7, 7), ylim=(-7, 7))
     plt.figure(figsize=(10,10))
     plt.grid(True, color = 'w', alpha = 0.125)
-    plt.plot(0, 0, marker=" ", c="y")
+    plt.plot(0, 0, marker="o", c="y")
 
+    dir_n = '/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Progons/'+str(datetime.datetime.now())
+    os.mkdir(dir_n)
     for obj in system:
         plt.plot(system[obj.i].makeXY()[0], system[obj.i].makeXY()[1], alpha = 0.4, marker=" ", c= obj.colour)
-    plt.savefig('/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Progons/'+str(inum)+' delta='+str(delta_cur)+'_'+str(datetime.datetime.now())+'.png', dpi = 200)
-    #plt.show()
+    plt.savefig(dir_n+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
+    plt.show()
+    return plt
+
+def vis_field(system, U_s, inum, delta_cur):
+    plt.clf()
+    plt.axes(xlim=(-7, 7), ylim=(-7, 7))
+    plt.figure(figsize=(10,10))
+    plt.grid(True, color = 'w', alpha = 0.125)
+    plt.plot(0, 0, marker="o", c="y")
+
+    xs = []
+    ys = []
+    for x in range(-10, 10):
+        xs.append(x)
+        ys.append(y)
+        x += 1
+        y += 1
+
+    x, y = np.meshgrid(
+    np.linspace(-10, 10, 80),
+    np.linspace(-10, 10, 80)
+                        )
+    data = np.dstack((x, y))
+    print(data)
+
+    plt.contourf(xs, ys, U(), levels=10)
+    # cbar = plt.colorbar(cs)
+    dir_n = '/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Field/'+str(datetime.datetime.now())
+    os.mkdir(dir_n)
+    plt.savefig(dir_n+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
+    plt.show()
     return plt
 
 def vis_N_3D(galaxy):
