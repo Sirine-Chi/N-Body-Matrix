@@ -58,11 +58,10 @@ def vis_field(system, U_s, inum, delta_cur):
 
     xs = []
     ys = []
-    for x in range(-10, 10):
+    for x in range(-10, 10, 1):
         xs.append(x)
-        ys.append(y)
-        x += 1
-        y += 1
+        for y in range(-10, 10, 1):
+            ys.append(y)
 
     x, y = np.meshgrid(
     np.linspace(-10, 10, 80),
