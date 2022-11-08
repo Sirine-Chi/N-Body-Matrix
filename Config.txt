@@ -1,8 +1,8 @@
-Mode--------------(Field) #Simulation/Progons/Field
+Mode--------------(Simulation) #Simulation/Progons/Field
 Force function----() #f[r, v]  f - vec, r - vec, v - vec, сила, действующая между двумя телами
-Method------------(Eiler) #Eiler, Eiler_Reverse, Midpoint, Adams,
+Method------------(Adams) #Eiler, Eiler_Reverse, Midpoint, Adams,
 
-End_time----------(1e+0) #float
+End_time----------(1e+1) #float
 Time_step---------(1e-5) #float
 Time_direction-----(+1) #+-1
 Pulse_table------(0) #True/False
