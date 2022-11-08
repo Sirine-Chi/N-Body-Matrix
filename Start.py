@@ -68,8 +68,8 @@ time_direction = int( find_value_by_name('Time_direction', config) )
 pulse_table = bool(int( find_value_by_name('Pulse_table', config) ))
 
 objects = format_objects('obj_', config)
+print(*objects, sep = "\n") #ПЕЧАТАТЬ С РАЗДЕЛИТЕЛЕМ \n
 
-print(objects) #ПЕЧАТАТЬ С РАЗДЕЛИТЕЛЕМ \n
 if mode == 'Simulation':
     print('mode =', mode, '  method =', method)
     delta_cur = 0
@@ -96,4 +96,4 @@ if mode == 'Field':
     inum = 's'
     print('N =',N,'  time_direction =',time_direction,'  end_time =',end_time,'  time_step =',time_step,'  delta_cur =',delta_cur,'  inum =',inum,'  pulse_table =',pulse_table)
 
-    nbl.simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table, 1)
+    nbl.simul(method, objects, N, time_direction, end_time, time_step, delta_cur, inum, pulse_table, bool(1))
