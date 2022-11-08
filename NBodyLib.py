@@ -124,7 +124,7 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             if pulse_table == True:
                 self.Ps.append(v(  self.v[0]*self.m  ))
 
-            if field == 1:
+            if field == True:
                 inum = 'f'
                 delta_cur = 0
                 Vis.vis_field(system, u_in_net(system, 0, 1), inum, delta_cur) #0 is case of n
@@ -169,13 +169,14 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.f.append(f(self, system, n))
             self.a.append(self.f[n]/self.m)
             if method == 'Eiler':
-                self.v.append(v( self.v[n-1]+dt*self.a[n] )) # Eiler
+                self.v.append(v( self.v[n-1] +dt/2*))
+                #self.v.append(v( self.v[n-1]+dt*self.a[n] )) # Eiler
             elif method == 'Eiler_Reverse':
                 self.v.append(v( self.v[n-1]+dt*self.a[n-1] )) # Eiler anvis
             elif method == 'Midpoint':
                 self.v.append(v( self.v[n-1]+ dt*f( self.r[n-1]+ dt/2*f(self.r[n-1]) )/self.m )) # Midpoint
             elif method == 'Adams':
-                self.v.append(v( self.v[n-1] + dt/2*(3*self.a[n-1] - self.a[n-2]) )) # Adams
+                self.v.append(v( self.v[n-1] + dt/2*( 3*self.a[n-1] - self.a[n-2]) )) # Adams
 
             if pulse_table == True:
                 self.Ps.append(v(  self.v[n]*self.m  ))
