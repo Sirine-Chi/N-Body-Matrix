@@ -44,34 +44,33 @@ def vis_N_2D(system, inum, delta_cur):
     dir_n = '/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Progons/'+str(datetime.datetime.now())
     os.mkdir(dir_n)
     for obj in system:
-        plt.plot(system[obj.i].makeXY()[0], system[obj.i].makeXY()[1], alpha = 0.4, marker=" ", c= obj.colour)
+        plt.plot(obj.makeXY()[0], obj.makeXY()[1], alpha = 0.4, marker=" ", c = obj.colour)
     plt.savefig(dir_n+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
     plt.show()
     return plt
 
-def vis_field(system, U_s, inum, delta_cur):
+def vis_field(system, n, inum, delta_cur):
     plt.clf()
     plt.axes(xlim=(-7, 7), ylim=(-7, 7))
     plt.figure(figsize=(10,10))
     plt.grid(True, color = 'w', alpha = 0.125)
     plt.plot(0, 0, marker="o", c="y")
 
-    xs = []
-    ys = []
-    for x in range(-10, 10, 1):
-        xs.append(x)
-        for y in range(-10, 10, 1):
-            ys.append(y)
+    xs, ys = np.mgrid[0:10:10j, 0:10:10j]
 
-    x, y = np.meshgrid(
-    np.linspace(-10, 10, 80),
-    np.linspace(-10, 10, 80)
-                        )
-    data = np.dstack((x, y))
-    print(data)
+    # xs = []
+    # ys = []
+    # for x in range(-10, 10, 1):
+    #     xs.append(x)
+    #     ys.append(x)
 
-    plt.contourf(xs, ys, U(), levels=10)
-    # cbar = plt.colorbar(cs)
+    c_us = []
+    for obj in system:
+        c_us.append( G*obj.m / dist(coor, obj.r[n]) )
+    U = sum(c_us)
+    plt.contourf(U, levels=16)
+    cbar = plt.colorbar(cs)
+
     dir_n = '/Users/ilyabelov/PycharmProjects/pythonProject/Plots/Field/'+str(datetime.datetime.now())
     os.mkdir(dir_n)
     plt.savefig(dir_n+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
