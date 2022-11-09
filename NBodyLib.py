@@ -100,7 +100,6 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.i = i
             self.r = []
             self.v = []
-            self.a = []
             self.f = []
             self.t = []
 
@@ -120,21 +119,20 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.v.append(v(v0))
             self.t.append(0)
             self.f.append( f(self, system, 1) )
-            self.a.append(self.f[0]/self.m)
             if pulse_table == True:
                 self.Ps.append(v(  self.v[0]*self.m  ))
 
             if field == True:
                 inum = 'f'
                 delta_cur = 0
-                Vis.vis_field(system, u_in_net(system, 0, 1), inum, delta_cur) #0 is case of n
+                Vis.vis_field(system, 0, inum, delta_cur) #0 is case of n
 
             #FOR ADAMS
             self.r.append(v(self.r[0]+dt*self.v[0]))
-            self.v.append(v(self.v[0]+dt*self.a[0]))
+            self.v.append(v(self.v[0]+dt*self.f[0]/self.m))
             self.t.append(1)
             self.f.append( f(self, system, 2) )
-            self.a.append(self.f[1]/self.m)
+
             if pulse_table == True:
                 self.Ps.append(v(  self.v[1]*self.m  ))
 
@@ -142,12 +140,12 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             print("id="+str(self.i), self.m, "f"+str(self.f), "v"+str(self.v), "r"+str(self.r), "t"+str(self.t))
         def print_object_coor(self):
             print("id="+str(self.i), self.r)
-        def makeXY(self):
+        def makeXY(obj):
             # devider = 1
             # devider = int(devider)
             x_s0=[]
             y_s0=[]
-            for i in system[self.i].r:
+            for i in obj.r:
                 x_s0.append(i[0])
                 y_s0.append(i[1])
                 # x_s0 = x_s0[::devider]
@@ -167,16 +165,17 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
 
             self.t.append(self.t[n-1]+dt)
             self.f.append(f(self, system, n))
-            self.a.append(self.f[n]/self.m)
             if method == 'Eiler':
-                self.v.append(v( self.v[n-1] +dt/2*))
-                #self.v.append(v( self.v[n-1]+dt*self.a[n] )) # Eiler
+                #self.v.append(v( self.v[n-1] +dt/2*))
+                self.v.append(v( self.v[n-1]+dt*self.f[n-1]/self.m )) # Eiler
             elif method == 'Eiler_Reverse':
-                self.v.append(v( self.v[n-1]+dt*self.a[n-1] )) # Eiler anvis
+                self.v.append(v( self.v[n-1]+dt*self.f[n-1]/self.m )) # Eiler anvis
+            # elif method == 'W':
+            #     self.v.append(v( self.v[n-1] +dt*(self.f[n]/self.m+ ) ))
             elif method == 'Midpoint':
                 self.v.append(v( self.v[n-1]+ dt*f( self.r[n-1]+ dt/2*f(self.r[n-1]) )/self.m )) # Midpoint
             elif method == 'Adams':
-                self.v.append(v( self.v[n-1] + dt/2*( 3*self.a[n-1] - self.a[n-2]) )) # Adams
+                self.v.append(v( self.v[n-1] + dt/2*( 3*self.f[n]/self.m - self.f[n-1]/self.m) )) # Adams
 
             if pulse_table == True:
                 self.Ps.append(v(  self.v[n]*self.m  ))
