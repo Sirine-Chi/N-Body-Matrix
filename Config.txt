@@ -1,4 +1,4 @@
-Mode--------------(Field) #Simulation/Progons/Field
+Mode--------------(Simulation) #Simulation/Progons/Field
 Force function----() #f[r, v]  f - vec, r - vec, v - vec, сила, действующая между двумя телами
 Method------------(Eiler) #Eiler, Eiler_Reverse, Midpoint, Adams,
 

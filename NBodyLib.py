@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import math
 import Visualise as Vis
-import Generator as gen
+#import Generator as gen
 from random2 import uniform
 from random2 import triangular
 from random2 import getrandbits
@@ -11,7 +11,7 @@ import datetime
 import time
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
-    return (v[0]**2 + v[1]**2)**0.5
+    return np.linalg.norm(v, 2, None, False)
 def v(v1): #вектор
     v = np.array(v1)
     return v
@@ -27,6 +27,7 @@ def v12(v2, v1):
 def ranvec(r): #Случайный радиус-вектор длинны r
     rv = v(  [uniform(-r, r), 2*(getrandbits(1)-0.5) *(r**2 - uniform(-r, r)**2)**0.5]  )
     return rv
+#TODO: use distribution!
 def ranrv(r): #Случайный радиус-вектор длинны r
     a = uniform(0, 2*math.pi)
     rr = uniform(0, r)
@@ -253,7 +254,8 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
     print('Finished!', 'simulation time')
     print("--- %s seconds ---" % (time.time() - simulation_time))
 
-    Vis.vis_N_2D(system, inum, delta_cur)
+    #Vis.vis_N_2D(system, inum, delta_cur)
+
     #Vis.vis_N_3D(galaxy).show
     #Vis.vis_N_anim(galaxy, enn).save('Galaxy.gif', writer='imagemagic', fps=60)
 

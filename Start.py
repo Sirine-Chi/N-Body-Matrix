@@ -53,7 +53,7 @@ def format_objects(index, c_file):
         obj_vals.append(line_vals[8]) #colour
 
         objs.append(obj_vals)
-        #print(obj_vals)
+        print(obj_vals)
     return objs
 
 mode = find_value_by_name('Mode', config)
