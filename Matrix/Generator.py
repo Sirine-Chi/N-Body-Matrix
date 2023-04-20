@@ -6,7 +6,7 @@ import numpy as np
 objects = []
 #center - vector
 def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
-    for i in range (1, N):
+    for i in range (0, N):
         st_der = crit_mass_delta/3
         objects.append([np.random.normal(medium_mass, st_der), center + nbl.ranvec(medium_radius), cen_velocity + nbl.ranvec(vel_scal)])
         #можно добавить дельту к medium_radius

@@ -4,11 +4,10 @@ import Generator as gn
 import datetime
 import time
 
-h = 0.00000001 #time step
 G = 0.0001184069#09138
 
 def format():
-    matrices = gn.giveout(3, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0)
+    matrices = gn.giveout(20, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0)
     print('matrices')
     print(*matrices, sep="\n")
     print('matrices end')
@@ -17,11 +16,13 @@ def format():
 def gravec(r1, r2): #единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
     # r1, r2 - коордирнаты тел
     d = nbl.dist(r1, r2)
-    print(d)
-    if d != 0.0:
-        return nbl.v((r2 - r1) / d**3)
-    else:
+    #print(d)
+    if d == 0.0:
         return nbl.v([0, 0])
+    else:
+        #print('Dev', r2-r1)
+        return nbl.v((r2 - r1) / d**3)
+
 
 def unit_vectors_matrix(position_vectors): #расчёт матрицы единичных векторов сил, действующих от тела j на тело i
     matrix = []
@@ -30,9 +31,9 @@ def unit_vectors_matrix(position_vectors): #расчёт матрицы един
         for i in position_vectors:
             #print('gravec', gravec(i, j))
             line.append(gravec(i, j))
-            print('line', line)
+            #print('line', line)
         matrix.append(line)
-    print('rs_m', matrix, 'rs_m end')
+    #print('rs_m', matrix, 'rs_m end')
     return nbl.v(matrix)
 
 def simulation(method, matrices, N, dir, end, h):
@@ -42,13 +43,16 @@ def simulation(method, matrices, N, dir, end, h):
     v_sys_mx = []
     a_sys_mx = []
     #метод эйлера
-    a_sys_mx.append(matrices[0] * unit_vectors_matrix(matrices[2]) * matrices[1])
     v_sys_mx.append(matrices[3])
     r_sys_mx.append(matrices[2])
+    # print('poses ', unit_vectors_matrix(matrices[2]))
+    # print('invs ', matrices[1])
+    a_sys_mx.append(( (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
+    print('s 0')
 
     num = int(end / h) #количесвто шагов
     for i in range(1, num):
-        a_sys_mx.append(matrices[0] * unit_vectors_matrix(r_sys_mx[i-1]) * matrices[1])
+        a_sys_mx.append(( (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
         v_sys_mx.append(v_sys_mx[i-1] + h*a_sys_mx[i])
         r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
         print('s ', i)
