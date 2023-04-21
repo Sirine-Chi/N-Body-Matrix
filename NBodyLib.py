@@ -56,6 +56,62 @@ def dsum(v_list):
     for i in v_list:
         vly.append(i[1])
     return v([sum(vlx), sum(vly)]) #сумма двумерных векторов
+def rotvec(v, al):
+    return [ v[0]*math.cos(math.radians(al)), v[1]*math.sin(math.radians(al))]
+
+def find_line(name, c_file):
+    lines = c_file.readlines()
+    for line in lines:
+        if line.find(name) != -1:
+            return (line)
+        # else:
+        #     print('Error in config reading \n check directory or format')
+        #     return(lines[-1])
+def find_value_by_name(name, c_file):
+    c_file.seek(0,0)
+    line = find_line(name, c_file)
+    st = line.find('(')+1
+    en = line.find(')')
+    var_value = line[st:en]
+    return var_value
+def list_of_objects(index, c_file):
+    c_file.seek(0,0)
+    lines = c_file.readlines()
+    list_of_objects = []
+    for line in lines:
+        if line.find(index) != -1:
+            list_of_objects.append(line)
+        # else:
+        #     print("Error in config reading \n maybe there is no objects")
+    return list_of_objects
+def count_objects(index, c_file):
+    return len(list_of_objects(index, c_file))
+def format_objects(index, c_file):
+    list = list_of_objects(index, c_file)
+    values = []
+    objs = []
+    for line in list:
+        line = line.replace(' ', '')
+        line = line.replace('[', '')
+        line = line.replace(']', '')
+        line = line.replace(')', '')
+        line = line.replace('\n', '')
+        sk = line.find('(')+1
+        line = line[sk:len(line)]
+        line_vals = line.split(',')
+
+        obj_vals = []
+        obj_vals.append(line_vals[0]) #name
+        obj_vals.append( float(line_vals[1]) ) #mass
+        obj_vals.append( [float(line_vals[2]), float(line_vals[3])] ) #r0 as vec
+        obj_vals.append( [float(line_vals[4]), float(line_vals[5])] ) #v0 as vec
+        obj_vals.append(int(line_vals[6])) #id
+        obj_vals.append(line_vals[7]) #system, DOESN'T MATTERS!!!
+        obj_vals.append(line_vals[8]) #colour
+
+        objs.append(obj_vals)
+        #print(obj_vals)
+    return objs
 
 #CONSTANTS
 G = 0.0001184069#09138
@@ -69,7 +125,6 @@ def net(step):
             y += step
         x += step
     return dots
-
 def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
     u_ob = G*obj.m / dist(coor, obj.r[n])
     return u_ob

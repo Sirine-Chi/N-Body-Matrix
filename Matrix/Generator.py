@@ -1,5 +1,7 @@
 import NBodyLib as nbl
 import numpy as np
+import sys
+original_stdout = sys.stdout
 
 #config = open('System.txt', 'r')
 
@@ -8,26 +10,27 @@ objects = []
 def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
     for i in range (0, N):
         st_der = crit_mass_delta/3
-        objects.append([np.random.normal(medium_mass, st_der), center + nbl.ranvec(medium_radius), cen_velocity + nbl.ranvec(vel_scal)])
+        objects.append([str(i), np.random.normal(medium_mass, st_der), list(center + nbl.ranvec(medium_radius)), list(cen_velocity + nbl.ranvec(vel_scal)), i, 'system', 'w'])
         #можно добавить дельту к medium_radius
     #print(*objects, sep = "\n")
+    return objects
 
 def mass_vectors(objects):
     masses = []
     inv_masses = []
     for o in objects:
-        masses.append(o[0])
-        inv_masses.append(1/o[0])
+        masses.append(o[1])
+        inv_masses.append(1/o[1])
     return [masses, inv_masses]
 def position_matrix(objects):
     positions = []
     for o in objects:
-        positions.append(o[1])
+        positions.append(nbl.v(o[2]))
     return positions
 def velocity_matrix(objects):
     velocities = []
     for o in objects:
-        velocities.append(o[2])
+        velocities.append(nbl.v(o[3]))
     return velocities
 
 def mass_matrix(ms):
@@ -52,6 +55,17 @@ def mass_inv_matrix(ms):
     #print(mx, 'inv mass matrix')
     return nbl.v(mx)
 
-def giveout(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
-    spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta)
-    return [mass_matrix(mass_vectors(objects)[0]), mass_inv_matrix(mass_vectors(objects)[1]), nbl.v(position_matrix(objects)), nbl.v(velocity_matrix(objects))]
+#formating
+def formatting(s):
+    #print(*s, sep="\n")
+
+    with open('System.txt', 'w') as system:
+        for p in s:
+            ps = []
+            st = str(p)
+            ps.append('obj_(' + st[1:-1] + ')')
+            sys.stdout = system
+        print(*ps, sep="\n")
+    system.close()
+    sys.stdout = original_stdout
+    return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), nbl.v(position_matrix(s)), nbl.v(velocity_matrix(s))]

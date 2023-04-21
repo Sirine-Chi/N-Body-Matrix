@@ -6,13 +6,6 @@ import time
 
 G = 0.0001184069#09138
 
-def format():
-    matrices = gn.giveout(20, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0)
-    print('matrices')
-    print(*matrices, sep="\n")
-    print('matrices end')
-    return matrices
-
 def gravec(r1, r2): #единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
     # r1, r2 - коордирнаты тел
     d = nbl.dist(r1, r2)
@@ -22,7 +15,6 @@ def gravec(r1, r2): #единичный вектор направления си
     else:
         #print('Dev', r2-r1)
         return nbl.v((r2 - r1) / d**3)
-
 
 def unit_vectors_matrix(position_vectors): #расчёт матрицы единичных векторов сил, действующих от тела j на тело i
     matrix = []
@@ -36,7 +28,7 @@ def unit_vectors_matrix(position_vectors): #расчёт матрицы един
     #print('rs_m', matrix, 'rs_m end')
     return nbl.v(matrix)
 
-def simulation(method, matrices, N, dir, end, h):
+def simulation(method, matrices, dir, end, h):
     test1_time = time.time()
 
     r_sys_mx = []
@@ -47,15 +39,15 @@ def simulation(method, matrices, N, dir, end, h):
     r_sys_mx.append(matrices[2])
     # print('poses ', unit_vectors_matrix(matrices[2]))
     # print('invs ', matrices[1])
-    a_sys_mx.append(( (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
-    print('s 0')
+    a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
+    #print('s 0')
 
     num = int(end / h) #количесвто шагов
     for i in range(1, num):
-        a_sys_mx.append(( (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
+        a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
         v_sys_mx.append(v_sys_mx[i-1] + h*a_sys_mx[i])
         r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
-        print('s ', i)
+        #print('s ', i)
 
     print('test1_time')
     print("--- %s seconds ---" % (time.time() - test1_time))
