@@ -49,5 +49,6 @@ def simulation(method, matrices, dir, end, h):
         r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
         #print('s ', i)
 
+    print('Finished!')
     print('test1_time')
     print("--- %s seconds ---" % (time.time() - test1_time))

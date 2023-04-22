@@ -55,17 +55,21 @@ def mass_inv_matrix(ms):
     #print(mx, 'inv mass matrix')
     return nbl.v(mx)
 
-#formating
-def formatting(s):
-    #print(*s, sep="\n")
-
+def write_objects(objects): #problem! Writes last object
     with open('System.txt', 'w') as system:
-        for p in s:
-            ps = []
+        ps = []
+        for p in objects:
             st = str(p)
             ps.append('obj_(' + st[1:-1] + ')')
-            sys.stdout = system
+        sys.stdout = system
         print(*ps, sep="\n")
     system.close()
     sys.stdout = original_stdout
+
+#formating
+def formatting(s):
+    #print(*s, sep="\n")
     return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), nbl.v(position_matrix(s)), nbl.v(velocity_matrix(s))]
+
+#если исполнить файл, то эта функция сгенирирует объекты заданных параметров
+write_objects(spherical(10, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
