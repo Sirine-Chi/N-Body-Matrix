@@ -10,13 +10,12 @@ time_step = float( mx.nbl.find_value_by_name('Time_step', config) )
 time_direction = int( mx.nbl.find_value_by_name('Time_direction', config) )
 #pulse_table = bool(int( mx.nbl.find_value_by_name('Pulse_table', config) ))
 
-objects = mx.nbl.format_objects('obj_', config)
-
+#objects = mx.nbl.format_objects('obj_', config)
 config.close()
 
-# system = open('System.txt', 'r')
-# objects = mx.nbl.format_objects('obj_', system)
-# system.close()
+system = open('System.txt', 'r')
+objects = mx.nbl.format_objects('obj_', system)
+system.close()
 print(*objects, sep = "\n") #ПЕЧАТАТЬ С РАЗДЕЛИТЕЛЕМ \n
 print('========= ^ Config Content ^ =========')
 

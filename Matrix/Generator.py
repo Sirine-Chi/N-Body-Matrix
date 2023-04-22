@@ -5,9 +5,9 @@ original_stdout = sys.stdout
 
 #config = open('System.txt', 'r')
 
-objects = []
 #center - vector
 def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
+    objects = []
     for i in range (0, N):
         st_der = crit_mass_delta/3
         objects.append([str(i), np.random.normal(medium_mass, st_der), list(center + nbl.ranvec(medium_radius)), list(cen_velocity + nbl.ranvec(vel_scal)), i, 'system', 'w'])
@@ -72,4 +72,4 @@ def formatting(s):
     return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), nbl.v(position_matrix(s)), nbl.v(velocity_matrix(s))]
 
 #если исполнить файл, то эта функция сгенирирует объекты заданных параметров
-write_objects(spherical(10, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+write_objects(spherical(10000, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
