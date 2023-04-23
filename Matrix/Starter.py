@@ -9,8 +9,10 @@ end_time = int(float( mx.nbl.find_value_by_name('End_time', config) ))
 time_step = float( mx.nbl.find_value_by_name('Time_step', config) )
 time_direction = int( mx.nbl.find_value_by_name('Time_direction', config) )
 #pulse_table = bool(int( mx.nbl.find_value_by_name('Pulse_table', config) ))
+#чтение переменных из файл
 
 #objects = mx.nbl.format_objects('obj_', config)
+#сформатировать объекты из конфига
 config.close()
 
 system = open('System.txt', 'r')
@@ -18,6 +20,7 @@ objects = mx.nbl.format_objects('obj_', system)
 system.close()
 print(*objects, sep = "\n") #ПЕЧАТАТЬ С РАЗДЕЛИТЕЛЕМ \n
 print('========= ^ Config Content ^ =========')
+#сформатировать объекты из файла системы
 
 
 method = 'e'
@@ -27,3 +30,4 @@ end = end_time
 h = time_step
 
 mx.simulation(method, ms, dir, end, h)
+#запуск симуляции, с параметрами из конфига
