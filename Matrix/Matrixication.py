@@ -1,6 +1,7 @@
 import pyopencl as cl
 import numpy as np
 import numpy.linalg as la
+import datetime
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
     return (v[0]**2 + v[1]**2)**0.5
@@ -25,7 +26,7 @@ def ranrv(r): #Случайный радиус-вектор длинны r
     rv = v( [rr*math.cos(a), rr*math.sin(a)]  )
     return rv
 
-def openCL_multiplication(matrix1, matrix2, res):
+def openCL_multiplication(matrix1, matrix2):
 
     ctx = cl.create_some_context()
     queue = cl.CommandQueue(ctx)
@@ -82,4 +83,4 @@ res = v( [[1.57981943, 1.63210835, 2.12016045, 1.80288424],
        [1.31099532, 0.70041376, 1.20338154, 1.14162762],
        [0.71769556, 0.52246746, 0.88158722, 0.8039138]] )
 
-openCL_multiplication(matrix1, matrix2, res)
+openCL_multiplication(matrix1, matrix2)
