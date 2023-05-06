@@ -1,5 +1,7 @@
 import Matrix_3 as mx
 
+print('[][][] MATRIX VERSION RUNNING [][][]')
+
 config = open('Config.txt', 'r')
 
 mode = mx.nbl.find_value_by_name('Mode', config)
