@@ -1,7 +1,7 @@
 # N-Body Simulations
 
 ## General
-Here are the physical simulation of N-body with start positions and velocities, in gravitational field. The space is 2-dimensional. Written on python with openCL for computing acceleration, as visualisator I use MatPlotLib library. Start configuration, masses and everything about objects are written in Config.txt. You can run programm with Start.py, all computational functions are written in NBodyLib.py, all visual in Visualise.py.
+Here are the physical simulation of N-body with start positions and velocities, in gravitational field. The space is 2-dimensional. Written on python with openCL for computing acceleration (matrix multiplication), as visualisator I use MatPlotLib library. Program settings are stored in Config.txt. Start conditions of the objects are in System.txt. You can run programm with Start.py, all computational functions are written in NBodyLib.py, all visual in Visualise.py. If you want to generate your own start configuration you are able to run Generator.py, it will write to System.txt new objects with parameters you can set.
 
 ## Archeticture
 ![ММС 10 2](https://github.com/Sirine-Chi/N-Body-Matrix/assets/71520044/5158e17d-e73d-45c7-b10e-808189d1ab15)
