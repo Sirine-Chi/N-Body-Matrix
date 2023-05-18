@@ -91,7 +91,17 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
     enn = int(end/dt)
     dt = dir*dt
     class Object:
-        def __init__(self, m, r0, v0, i, system, colour, *args, **kwargs): #ПРОБЛЕМА мы берём коррдинаты ещё неинициализированных объектов
+        def f12(obj1, obj2, n):  # силa, действующая на 1 от 2
+            f12 = v(
+                unvec(obj2.r[n - 1] - obj1.r[n - 1]) * obj1.m * obj2.m * G / (dist(obj2.r[n - 1], obj1.r[n - 1]) ** 2))
+            return f12
+        def f(obj, system, n):
+            obj.fn = []
+            for other in system:
+                if obj != other:
+                    obj.fn.append(f12(obj, other, n))
+            return dsum(obj.fn)
+        def __init__(self, m, r0, v0, i, system, colour, *args, **kwargs):
             self.colour = colour
             self.m = m
             self.r0 = r0
@@ -102,35 +112,19 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.f = []
             self.t = []
 
-            def f12(obj1, obj2, n): #силa, действующая на 1 от 2
-                f12 = v( unvec(obj2.r[n-1]-obj1.r[n-1]) * obj1.m*obj2.m*G / (dist(obj2.r[n-1], obj1.r[n-1])**2) )
-                return f12
-            def f(obj, system, n):
-                obj.fn=[]
-                for other in system:
-                    if obj != other:
-                        obj.fn.append(f12(obj, other, n))
-                return dsum(obj.fn)
-
-            if pulse_table == True:
-                self.Ps = []
             self.r.append(v(r0))
             self.v.append(v(v0))
             self.t.append(0)
-            self.f.append( f(self, system, 1) )
+            self.f.append( Object.f(self, system, 1) )
             if pulse_table == True:
+                self.Ps = []
                 self.Ps.append(v(  self.v[0]*self.m  ))
-
-            if field == True:
-                inum = 'f'
-                delta_cur = 0
-                Vis.vis_field(system, 0, inum, delta_cur) #0 is case of n
 
             #FOR ADAMS
             self.r.append(v(self.r[0]+dt*self.v[0]))
             self.v.append(v(self.v[0]+dt*self.f[0]/self.m))
             self.t.append(1)
-            self.f.append( f(self, system, 2) )
+            self.f.append( Object.f(self, system, 2) )
 
             if pulse_table == True:
                 self.Ps.append(v(  self.v[1]*self.m  ))
@@ -150,6 +144,8 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
                 # x_s0 = x_s0[::devider]
                 # y_s0 = y_s0[::devider]
             return [x_s0, y_s0]
+        def reper(self, n):
+            self.r[n] = self.r[n] - system[0].r[n]
 
         def iteration(self, system, n, dt):
             def f12(obj1, obj2, n): #силa, действующая на 1 от 2
@@ -190,50 +186,26 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             # if n > 3:
             #     del self.r[0]
 
-        def reper(self, n):
-            self.r[n] = self.r[n] - system[0].r[n]
-
     class object(Object):
         pass
 
     system = []
-    #galaxy = gen.SS03(galaxy)
     for ob in objects:
         system.append(object(ob[1], ob[2]+ranrv(delta_cur), ob[3], ob[4], system, ob[6].replace("'", '')))
 
-    #galaxy.append(Star(M/2, [1, 0], [1, 3**0.5], 0, galaxy))
-    #galaxy.append(Star(M/2, [-1, 0], [1, -(3**0.5)], 1, galaxy))
-    # galaxy.append(Star(M/2, [0, 3**0.5], [-2, 0], 2, galaxy))
-    #
-    # galaxy.append(Star(M, [1, 1], [-3, 3], 0, galaxy))
-    # galaxy.append(Star(M, [1, -1], [3, 3], 1, galaxy))
-    # galaxy.append(Star(M, [-1, -1], [3, -3], 2, galaxy))
-    # galaxy.append(Star(M, [-1, 1], [-3, -3], 3, galaxy))
+    #---Iterator---
+    for n in range (2, enn):
+        for ss in system:
+            ss.iteration(system, n, dt)
+            ss.reper(n)
 
-    #---Print start configuration---
-    # for i in range (0, N):
-    #     #galaxy.append(Star(M/2, ranrv(5), ranrv(0.5), i, galaxy))
-    #     galaxy[i].printstar()
-
-    #--define function for pulse---
+    # ---PULSE TABLE---
     if pulse_table == True:
         def Pn(system, n):
             ps = []
             for ob in system:
                 ps.append(ob.Ps[n-1])
             return scal(dsum(ps))
-
-    #---Iterator---
-    for n in range (2, enn):
-        #dtn = dt #FOR DYNAMIC TIME STEP!!!
-        # Star.iter(galaxy, n, dt)
-        for ss in system:
-            ss.iteration(system, n, dt)
-            ss.reper(n)
-            #ss.printstar() #вывести всё про точку
-
-    # ---PULSE TABLE---
-    if pulse_table == True:
         PS = [] #Добавляем в список значения полного импульса с итераций
         for n in range (0, enn):
             PS.append(Pn(system, n))

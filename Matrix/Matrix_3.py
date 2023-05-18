@@ -3,7 +3,7 @@ import NBodyLib as nbl
 import Generator as gn
 import datetime
 import time
-import glm
+#import glm
 
 G = 0.0001184069#09138
 
