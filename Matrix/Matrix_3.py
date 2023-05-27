@@ -16,7 +16,6 @@ def gravec(r1, r2): #единичный вектор направления си
     else:
         #print('Dev', r2-r1)
         return nbl.v((r2 - r1) / d**3)
-
 def unit_vectors_matrix(position_vectors): #расчёт матрицы единичных векторов сил, действующих от тела j на тело i
     matrix = [] #собираем матрицу R_ij
     for j in position_vectors:
@@ -28,6 +27,7 @@ def unit_vectors_matrix(position_vectors): #расчёт матрицы един
         matrix.append(line)
     #print('rs_m', matrix, 'rs_m end')
     return nbl.v(matrix)
+#def calc_a(matrix):
 
 def simulation(method, matrices, dir, end, h):
     test1_time = time.time()
@@ -40,7 +40,8 @@ def simulation(method, matrices, dir, end, h):
     r_sys_mx.append(matrices[2])
     # print('poses ', unit_vectors_matrix(matrices[2]))
     # print('invs ', matrices[1])
-    a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
+    #a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
+    a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
     #перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     #print('s 0')
 

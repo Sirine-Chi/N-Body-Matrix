@@ -12,7 +12,7 @@ import datetime
 import time
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
-    return (v[0]**2 + v[1]**2)**0.5
+    return np.linalg.norm(v ,ord=2)
 def a(v1):
     return array.array('f', v1)
 def v(v1): #вектор
@@ -280,3 +280,6 @@ def openCL_multiplication(matrix1, matrix2):
     print('OpenCL Multiplication: ' + str(delta_t))
 
     return final_matrix
+
+def np_mult(matrix1, matrix2): # =m1 x m2, порядок как в письме
+    return matrix1.dot(matrix2)

@@ -3,13 +3,10 @@ import numpy as np
 import pandas as pd
 import math
 import Visualise as Vis
-#import Generator as gen
-from random2 import uniform
-from random2 import triangular
-from random2 import getrandbits
-from random2 import randint
+import random2 as rnd
 import datetime
 import time
+import PyYAML
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
     return np.linalg.norm(v, 2, None, False)
@@ -26,12 +23,12 @@ def v12(v1, v2):
 def v12(v2, v1):
     return (v1-v2)
 def ranvec(r): #Случайный радиус-вектор длинны r
-    rv = v(  [uniform(-r, r), 2*(getrandbits(1)-0.5) *(r**2 - uniform(-r, r)**2)**0.5]  )
+    rv = v(  [rnd.uniform(-r, r), 2*(rnd.getrandbits(1)-0.5) *(r**2 - rnd.uniform(-r, r)**2)**0.5]  )
     return rv
 #TODO: use distribution!
 def ranrv(r): #Случайный радиус-вектор длинны r
-    a = uniform(0, 2*math.pi)
-    rr = uniform(0, r)
+    a = rnd.uniform(0, 2*math.pi)
+    rr = rnd.uniform(0, r)
     rv = v( [rr*math.cos(a), rr*math.sin(a)]  )
     return rv
 def vsum(v_list):
@@ -143,6 +140,15 @@ def u_in_net(system, n, step):
         U_s.append(U(coor, system, n))
         U_3d_s.append([coor[0], coor[1], U(coor, system, n)])
     return U_s
+def f12(obj1, obj2, n):  # силa, действующая на 1 от 2
+    return v(unvec(obj2.r[n - 1] - obj1.r[n - 1]) * obj1.m * obj2.m * G / (dist(obj2.r[n - 1], obj1.r[n - 1]) ** 2))
+def f(obj, system, n):
+    obj.fn = []
+    for other in system:
+        if obj != other:
+            obj.fn.append(f12(obj, other, n))
+    return dsum(obj.fn)
+    obj.fn.clear()
 
 def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field):
     simulation_time = time.time()
@@ -160,23 +166,12 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.f = []
             self.t = []
 
-            def f12(obj1, obj2, n): #силa, действующая на 1 от 2
-                f12 = v( unvec(obj2.r[n-1]-obj1.r[n-1]) * obj1.m*obj2.m*G / (dist(obj2.r[n-1], obj1.r[n-1])**2) )
-                return f12
-            def f(obj, system, n):
-                obj.fn=[]
-                for other in system:
-                    if obj != other:
-                        obj.fn.append(f12(obj, other, n))
-                return dsum(obj.fn)
-
-            if pulse_table == True:
-                self.Ps = []
             self.r.append(v(r0))
             self.v.append(v(v0))
             self.t.append(0)
             self.f.append( f(self, system, 1) )
             if pulse_table == True:
+                self.Ps = []
                 self.Ps.append(v(  self.v[0]*self.m  ))
 
             if field == True:
@@ -210,43 +205,24 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             return [x_s0, y_s0]
 
         def iteration(self, system, n, dt):
-            def f12(obj1, obj2, n): #силa, действующая на 1 от 2
-                return v( unvec(obj2.r[n-1]-obj1.r[n-1]) * obj1.m*obj2.m*G / (dist(obj2.r[n-1], obj1.r[n-1])**2) )
-            def f(obj, system, n):
-                obj.fn=[]
-                for other in system:
-                    if obj != other:
-                        obj.fn.append(f12(obj, other, n))
-                return dsum(obj.fn)
-                obj.fn.clear()
+
+            def eiler_method(fs, vs, rs, m):
+                vs.append(v(vs[n-1] + dt * fs[n - 1] / m))  # Eiler
+                rs.append(v(rs[n-1] + dt * vs[n]))
+            def midpoint_method(f, v, r, m):
+                v.append(v(v[n-1] + dt * f(r[n-1] + dt/2 * f(r[n-1]))/m))  # Midpoint
+                r.append(v(r[n-1] + dt/2 * (v[n-1] + v[n-2])))
+            def adams_method(f, v, r, m):
+                v.append(v( v[n-1] + dt/2*(3*f[n]/m - f[n-1]/m)))  # Adams
+                r.append(v( r[n-1] + dt/2*(3*v[n] - v[n-1])))
 
             self.t.append(self.t[n-1]+dt)
             self.f.append(f(self, system, n))
-            if method == 'Eiler':
-                #self.v.append(v( self.v[n-1] +dt/2*))
-                self.v.append(v( self.v[n-1]+dt*self.f[n-1]/self.m )) # Eiler
-            elif method == 'Eiler_Reverse':
-                self.v.append(v( self.v[n-1]+dt*self.f[n-1]/self.m )) # Eiler anvis
-            # elif method == 'W':
-            #     self.v.append(v( self.v[n-1] +dt*(self.f[n]/self.m+ ) ))
-            elif method == 'Midpoint':
-                self.v.append(v( self.v[n-1]+ dt*f( self.r[n-1]+ dt/2*f(self.r[n-1]) )/self.m )) # Midpoint
-            elif method == 'Adams':
-                self.v.append(v( self.v[n-1] + dt/2*( 3*self.f[n]/self.m - self.f[n-1]/self.m) )) # Adams
+
+            eiler_method(self.f, self.v, self.r, self.m)
 
             if pulse_table == True:
                 self.Ps.append(v(  self.v[n]*self.m  ))
-
-            if method == 'Eiler':
-                self.r.append(v( self.r[n-1]+dt*self.v[n])) #Eiler
-            #self.r[n] = self.r[n] - galaxy[0].r[n]
-            elif method == 'Midpoint':
-                self.r.append(v( self.r[n-1]+ dt/2*(self.v[n-1]+self.v[n-2]) )) #midpoint
-            elif method == 'Adams':
-                self.r.append(v( self.r[n-1] + dt/2*(3*self.v[n-1] - self.v[n-2]) )) # Adams
-
-            # if n > 3:
-            #     del self.r[0]
 
         def reper(self, n):
             self.r[n] = self.r[n] - system[0].r[n]
@@ -255,23 +231,8 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
         pass
 
     system = []
-    #galaxy = gen.SS03(galaxy)
     for ob in objects:
         system.append(object( ob[1], ob[2], ob[3], ob[4], system, ob[6].replace("'", '') ))
-
-    #galaxy.append(Star(M/2, [1, 0], [1, 3**0.5], 0, galaxy))
-    #galaxy.append(Star(M/2, [-1, 0], [1, -(3**0.5)], 1, galaxy))
-    # galaxy.append(Star(M/2, [0, 3**0.5], [-2, 0], 2, galaxy))
-    #
-    # galaxy.append(Star(M, [1, 1], [-3, 3], 0, galaxy))
-    # galaxy.append(Star(M, [1, -1], [3, 3], 1, galaxy))
-    # galaxy.append(Star(M, [-1, -1], [3, -3], 2, galaxy))
-    # galaxy.append(Star(M, [-1, 1], [-3, -3], 3, galaxy))
-
-    #---Print start configuration---
-    # for i in range (0, N):
-    #     #galaxy.append(Star(M/2, ranrv(5), ranrv(0.5), i, galaxy))
-    #     galaxy[i].printstar()
 
     #--define function for pulse---
     if pulse_table == True:
@@ -284,7 +245,7 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
     #---Iterator---
     for n in range (2, enn):
         #dtn = dt #FOR DYNAMIC TIME STEP!!!
-        # Star.iter(galaxy, n, dt)
+        # Star.iter(system, n, dt)
         for ss in system:
             ss.iteration(system, n, dt)
             ss.reper(n)
@@ -326,3 +287,46 @@ def progons(method, objects, N, dir, end, dt, delta_step, k, delta_start, delta_
 
     print('progons_global_time')
     print("--- %s seconds ---" % (time.time() - progons_global_time))
+
+def openCL_multiplication(matrix1, matrix2):
+    ctx = cl.create_some_context()
+    queue = cl.CommandQueue(ctx)
+
+    mf = cl.mem_flags
+    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
+    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
+    dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
+
+    prg = cl.Program(ctx, """
+        __kernel void multiplymatrices(const unsigned int size, __global float * matrix1, __global float * matrix2, __global float * res) {
+
+        int i = get_global_id(1); 
+        int j = get_global_id(0);
+
+        res[i + size * j] = 0;
+
+        for (int k = 0; k < size; k++)
+        {
+            res[i + size * j] += matrix1[k + size * i] * matrix2[j + size * k];
+        }
+
+        }
+        """).build()
+    # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
+
+    t0 = datetime.datetime.now()
+
+    prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
+
+    final_matrix = np.empty_like(matrix1)
+    cl.enqueue_copy(queue, final_matrix, dest_buf)
+
+    print(final_matrix)
+
+    delta_t = datetime.datetime.now() - t0
+    print('OpenCL Multiplication: ' + str(delta_t))
+
+    return final_matrix
+
+def np_mult(matrix1, matrix2): # =m1 x m2, порядок как в письме
+    return matrix1.dot(matrix2)
