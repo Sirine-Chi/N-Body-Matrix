@@ -1,4 +1,5 @@
 import numpy as np
+import pyopencl as cl
 #import gnumpy as gpu
 import pandas as pd
 import math
@@ -6,7 +7,7 @@ import Visualise as Vis
 import random2 as rnd
 import datetime
 import time
-import PyYAML
+#import PyYAML
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
     return np.linalg.norm(v, 2, None, False)
@@ -39,12 +40,6 @@ def vsum(v_list):
             vli.append(i[l])
         vl.append(sum(vli))
         l+=1
-    # vlx=[]
-    # for i in v_list:
-    #     vlx.append(i[0])
-    # vly=[]
-    # for i in v_list:
-    #     vly.append(i[1])
     return v(vl) #сумма n-мерных векторов
 def dsum(v_list):
     vlx=[]
@@ -288,7 +283,7 @@ def progons(method, objects, N, dir, end, dt, delta_step, k, delta_start, delta_
     print('progons_global_time')
     print("--- %s seconds ---" % (time.time() - progons_global_time))
 
-def openCL_multiplication(matrix1, matrix2):
+def openCL_mult(matrix1, matrix2):
     ctx = cl.create_some_context()
     queue = cl.CommandQueue(ctx)
 
@@ -321,7 +316,7 @@ def openCL_multiplication(matrix1, matrix2):
     final_matrix = np.empty_like(matrix1)
     cl.enqueue_copy(queue, final_matrix, dest_buf)
 
-    print(final_matrix)
+    #print(final_matrix)
 
     delta_t = datetime.datetime.now() - t0
     print('OpenCL Multiplication: ' + str(delta_t))

@@ -42,16 +42,19 @@ def simulation(method, matrices, dir, end, h):
     # print('invs ', matrices[1])
     #a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
     a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
+    #a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(matrices[2]))))[0])
     #перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     #print('s 0')
 
     num = int(end / h) #количесвто шагов
     for i in range(1, num):
-        a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
+        #a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
+        a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))) ) [0])
+        #a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))))[0])
         v_sys_mx.append(v_sys_mx[i-1] + h*a_sys_mx[i])
         r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
         #print('s ', i)
-    print(r_sys_mx[num-1])
+    print(r_sys_mx)
     print('Finished!')
     print('test1_time')
     print("--- %s seconds ---" % (time.time() - test1_time))
