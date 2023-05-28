@@ -41,8 +41,8 @@ def simulation(method, matrices, dir, end, h):
     # print('poses ', unit_vectors_matrix(matrices[2]))
     # print('invs ', matrices[1])
     #a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
-    a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
-    #a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(matrices[2]))))[0])
+    #a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
+    a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(matrices[2]))))[0])
     #перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     #print('s 0')
 
