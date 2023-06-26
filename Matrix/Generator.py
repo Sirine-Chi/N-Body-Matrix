@@ -29,8 +29,11 @@ def position_matrix(objects):
     return positions
 def velocity_matrix(objects):
     velocities = []
+    def vel(o):
+        return nbl.v(o[3])
     for o in objects:
         velocities.append(nbl.v(o[3]))
+    # return map(vel, objects)
     return velocities
 def mass_matrix(ms):
     mx = []

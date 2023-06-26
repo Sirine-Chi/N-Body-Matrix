@@ -7,7 +7,7 @@ Time_step---------(5e-5) #float
 Time_direction----(+1) #+-1
 Pulse_table-------(0) #True/False
 
-Progons_per_delta-(3)
+Progons_per_delta-(2)
 Delta_start-------(0)
 Delta_end---------(0)
 Delta_step--------(0.01)

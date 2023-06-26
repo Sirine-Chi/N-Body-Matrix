@@ -7,13 +7,11 @@ import Visualise as Vis
 import random2 as rnd
 import datetime
 import time
-#import PyYAML
 
 def scal(v): #Модуль (скаляр, длиннна) вектора
     return np.linalg.norm(v, 2, None, False)
 def v(v1): #вектор
-    v = np.array(v1)
-    return v
+    return np.array(v1)
 def unvec(v): #еденичный вектор
     uv = v / scal(v)
     return uv
@@ -21,8 +19,6 @@ def dist(v1, v2): #расстояние между двумя точками (к
     return scal(v1-v2)
 def v12(v1, v2):
     return (v2-v1)
-def v12(v2, v1):
-    return (v1-v2)
 def ranvec(r): #Случайный радиус-вектор длинны r
     rv = v(  [rnd.uniform(-r, r), 2*(rnd.getrandbits(1)-0.5) *(r**2 - rnd.uniform(-r, r)**2)**0.5]  )
     return rv
@@ -33,82 +29,19 @@ def ranrv(r): #Случайный радиус-вектор длинны r
     rv = v( [rr*math.cos(a), rr*math.sin(a)]  )
     return rv
 def vsum(v_list):
-    vl=[]
-    for l in range(0, len(v_list[0]) ):
-        vli=[]
-        for i in v_list:
-            vli.append(i[l])
-        vl.append(sum(vli))
-        l+=1
-    return v(vl) #сумма n-мерных векторов
-def dsum(v_list):
-    vlx=[]
-    for i in v_list:
-        vlx.append(i[0])
-    vly=[]
-    for i in v_list:
-        vly.append(i[1])
-    return v([sum(vlx), sum(vly)]) #сумма двумерных векторов
+    return sum(v_list) #сумма N-мерных векторов
 def rotvec(v, al):
     return [ v[0]*math.cos(math.radians(al)), v[1]*math.sin(math.radians(al))]
+def format_table(system):
+    lines = []
+    for line in system.to_numpy():
+        lines.append( [line[1].replace(' ', ''), line[2], v([line[3], line[4]]), v([line[5], line[6]]), line[7].replace(' ', ''), line[8]] )
+    # print(*lines, sep='\n')
+    return lines
 
-def find_line(name, c_file):
-    lines = c_file.readlines()
-    for line in lines:
-        if line.find(name) != -1:
-            return (line)
-        # else:
-        #     print('Error in config reading \n check directory or format')
-        #     return(lines[-1])
-def find_value_by_name(name, c_file):
-    c_file.seek(0,0)
-    line = find_line(name, c_file)
-    st = line.find('(')+1
-    en = line.find(')')
-    var_value = line[st:en]
-    return var_value
-def list_of_objects(index, c_file):
-    c_file.seek(0,0)
-    lines = c_file.readlines()
-    list_of_objects = []
-    for line in lines:
-        if line.find(index) != -1:
-            list_of_objects.append(line)
-        # else:
-        #     print("Error in config reading \n maybe there is no objects")
-    return list_of_objects
-def count_objects(index, c_file):
-    return len(list_of_objects(index, c_file))
-def format_objects(index, c_file):
-    list = list_of_objects(index, c_file)
-    values = []
-    objs = []
-    for line in list:
-        line = line.replace(' ', '')
-        line = line.replace('[', '')
-        line = line.replace(']', '')
-        line = line.replace(')', '')
-        line = line.replace('\n', '')
-        sk = line.find('(')+1
-        line = line[sk:len(line)]
-        line_vals = line.split(',')
-
-        obj_vals = []
-        obj_vals.append(line_vals[0]) #name
-        obj_vals.append( float(line_vals[1]) ) #mass
-        obj_vals.append( [float(line_vals[2]), float(line_vals[3])] ) #r0 as vec
-        obj_vals.append( [float(line_vals[4]), float(line_vals[5])] ) #v0 as vec
-        obj_vals.append(int(line_vals[6])) #id
-        obj_vals.append(line_vals[7]) #system, DOESN'T MATTERS!!!
-        obj_vals.append(line_vals[8]) #colour
-
-        objs.append(obj_vals)
-        #print(obj_vals)
-    return objs
-
-#CONSTANTS
+# CONSTANTS
 G = 0.0001184069#09138
-#ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
+# ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
 
 def net(step):
     dots = []
@@ -142,7 +75,7 @@ def f(obj, system, n):
     for other in system:
         if obj != other:
             obj.fn.append(f12(obj, other, n))
-    return dsum(obj.fn)
+    return vsum(obj.fn)
     obj.fn.clear()
 
 def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field):
@@ -165,14 +98,6 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.v.append(v(v0))
             self.t.append(0)
             self.f.append( f(self, system, 1) )
-            if pulse_table == True:
-                self.Ps = []
-                self.Ps.append(v(  self.v[0]*self.m  ))
-
-            if field == True:
-                inum = 'f'
-                delta_cur = 0
-                Vis.vis_field(system, 0, inum, delta_cur) #0 is case of n
 
             #FOR ADAMS
             self.r.append(v(self.r[0]+dt*self.v[0]))
@@ -181,7 +106,14 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             self.f.append( f(self, system, 2) )
 
             if pulse_table == True:
+                self.Ps = []
+                self.Ps.append(v(self.v[0] * self.m))
                 self.Ps.append(v(  self.v[1]*self.m  ))
+
+            if field == True:
+                inum = 'f'
+                delta_cur = 0
+                Vis.vis_field(system, 0, inum, delta_cur) #0 is case of n
 
         def print_object(self):
             print("id="+str(self.i), self.m, "f"+str(self.f), "v"+str(self.v), "r"+str(self.r), "t"+str(self.t))
@@ -235,7 +167,7 @@ def simul(method, objects, N, dir, end, dt, delta_cur, inum, pulse_table, field)
             ps = []
             for ob in system:
                 ps.append(ob.Ps[n-1])
-            return scal(dsum(ps))
+            return scal(vsum(ps))
 
     #---Iterator---
     for n in range (2, enn):
@@ -325,3 +257,4 @@ def openCL_mult(matrix1, matrix2):
 
 def np_mult(matrix1, matrix2): # =m1 x m2, порядок как в письме
     return matrix1.dot(matrix2)
+    # return np.matmul(matrix1, matrix2)
