@@ -15,6 +15,11 @@ def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_ma
     #print(*objects, sep = "\n")
     return objects
 
+def gen_table(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
+    objects = []
+
+    return "hi"
+
 def mass_vectors(objects):
     masses = []
     inv_masses = []
@@ -56,7 +61,7 @@ def mass_inv_matrix(ms):
         mx.append(ln)
     #print(mx, 'inv mass matrix')
     return nbl.v(mx)
-def write_objects(objects): #problem! Writes last object
+def write_objects(objects): # problem! Writes last object
     with open('System.txt', 'w') as system:
         ps = []
         for p in objects:
@@ -66,10 +71,13 @@ def write_objects(objects): #problem! Writes last object
         print(*ps, sep="\n")
     system.close()
     sys.stdout = original_stdout
+def write_table(objects):
+    tab = nbl.pd.DataFrame(objects)
+    tab.to_csv('Table.csv')
 
 def formatting(s):
     #print(*s, sep="\n")
     return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), nbl.v(position_matrix(s)), nbl.v(velocity_matrix(s))]
-#По порядку: матрица произведений масс, матрица обратных масс, вектор координат системы, вектор скоростей системы
-#если исполнить файл, то эта функция сгенирирует объекты заданных параметров
-#write_objects(spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+# По порядку: матрица произведений масс, матрица обратных масс, вектор координат системы, вектор скоростей системы
+# если исполнить файл, то эта функция сгенирирует объекты заданных параметров
+# write_objects(spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
