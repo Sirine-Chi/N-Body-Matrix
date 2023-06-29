@@ -12,13 +12,18 @@ def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_ma
         st_der = crit_mass_delta/3
         objects.append([str(i), np.random.normal(medium_mass, st_der), list(center + nbl.ranvec(medium_radius)), list(cen_velocity + nbl.ranvec(vel_scal)), i, 'system', 'w'])
         #можно добавить дельту к medium_radius
-    #print(*objects, sep = "\n")
+    # print(*objects, sep = "\n")
     return objects
 
-def gen_table(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
+def spherical_sc(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
     objects = []
-
-    return "hi"
+    type = "dynamic"
+    for i in range (0, N):
+        st_der = crit_mass_delta / 3
+        objects.append([str(type), str(i), np.random.normal(medium_mass, st_der), list(center + nbl.ranvec(medium_radius))[0],
+                        list(center + nbl.ranvec(medium_radius))[1], list(cen_velocity + nbl.ranvec(vel_scal))[0], list(cen_velocity + nbl.ranvec(vel_scal))[1], 'w', 0])
+    # print(*objects, sep="\n")
+    return objects
 
 def mass_vectors(objects):
     masses = []
@@ -72,12 +77,19 @@ def write_objects(objects): # problem! Writes last object
     system.close()
     sys.stdout = original_stdout
 def write_table(objects):
-    tab = nbl.pd.DataFrame(objects)
-    tab.to_csv('Table.csv')
+    names = ["Type", "Name", "Mass", "R x", "R y", "V x", "Vy", "Color", "Angle (Deg)"] # str(type),
+
+    tab = nbl.pd.DataFrame(data=objects)
+    tab.to_csv('Table.csv', header=names, index=False)
 
 def formatting(s):
     #print(*s, sep="\n")
     return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), nbl.v(position_matrix(s)), nbl.v(velocity_matrix(s))]
 # По порядку: матрица произведений масс, матрица обратных масс, вектор координат системы, вектор скоростей системы
 # если исполнить файл, то эта функция сгенирирует объекты заданных параметров
+
+# Writing generated data to System.TXT
 # write_objects(spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+
+# Writing generated data to System.CSV table
+write_table(spherical_sc(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
