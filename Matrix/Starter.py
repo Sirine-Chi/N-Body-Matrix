@@ -24,7 +24,6 @@ time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
 system = nbl.pd.read_csv('System.csv')
-system = system#[0:2]
 N = len(system)
 objects = nbl.format_table(system)
 

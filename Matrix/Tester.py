@@ -25,12 +25,12 @@ time_step = float(config["Time step"])
 time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
-# test_data = nbl.pd.DataFrame([])
-# test_data.to_csv("Time test.csv", index=False) # header=["Number of objects", "Time"],
+test_data = nbl.pd.DataFrame([])
+test_data.to_csv("Time loop.csv", index=False) # header=["Number of objects", "Time"],
 
 # --- --- LOOP FOR SIMULATIONS, getting T, N from each --- ---
 
-for i in range(30, 60, 2):
+for i in range(2, 32, 2):
     system = nbl.pd.read_csv('Table.csv')
     system = system[0:i]
     N = len(system)
@@ -40,7 +40,7 @@ for i in range(30, 60, 2):
     os.mkdir(dir_n)
     with open(dir_n + '/Results.txt', 'w') as file:
         sys.stdout = file
-        ms = gen.formatting(objects)  # форматирование под матрицы
+        # ms = gen.formatting(objects)  # форматирование под матрицы
         dir = time_direction
         end = end_time
         h = time_step
@@ -51,10 +51,11 @@ for i in range(30, 60, 2):
         print('All saved in ', dir_n)
         print('N =', N, '  time_direction =', time_direction, '  end_time =', end_time, '  time_step =', time_step,
               '  delta_cur =', delta_cur, '  inum =', inum, '  pulse_table =', pulse_table)
-        calc_time = nbl.simulation(method, ms, dir, end, h)
+        calc_time = nbl.simul(method, objects, dir, end, h, delta_cur, inum, pulse_table, 0, dir_n)
+        # calc_time = nbl.simulation(method, ms, dir, end, h)
     sys.stdout = original_stdout
     print(N, calc_time, "\n")
-    with open(r"Time test.csv", 'a') as ta:
+    with open(r"Time loop.csv", 'a') as ta:
         writer = csv.writer(ta)
         writer.writerow([N, calc_time])
         # ta.write(str(N) + ", " + str(calc_time))

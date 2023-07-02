@@ -61,6 +61,7 @@ G = 0.0001184069  # 09138
 # ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
 
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
+    simulation_time = time.time()
     # def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
     #     if dist(coor, obj.r[n]) == 0:
     #         return 0
@@ -102,7 +103,6 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
         return vsum(obj.fn)
         obj.fn.clear()
 
-    simulation_time = time.time()
     enn = int(end / dt)
     dt = dir * dt
 
@@ -234,10 +234,12 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
     print('sim num= ' + str(inum) + ' ', 'delta= ' + str(delta_cur) + ' ')
 
     print('Finished!', 'simulation time')
-    print("--- %s seconds ---" % (time.time() - simulation_time))
+    timee = time.time() - simulation_time
+    print("--- %s seconds ---" % (timee))
+    return timee
 
     print('Vis is turned off')
-    Vis.vis_N_2D(system, inum, delta_cur, 'Progons', dir_n)
+    # Vis.vis_N_2D(system, inum, delta_cur, 'Progons', dir_n)
     # MAIN VISUALISER CALL!!!!! ^^^^
 
     if field == True:
