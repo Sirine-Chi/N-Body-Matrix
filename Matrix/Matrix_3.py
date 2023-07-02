@@ -30,7 +30,7 @@ def unit_vectors_matrix(position_vectors): #расчёт матрицы един
 #def calc_a(matrix):
 
 def simulation(method, matrices, dir, end, h):
-    test1_time = time.time()
+    # test1_time = time.time()
 
     r_sys_mx = []
     v_sys_mx = []
@@ -55,6 +55,6 @@ def simulation(method, matrices, dir, end, h):
         r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
         #print('s ', i)
     print(r_sys_mx[num-1])
-    print('Finished!')
-    print('test1_time')
-    print("--- %s seconds ---" % (time.time() - test1_time))
+    # print('Finished!')
+    # print('test1_time')
+    # print("--- %s seconds ---" % (time.time() - test1_time))

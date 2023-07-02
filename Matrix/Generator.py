@@ -3,9 +3,7 @@ import numpy as np
 import sys
 original_stdout = sys.stdout
 
-#config = open('System.txt', 'r')
-
-#center - vector
+# center - vector
 def spherical(N, center,  medium_radius, crit_radius_delta, medium_mass, crit_mass_delta, cen_velocity, vel_scal, vel_crit_delta):
     objects = []
     for i in range (0, N):
@@ -22,7 +20,7 @@ def spherical_sc(N, center,  medium_radius, crit_radius_delta, medium_mass, crit
         st_der = crit_mass_delta / 3
         objects.append([str(type), str(i), np.random.normal(medium_mass, st_der), list(center + nbl.ranvec(medium_radius))[0],
                         list(center + nbl.ranvec(medium_radius))[1], list(cen_velocity + nbl.ranvec(vel_scal))[0], list(cen_velocity + nbl.ranvec(vel_scal))[1], 'w', 0])
-    # print(*objects, sep="\n")
+    print(*objects, sep="\n")
     return objects
 
 def mass_vectors(objects):
@@ -78,7 +76,6 @@ def write_objects(objects): # problem! Writes last object
     sys.stdout = original_stdout
 def write_table(objects):
     names = ["Type", "Name", "Mass", "R x", "R y", "V x", "Vy", "Color", "Angle (Deg)"] # str(type),
-
     tab = nbl.pd.DataFrame(data=objects)
     tab.to_csv('Table.csv', header=names, index=False)
 
@@ -92,4 +89,4 @@ def formatting(s):
 # write_objects(spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
 
 # Writing generated data to System.CSV table
-write_table(spherical_sc(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+# write_table(spherical_sc(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))

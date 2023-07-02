@@ -1,9 +1,14 @@
-import Matrix_3 as mx
+import NBodyLib as nbl
+import Generator as gn
+import datetime3
+import sys
+import os
 import yaml
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
+original_stdout = sys.stdout
 
 print('[] [] [] MATRIX VERSION RUNNING [] [] []')
 
@@ -18,18 +23,35 @@ time_step = float(config["Time step"])
 time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
-system = mx.nbl.pd.read_csv('System.csv')
-system = system[0:2]
+system = nbl.pd.read_csv('System.csv')
+system = system#[0:2]
 N = len(system)
-objects = mx.nbl.format_table(system)
+objects = nbl.format_table(system)
 
 print('========= ^ Config Content ^ =========')
 
-method = 'e'
-ms = mx.gn.formatting(objects) #форматирование под матрицы
-dir = time_direction
-end = end_time
-h = time_step
 
-mx.simulation(method, ms, dir, end, h)
-#запуск симуляции, с параметрами из конфига
+if mode == "Simulation":
+    dir_n = '/Users/ilyabelov/PycharmProjects/N-body/Plots/Simulation/' + str(datetime3.datetime.now())
+    os.mkdir(dir_n)
+    with open(dir_n + '/Results.txt', 'w') as file:
+        sys.stdout = file
+
+        method = 'e'
+        delta_cur = 0
+        inum = 's'
+        print('mode =', mode, '  method =', method)
+        print('All saved in ', dir_n)
+        print('N =', N, '  time_direction =', time_direction, '  end_time =', end_time, '  time_step =', time_step,
+              '  delta_cur =', delta_cur, '  inum =', inum, '  pulse_table =', pulse_table)
+        ms = gn.formatting(objects) # форматирование под матрицы
+        dir = time_direction
+        end = end_time
+        h = time_step
+        nbl.simulation(method, ms, dir, end, h)
+        # запуск симуляции с параметрами из конфига
+    file.close()
+
+sys.stdout = original_stdout
+print('finish!')
+print('All saved in ', dir_n)
