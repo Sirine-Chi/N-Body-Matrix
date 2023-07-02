@@ -52,7 +52,7 @@ for i in range(2, 32, 2):
         print('N =', N, '  time_direction =', time_direction, '  end_time =', end_time, '  time_step =', time_step,
               '  delta_cur =', delta_cur, '  inum =', inum, '  pulse_table =', pulse_table)
         calc_time = nbl.simul(method, objects, dir, end, h, delta_cur, inum, pulse_table, 0, dir_n)
-        # calc_time = nbl.simulation(method, ms, dir, end, h)
+        # calc_time = nbl.simulation(method, ms, dirч, end, h)
     sys.stdout = original_stdout
     print(N, calc_time, "\n")
     with open(r"Time loop.csv", 'a') as ta:

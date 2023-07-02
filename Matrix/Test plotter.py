@@ -12,8 +12,8 @@ ts = data["Time"]
 ns2 = data2["Number"]
 ts2 = data2["Time"]
 
-aprx1 = lambda x: 0.1*(x**(-9/5))
-aprx2 = lambda x: 0.723 * np.exp(-0.4529*x)
+aprx1 = lambda x: 0.1*(x**(-9/5)) # Approximation with POWER
+aprx2 = lambda x: 0.723 * np.exp(-0.4529*x) # Approximation with EXP
 
 tsa = list(map(aprx1, ns))
 # tsb = list(map(aprx2, ns))
@@ -24,8 +24,8 @@ fig, ax = plt.subplots()
 
 ax.plot(ns, 1/ts, c="lime", label=r'OpenCL')
 ax.plot(ns2, 1/ts2, c="violet", label=r'Loop CPU')
-ax.plot(ns, tsa, c="red", label=(r'Approx $y = 0.1x^{-1.8}$'))
-# ax.plot(ns, tsb, c="blue", label=(r'Approx $y = 0.7e^{-0.45x}$'))
+# ax.plot(ns, tsa, c="red", label=(r'Approx $y = 0.1x^{-1.8}$')) # Approximation with POWER
+# ax.plot(ns, tsb, c="blue", label=(r'Approx $y = 0.7e^{-0.45x}$')) # Approximation with EXP
 
 ax.set(xlabel=r'Number of objects (1)', ylabel=r'$1/T \quad (sec^{-1})$',
        title='Performance')
