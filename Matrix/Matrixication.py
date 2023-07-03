@@ -3,8 +3,8 @@ import numpy as np
 import numpy.linalg as la
 import datetime
 
-def scal(v): #Модуль (скаляр, длиннна) вектора
-    return (v[0]**2 + v[1]**2)**0.5
+def scal(v):  # Lenth of the vector
+    return np.linalg.norm(v, ord=2)
 def v(v1): #вектор
     v = np.array(v1)
     return v
@@ -68,6 +68,58 @@ def openCL_multiplication(matrix1, matrix2):
 
     return final_matrix
 
+def optimised_oCL_mult(matrix1, matrix2):
+
+    # # Create two matrices
+    # A = np.random.rand(1000, 1000).astype(np.float32)
+    # B = np.random.rand(1000, 1000).astype(np.float32)
+    A = matrix1.astype(np.float32)
+    B = matrix2.astype(np.float32)
+
+    # Create OpenCL context and queue
+    ctx = cl.create_some_context()
+    queue = cl.CommandQueue(ctx)
+
+    # Create OpenCL buffers for matrices
+    a_buf = cl.Buffer(ctx, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=A)
+    b_buf = cl.Buffer(ctx, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=B)
+    c_buf = cl.Buffer(ctx, cl.mem_flags.WRITE_ONLY, A.nbytes)
+
+    # Create OpenCL program and kernel
+    prg = cl.Program(ctx, """
+        __kernel void multiplymatrices(const unsigned int size, __global float * matrix1, __global float * matrix2, __global float * res) {
+            __local float A_tile[16][16];
+            __local float B_tile[16][16];
+            int i = get_global_id(1);
+            int j = get_global_id(0);
+            float sum = 0.0f;
+            for (int k = 0; k < size; k += 16) {
+                A_tile[get_local_id(1)][get_local_id(0)] = matrix1[i * size + k + get_local_id(0)];
+                B_tile[get_local_id(1)][get_local_id(0)] = matrix2[(k + get_local_id(1)) * size + j];
+                barrier(CLK_LOCAL_MEM_FENCE);
+                for (int l = 0; l < 16; l++) {
+                    sum += A_tile[get_local_id(1)][l] * B_tile[l][get_local_id(0)];
+                }
+                barrier(CLK_LOCAL_MEM_FENCE);
+            }
+            res[i * size + j] = sum;
+        }
+    """).build()
+
+    # Set global and local work sizes
+    global_size = (A.shape[1], A.shape[0])
+    local_size = (16, 16)
+
+    # Execute OpenCL kernel for matrix multiplication
+    prg.multiplymatrices(queue, global_size, local_size, np.int32(A.shape[0]), a_buf, b_buf, c_buf)
+
+    # Transfer the result back to the CPU
+    C = np.empty_like(A)
+    cl.enqueue_copy(queue, C, c_buf)
+
+    return C
+
+
 matrix1 = v([[0.99114645, 0.09327769, 0.90075564, 0.8913309],
            [0.59739089, 0.13906649, 0.94246316, 0.65673178],
            [0.24535166, 0.68942326, 0.41361505, 0.5789603],
@@ -84,3 +136,7 @@ res = v( [[1.57981943, 1.63210835, 2.12016045, 1.80288424],
        [0.71769556, 0.52246746, 0.88158722, 0.8039138]] )
 
 openCL_multiplication(matrix1, matrix2)
+
+print(" - - - - - - - - - ")
+
+print(optimised_oCL_mult(matrix1, matrix2))
