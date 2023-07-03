@@ -55,7 +55,7 @@ for i in range(40, 100, 10):
         # calc_time = nbl.simulation(method, ms, dir, end, h)
     sys.stdout = original_stdout
     print(N, calc_time, "\n")
-    with open(r"Time loop.csv", 'a') as ta:
+    with open(r"Testing/Time loop.csv", 'a') as ta:
         writer = csv.writer(ta)
         writer.writerow([N, calc_time])
         # ta.write(str(N) + ", " + str(calc_time))

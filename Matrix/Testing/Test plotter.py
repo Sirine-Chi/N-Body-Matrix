@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 # --- --- PLOT DRAWING --- ---
 
-data = nbl.pd.read_csv('Time test.csv')
-data2 = nbl.pd.read_csv('Time loop.csv')
+data = nbl.pd.read_csv('Testing/Time test.csv')
+data2 = nbl.pd.read_csv('Testing/Time loop.csv')
 ns = data["Number"]
 ts = data["Time"]
 ns2 = data2["Number"]
@@ -30,11 +30,11 @@ ax.set(xlabel=r'Number of objects (1)', ylabel=r'$1/T \quad (sec^{-1})$',
        title='Performance')
 ax.grid(True, color='grey', alpha=0.25)
 
-ax.plot(ns, 1/ts, c="lime", label=r'OpenCL')
-ax.plot(ns2, 1/ts2, c="violet", label=r'Loop CPU')
+ax.plot(ns, ts, c="lime", label=r'OpenCL')
+ax.plot(ns2, ts2, c="violet", label=r'Loop CPU')
 
-ax2 = ax.twiny()
-ax2.plot(highres_ns, tsa, c="red", label=r'Approx $y = 0.1x^{-1.8}$') # Approximation with POWER
+# ax2 = ax.twiny()
+# ax2.plot(highres_ns, tsa, c="red", label=r'Approx $y = 0.1x^{-1.8}$') # Approximation with POWER
 # ax.plot(ns, tsa2, c="blue", label=(r'Approx $y = 0.7e^{-0.45x}$')) # Approximation with EXP
 
 plt.legend()
