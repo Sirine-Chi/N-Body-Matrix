@@ -8,49 +8,71 @@ import time
 import datetime
 import pyopencl as cl
 
+
 def scal(v):  # Lenth of the vector
     return np.linalg.norm(v, ord=2)
+
+
 def v(v1):  # vector
     return np.array(v1)
+
+
 def unvec(v):  # unit vector
     uv = v / scal(v)
     return uv
+
+
 def dist(v1, v2):  # distance between vectors
     return scal(v1 - v2)
+
+
 def v12(v1, v2):
-    return (v1 - v2)
+    return v1 - v2
+
+
 def ranvec(r):  # Random vector with lengh r
     rv = v([rnd.uniform(-r, r), 2 * (rnd.getrandbits(1) - 0.5) * (r ** 2 - rnd.uniform(-r, r) ** 2) ** 0.5])
     return rv
+
+
 def ranrv(r):  # Случайный радиус-вектор длинны r
     a = rnd.uniform(0, 2 * math.pi)
     rr = rnd.uniform(0, r)
     rv = v([rr * math.cos(a), rr * math.sin(a)])  # в радианах
     return rv
+
+
 def vsum(v_list):
     return sum(v_list)  # Sum of N-diemensional vectors
+
+
 def rotvec(vec, al):
     # rotates 2D vector on AL degrees, multiplies rotation matrix on vector   v' = M*v
     rotation_mx = v([[math.cos(math.radians(al)), math.sin(math.radians(al))],
                      [-1 * math.sin(math.radians(al)), math.cos(math.radians(al))]])
     return np.matmul(vec, rotation_mx)
+
+
 def format_table(system):
     lines = []
     for line in system.to_numpy():
         lines.append(
-            [str(line[1]).replace(' ', ''), line[2], v([line[3], line[4]]), v([line[5], line[6]]), line[7].replace(' ', ''),
+            [str(line[1]).replace(' ', ''), line[2], v([line[3], line[4]]), v([line[5], line[6]]),
+             line[7].replace(' ', ''),
              line[8]])
     # print(*lines, sep='\n')
     return lines
+
 
 # numerical methods
 
 
 eiler = lambda x_nm, y_n, h: x_nm + h * y_n
-adams = lambda x_nm, y_n, y_nd, h: x_nm + h*3/2*y_n - h/2*y_nd
+adams = lambda x_nm, y_n, y_nd, h: x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
 # force functions
-f_ij = lambda ri, rj, mi, mj: v(((rj - ri) * mi * mj * G) / (scal(ri - rj)) ** 3) # функция силы Ньютоновской гравитации, действующей между двумя телами, даны массы и положения
-analytic_f = lambda r0, v0, t: [(r0 + v0*t - 5 * t**2), (v0 - r*t)] # EXAMPLE!
+f_ij = lambda ri, rj, mi, mj: v(((rj - ri) * mi * mj * G) / (
+    scal(ri - rj)) ** 3)  # функция силы Ньютоновской гравитации, действующей между двумя телами, даны массы и положения
+analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - r * t)]  # EXAMPLE!
 # def analytic_f(r0, v0, t):  # EXAMPLE!
 #     rt = r0 + v0*t - 5 * t**2
 #     vt = v0 - r*t
@@ -58,10 +80,13 @@ analytic_f = lambda r0, v0, t: [(r0 + v0*t - 5 * t**2), (v0 - r*t)] # EXAMPLE!
 
 # CONSTANTS
 G = 0.0001184069  # 09138
+
+
 # ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
 
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
+
     # def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
     #     if dist(coor, obj.r[n]) == 0:
     #         return 0
@@ -95,7 +120,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
     def f12(obj1, obj2, n):  # Force between first and second given objects on time step n. Uses lambda f_ij
         return f_ij(obj1.r[n - 1], obj2.r[n - 1], obj1.m, obj2.m)
 
-    def f(obj, system, n): # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
+    def f(obj, system, n):  # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
         obj.fn = []
         for other in system:
             if obj != other:
@@ -169,7 +194,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
                 rs.append(v(rs[n - 1] + dt / 2 * (vs[n - 1] + vs[n - 2])))
 
             def adams_method(fs, vs, rs, m):
-                vs.append(adams(vs[n-1], (fs[n-1]/m), (fs[n-2]/m), dt))
+                vs.append(adams(vs[n - 1], (fs[n - 1] / m), (fs[n - 2] / m), dt))
                 rs.append(adams(rs[n - 1], (vs[n - 1] / m), (vs[n - 2] / m), dt))
                 # vs.append(v(vs[n - 1] + dt / 2 * (3 * fs[n] / m - fs[n - 1] / m)))
                 # rs.append(v(rs[n - 1] + dt / 2 * (3 * vs[n] - vs[n - 1])))
@@ -260,6 +285,7 @@ def progons(method, objects, dir, end, dt, delta_step, k, delta_start, delta_end
     print('progons_global_time')
     print("--- %s seconds ---" % (time.time() - progons_global_time))
 
+
 # MATRIX FUNCTIONS
 
 def openCL_mult(matrix1, matrix2):
@@ -301,10 +327,14 @@ def openCL_mult(matrix1, matrix2):
     print('OpenCL Multiplication: ' + str(delta_t))
 
     return final_matrix
-def np_mult(matrix1, matrix2): # =m1 x m2, порядок как в письме
+
+
+def np_mult(matrix1, matrix2):  # =m1 x m2, порядок как в письме
     return matrix1.dot(matrix2)
     # return np.matmul(matrix1, matrix2)
-def gravec(r1, r2): #единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
+
+
+def gravec(r1, r2):  # единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
     # r1, r2 - коордирнаты тел
     d = dist(r1, r2)
     # print(d)
@@ -312,9 +342,11 @@ def gravec(r1, r2): #единичный вектор направления си
         return v([0, 0])
     else:
         # print('Dev', r2-r1)
-        return v((r2 - r1) / d**3)
-def unit_vectors_matrix(position_vectors): # расчёт матрицы единичных векторов сил, действующих от тела j на тело i
-    matrix = [] # собираем матрицу R_ij
+        return v((r2 - r1) / d ** 3)
+
+
+def unit_vectors_matrix(position_vectors):  # расчёт матрицы единичных векторов сил, действующих от тела j на тело i
+    matrix = []  # собираем матрицу R_ij
     for j in position_vectors:
         line = []
         for i in position_vectors:
@@ -324,6 +356,8 @@ def unit_vectors_matrix(position_vectors): # расчёт матрицы еди�
         matrix.append(line)
     # print('rs_m', matrix, 'rs_m end')
     return v(matrix)
+
+
 # def calc_a(matrix):
 
 def simulation(method, matrices, dir, end, h):
@@ -343,15 +377,15 @@ def simulation(method, matrices, dir, end, h):
     # перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     # print('s 0')
 
-    num = int(end / h) # количесвто шагов
+    num = int(end / h)  # количесвто шагов
     for i in range(1, num):
         # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
-        a_sys_mx.append(( G*np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))) ) [0])
+        a_sys_mx.append((G * np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i - 1]))))[0])
         # a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))))[0])
-        v_sys_mx.append(v_sys_mx[i-1] + h*a_sys_mx[i])
-        r_sys_mx.append(r_sys_mx[i-1] + h*v_sys_mx[i])
+        v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
+        r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
         # print('s ', i)
-    print(r_sys_mx[num-1])
+    print(r_sys_mx[num - 1])
     print('Finished!')
     print('test1_time')
     timee = time.time() - test1_time

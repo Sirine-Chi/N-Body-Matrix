@@ -60,5 +60,3 @@ def simulation(method, matrices, dir, end, h):
     # print("--- %s seconds ---" % (time.time() - test1_time))
 
 # --- One more matrix code
-
-def

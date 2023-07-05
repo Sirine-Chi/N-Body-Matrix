@@ -30,7 +30,7 @@ pulse_table = config["Pulse table"]
 
 # --- --- LOOP FOR SIMULATIONS, getting T, N from each --- ---
 
-for i in range(40, 100, 10):
+for i in range(100, 102, 2):
     system = nbl.pd.read_csv('Table.csv')
     system = system[0:i]
     N = len(system)
@@ -65,4 +65,3 @@ for i in range(40, 100, 10):
 print('finish!')
 print('All saved in ', dir_n)
 time_data = nbl.pd.DataFrame(test_data)
-
