@@ -12,7 +12,7 @@ original_stdout = sys.stdout
 
 # gen.write_table(gen.spherical_sc(100, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
 
-# --- --- SETTINGS --- ---
+# --- --- SET TINGS --- ---
 
 stream = open("Config.yaml", 'r')
 config = yaml.load(stream, Loader=yaml.FullLoader)

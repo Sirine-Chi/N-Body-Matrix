@@ -1,6 +1,6 @@
 import numpy as np
 
-import NBodyLib as nbl
+from nbody import NBodyLib as nbl
 import matplotlib.pyplot as plt
 
 # --- --- PLOT DRAWING --- ---
