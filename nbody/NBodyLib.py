@@ -77,8 +77,6 @@ analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXA
 G = 0.0001184069  # 09138
 
 
-# ДОБАВИТЬ КОНСТАНТЫ ДЛЯ ПЕРЕВОДА? ПОДКЛЮЧИТЬ СИ ТАБЛИЦУ И ПЕРЕВОДИТЬ
-
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
 
@@ -176,7 +174,8 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             self.t.append(self.t[n - 1] + dt)
             self.v.append(analytic_f(self.r0, self.v0, (n * dt))[1])
             self.r.append(analytic_f(self.r0, self.v0, (n * dt))[0])
-
+    
+    # Наполнение системы
     system = []
     for ob in objects:
         system.append(DynamicObject(ob[1], ob[2] + ranrv(delta_cur), ob[3], system, ob[4].replace("'", ''), ob[5]))
