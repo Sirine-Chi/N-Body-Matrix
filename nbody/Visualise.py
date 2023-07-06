@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as anima
-# from NBodyLib import U
 import numpy as np
 import datetime
 import os
@@ -37,7 +36,7 @@ def vis_1_23D(x_s, y_s, t_s):
     return plt
 
 
-def vis_N_2D(system, inum, delta_cur, mode, dir_n):
+def vis_N_2D(system, inum, delta_cur, mode, directory):
     plt.clf()
     # plt.figure(str(inum)+'_delta='+str(delta_cur)+'.png')
     plt.style.use('dark_background')
@@ -48,13 +47,13 @@ def vis_N_2D(system, inum, delta_cur, mode, dir_n):
 
     for obj in system:
         plt.plot(obj.makeXY()[0], obj.makeXY()[1], alpha=0.4, marker=" ", c=obj.colour)
-    plt.savefig(dir_n + '/' + str(inum) + '_delta=' + str(delta_cur) + '.png', dpi=200)
+    plt.savefig(directory + '/' + str(inum) + '_delta=' + str(delta_cur) + '.png', dpi=200)
     # plt.show()
     return plt
     plt.clf()
 
 
-# def vis_field(U, system, inum, delta_cur, dir_n):
+# def vis_field(U, system, inum, delta_cur, directory):
 #     plt.clf()
 #     plt.style.use('dark_background')
 #     #plt.figure(str(inum)+'_delta='+str(delta_cur)+'.png')
@@ -68,7 +67,7 @@ def vis_N_2D(system, inum, delta_cur, mode, dir_n):
 #     # plt.contour(U, levels=200)
 #     # cbar = plt.colorbar(cs)
 #
-#     plt.savefig(dir_n+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
+#     plt.savefig(directory+'/'+str(inum)+'_delta='+str(delta_cur)+'.png', dpi = 200)
 #     # plt.show()
 #     return plt
 #     plt.clf()

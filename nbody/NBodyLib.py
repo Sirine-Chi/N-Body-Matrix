@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 import pandas as pd
 import math
-import nbody.Visualise as Vis
+import Visualise as Vis
 import random2 as rnd
 import time
 import datetime
@@ -35,14 +35,14 @@ def ranvec(r):  # Random vector with lengh r
     return rv
 
 
-def ranrv(r):  # Случайный радиус-вектор длинны r
+def ranrv(r):  # Random vector with random radius < r
     a = rnd.uniform(0, 2 * math.pi)
     rr = rnd.uniform(0, r)
-    rv = v([rr * math.cos(a), rr * math.sin(a)])  # в радианах
+    rv = v([rr * math.cos(a), rr * math.sin(a)])  # radians
     return rv
 
 
-def vsum(v_list):
+# def vsum(v_list):
     return sum(v_list)  # Sum of N-diemensional vectors
 
 
@@ -65,18 +65,13 @@ def format_table(system):
 
 
 # numerical methods
-
-
 eiler = lambda x_nm, y_n, h: x_nm + h * y_n
 adams = lambda x_nm, y_n, y_nd, h: x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
+
 # force functions
 f_ij = lambda ri, rj, mi, mj: v(((rj - ri) * mi * mj * G) / (
     scal(ri - rj)) ** 3)  # функция силы Ньютоновской гравитации, действующей между двумя телами, даны массы и положения
-analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - r * t)]  # EXAMPLE!
-# def analytic_f(r0, v0, t):  # EXAMPLE!
-#     rt = r0 + v0*t - 5 * t**2
-#     vt = v0 - r*t
-#     return [rt, vt]
+analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXAMPLE!
 
 # CONSTANTS
 G = 0.0001184069  # 09138
@@ -87,36 +82,6 @@ G = 0.0001184069  # 09138
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
 
-    # def u_ob(coor, obj, n): #coor - vector, obj1 - Star, потенциал, создаваемый телом obj1 в точке coor / на шаге n
-    #     if dist(coor, obj.r[n]) == 0:
-    #         return 0
-    #     else:
-    #         u = -1*G*obj.m / dist(coor, obj.r[n])
-    #         return u
-    # #print(u)
-    # def U(coor, system, n): #потенциал, создаваемый всеми в точке coor /на шаге n
-    #     us = []
-    #     for obj in system:
-    #         us.append(u_ob(coor, obj, n))
-    #     U = sum(us)
-    #     #print(U)
-    #     return U
-    # def U_matrix(system, n):
-    #     matrix = []
-    #     y = -5
-    #     while y <= 5:
-    #         U_line = []
-    #         x = -5
-    #         while x <= 5:
-    #             coor = [x, y]
-    #             U_line.append(U(coor, system, n))
-    #             x += 0.05
-    #         y += 0.05
-    #         matrix.append(U_line)
-    #     # print(matrix)
-    #     return matrix
-    # Functions for potential net
-
     def f12(obj1, obj2, n):  # Force between first and second given objects on time step n. Uses lambda f_ij
         return f_ij(obj1.r[n - 1], obj2.r[n - 1], obj1.m, obj2.m)
 
@@ -125,7 +90,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
         for other in system:
             if obj != other:
                 obj.fn.append(f12(obj, other, n))
-        return vsum(obj.fn)
+        return sum(obj.fn)
         obj.fn.clear()
 
     enn = int(end / dt)
@@ -149,7 +114,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             self.t.append(0)
             self.f.append(f(self, system, 1))
 
-            # FOR ADAMS
+            # FOR ADAMS, first iteration with eiler method
             self.r.append(v(self.r[0] + dt * self.v[0]))
             self.v.append(v(self.v[0] + dt * self.f[0] / self.m))
             self.t.append(1)
@@ -168,15 +133,11 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             print("id=" + str(self.i), self.r)
 
         def makeXY(self):
-            # devider = 1
-            # devider = int(devider)
             x_s0 = []
             y_s0 = []
             for i in self.r:
                 x_s0.append(i[0])
                 y_s0.append(i[1])
-                # x_s0 = x_s0[::devider]
-                # y_s0 = y_s0[::devider]
             return [x_s0, y_s0]
 
         def reper(self, n):
@@ -189,7 +150,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
                 vs.append(eiler(vs[n - 1], (fs[n - 1] / m), dt))
                 rs.append(eiler(rs[n - 1], vs[n], dt))
 
-            def midpoint_method(fs, vs, rs, ms):
+            def midpoint_method(fs, vs, rs, m):
                 vs.append(v(vs[n - 1] + dt * f(rs[n - 1] + dt / 2 * f(rs[n - 1])) / m))  # Midpoint
                 rs.append(v(rs[n - 1] + dt / 2 * (vs[n - 1] + vs[n - 2])))
 
@@ -218,13 +179,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
 
     system = []
     for ob in objects:
-        # system.append(object( ob[1], ob[2]+ranrv(delta_cur), ob[3], ob[4], system, ob[6].replace("'", '') ))
         system.append(DynamicObject(ob[1], ob[2] + ranrv(delta_cur), ob[3], system, ob[4].replace("'", ''), ob[5]))
-
-    if field == True:
-        inum = 'f'
-        delta_cur = 0
-        Vis.vis_field(U_matrix(system, 0), system, inum, delta_cur, dir_n)  # 0 is case of n
 
     # --define function for pulse---
     if pulse_table == True:
@@ -232,25 +187,22 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             ps = []
             for ob in system:
                 ps.append(ob.Ps[n - 1])
-            return scal(vsum(ps))
+            return scal(sum(ps))
 
     # ---Iterator---
     for n in range(2, enn):
-        # dtn = dt #FOR DYNAMIC TIME STEP!!!
-        # Star.iter(galaxy, n, dt)
         for ss in system:
             ss.iteration(system, n, dt)
             ss.reper(n)
-            # ss.print_object() #вывести всё про точку
 
     # ---PULSE TABLE---
     if pulse_table == True:
         PS = []  # Добавляем в список значения полного импульса с итераций
         for n in range(0, enn):
-            PS.append(Pn(galaxy, n))
+            PS.append(Pn(system, n))
         tP = pd.DataFrame(
             {
-                "t": galaxy[0].t,
+                "t": system[0].t,
                 "P": PS
             })
         tP.to_csv('tP.csv')
@@ -258,19 +210,13 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
 
     print('sim num= ' + str(inum) + ' ', 'delta= ' + str(delta_cur) + ' ')
 
-    print('Finished!', 'simulation time')
     timee = time.time() - simulation_time
-    print("--- %s seconds ---" % (timee))
+    print('Finished!', 'simulation time', '/n', "--- %s seconds ---" % (timee))
     return timee
 
     print('Vis is turned off')
     # Vis.vis_N_2D(system, inum, delta_cur, 'Progons', dir_n)
     # MAIN VISUALISER CALL!!!!! ^^^^
-
-    if field == True:
-        Vis.vis_N_2D(system, inum, delta_cur, 'Field', dir_n)
-    # Vis.vis_N_3D(galaxy).show
-    # Vis.vis_N_anim(galaxy, enn).save('Galaxy.gif', writer='imagemagic', fps=60)
 
 
 def progons(method, objects, dir, end, dt, delta_step, k, delta_start, delta_end, pulse_table, dir_n):
@@ -281,9 +227,8 @@ def progons(method, objects, dir, end, dt, delta_step, k, delta_start, delta_end
         for inum in range(0, k):
             simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, 0, dir_n)
         delta_cur = float(delta_cur) + delta_step
-
-    print('progons_global_time')
-    print("--- %s seconds ---" % (time.time() - progons_global_time))
+    
+    print('progons_global_time \n', "--- %s seconds ---" % (time.time() - progons_global_time))
 
 
 # MATRIX FUNCTIONS
@@ -341,7 +286,6 @@ def gravec(r1, r2):  # единичный вектор направления с
     if d == 0.0:
         return v([0, 0])
     else:
-        # print('Dev', r2-r1)
         return v((r2 - r1) / d ** 3)
 
 
@@ -361,6 +305,7 @@ def unit_vectors_matrix(position_vectors):  # расчёт матрицы еди
 # def calc_a(matrix):
 
 def simulation(method, matrices, dir, end, h):
+
     test1_time = time.time()
 
     r_sys_mx = []
@@ -377,7 +322,7 @@ def simulation(method, matrices, dir, end, h):
     # перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     # print('s 0')
 
-    num = int(end / h)  # количесвто шагов
+    num = int(dir * end / h)  # количесвто шагов
     for i in range(1, num):
         # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
         a_sys_mx.append((G * np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i - 1]))))[0])
@@ -386,8 +331,7 @@ def simulation(method, matrices, dir, end, h):
         r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
         # print('s ', i)
     print(r_sys_mx[num - 1])
-    print('Finished!')
-    print('test1_time')
+
     timee = time.time() - test1_time
-    print("--- %s seconds ---" % (timee))
+    print('Finished! \n', 'test1_time', "--- %s seconds ---" % (timee))
     return timee
