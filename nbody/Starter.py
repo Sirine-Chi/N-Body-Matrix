@@ -1,6 +1,7 @@
 import NBodyLib as nbl
 import Generator as gn
 import datetime3
+import logging
 import sys
 import os
 import yaml
@@ -36,18 +37,18 @@ print('========= ^ Config Content ^ =========')
 if mode == "Simulation":
     directory = '/Users/ilyabelov/PycharmProjects/N-Body/nbody/Results/Simulations' + str(datetime3.datetime.now())
     os.mkdir(directory)
+    # results = open(directory + '/Results.txt', 'w')
+    # results.writelines(config)
+    # results.close()
+
     with open(directory + '/Results.txt', 'w') as file:
         sys.stdout = file
 
         print('All saved in ', directory)
         print_config(config)
         
-        ms = gn.formatting(objects) # форматирование под матрицы
-        dir = time_direction
-        end = end_time
-        h = time_step
-        nbl.simulation(method, ms, dir, end, h)
-        # запуск симуляции с параметрами из конфига
+        ms = gn.formatting(objects) # Making special matrices from objects
+        nbl.simulation(method, ms, time_direction, end_time, time_step) # Run simulation with config settings
     file.close()
 
 sys.stdout = original_stdout
