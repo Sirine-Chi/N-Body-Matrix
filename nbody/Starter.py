@@ -17,8 +17,6 @@ def print_config(config):
 
 print('[] [] [] MATRIX VERSION RUNNING [] [] []')
 
-
-print(__file__)
 stream = open("Config.yaml", 'r')
 config = yaml.load(stream, Loader=yaml.FullLoader)
 print_config(config)
@@ -29,24 +27,24 @@ time_step = float(config["Time step"])
 time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
-system = nbl.pd.read_csv('systems_data/Solar System.csv')
-system = system[0:2]
-N = len(system)
-objects = nbl.format_table(system)
+system = nbl.pd.read_csv('systems_data/Solar System.csv') # Reading our csv table with objects
+system = system[0:3] # Cutting unnecesary objects
+N = len(system) # How many objects there are
+objects = nbl.format_table(system) # Formatting
 
 print('========= ^ Config Content ^ =========')
 
 
 if mode == "Simulation":
-    directory = '/Users/ilyabelov/PycharmProjects/N-Body/nbody/Results/Simulations/' + str(datetime3.datetime.now())
+    directory = ('Results/Simulations/' + str(datetime3.datetime.now())).replace(':', '-')
     os.mkdir(directory)
     results = open(directory + '/Results.txt', 'w')
-    results.writelines(config)
+    for key, value in config.items():
+        results.writelines(key + ":   " + str(value) + "\n")
     results.write('All saved in ' + directory)
     results.close()
-    
-    ms = gn.formatting(objects) # Making special matrices from objects
-        nbl.simulation(method, ms, time_direction, end_time, time_step) # Run simulation with config settings
 
-sys.stdout = original_stdout
+    nbl.simulation(method, objects, time_direction, end_time, time_step) # Run simulation with config settings
+
+# sys.stdout = original_stdout
 print('Finish!', '\n', 'All saved in ', directory)

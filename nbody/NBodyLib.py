@@ -41,11 +41,6 @@ def ranrv(r):  # Random vector with random radius < r
     rv = v([rr * math.cos(a), rr * math.sin(a)])  # radians
     return rv
 
-
-# def vsum(v_list):
-    return sum(v_list)  # Sum of N-diemensional vectors
-
-
 def rotvec(vec, al):
     # rotates 2D vector on AL degrees, multiplies rotation matrix on vector   v' = M*v
     rotation_mx = v([[math.cos(math.radians(al)), math.sin(math.radians(al))],
@@ -59,7 +54,7 @@ def format_table(system):
         lines.append(
             [str(line[1]).replace(' ', ''), line[2], v([line[3], line[4]]), v([line[5], line[6]]),
              line[7].replace(' ', ''),
-             line[8]])
+             line[8]]) # Formating our objects, glue X and Y, replacing SPACES, and so
     # print(*lines, sep='\n')
     return lines
 
@@ -89,7 +84,6 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             if obj != other:
                 obj.fn.append(f12(obj, other, n))
         return sum(obj.fn)
-        obj.fn.clear()
 
     enn = int(end / dt)
     dt = dir * dt
@@ -214,7 +208,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
     return timee
 
     print('Vis is turned off')
-    # Vis.vis_N_2D(system, inum, delta_cur, 'Progons', dir_n)
+    # Vis.vis_N_2D(system, inum, delta_cur, dir_n)
     # MAIN VISUALISER CALL!!!!! ^^^^
 
 
@@ -300,12 +294,71 @@ def unit_vectors_matrix(position_vectors):  # расчёт матрицы еди
     # print('rs_m', matrix, 'rs_m end')
     return v(matrix)
 
+def mass_vectors(objects):
+    masses = []
+    inv_masses = []
+    for o in objects:
+        masses.append(o[1])
+        inv_masses.append(1 / o[1])
+    return [masses, inv_masses]
 
-# def calc_a(matrix):
 
-def simulation(method, matrices, dir, end, h):
+def position_matrix(objects):
+    positions = []
+    for o in objects:
+        positions.append(v(o[2]))
+    return positions
 
-    test1_time = time.time()
+
+def velocity_matrix(objects):
+    velocities = []
+
+    def vel(o):
+        return v(o[3])
+
+    for o in objects:
+        velocities.append(v(o[3]))
+    # return map(vel, objects)
+    return velocities
+
+
+def mass_matrix(ms):
+    mx = []
+    for i in ms:
+        ln = []
+        for j in ms:
+            ln.append(i * j)
+        mx.append(ln)
+    # print(mx, 'mass matris')
+    return v(mx)
+
+
+def mass_inv_matrix(ms):
+    mx = []
+    for i in ms:
+        ln = []
+        for j in ms:
+            if i == j:
+                ln.append(j)
+            if i != j:
+                ln.append(0)
+        mx.append(ln)
+    # print(mx, 'inv mass matrix')
+    return v(mx)
+
+
+def format_matrices(s):
+    # print(*s, sep="\n")
+    return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), v(position_matrix(s)),
+            v(velocity_matrix(s))]
+# По порядку: матрица произведений масс, матрица обратных масс, вектор координат системы, вектор скоростей системы
+# если исполнить файл, то эта функция сгенирирует объекты заданных параметров
+
+
+def simulation(method, objects, dir, end, h):
+    matrices = format_matrices(objects)
+
+    start_time = time.time()
 
     r_sys_mx = []
     v_sys_mx = []
@@ -321,7 +374,7 @@ def simulation(method, matrices, dir, end, h):
     # перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     # print('s 0')
 
-    num = int(dir * end / h)  # количесвто шагов
+    num = int(dir * end / h)  # Number of steps
     for i in range(1, num):
         # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
         a_sys_mx.append((G * np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i - 1]))))[0])
@@ -331,6 +384,6 @@ def simulation(method, matrices, dir, end, h):
         # print('s ', i)
     print(r_sys_mx[num - 1])
 
-    timee = time.time() - test1_time
+    timee = time.time() - start_time
     print('Finished! \n', 'test1_time', "--- %s seconds ---" % (timee))
     return timee

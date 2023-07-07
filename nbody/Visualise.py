@@ -36,7 +36,7 @@ def vis_1_23D(x_s, y_s, t_s):
     return plt
 
 
-def vis_N_2D(system, inum, delta_cur, mode, directory):
+def vis_N_2D(system, inum, delta_cur, directory):
     plt.clf()
     # plt.figure(str(inum)+'_delta='+str(delta_cur)+'.png')
     plt.style.use('dark_background')
