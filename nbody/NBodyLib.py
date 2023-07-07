@@ -48,13 +48,13 @@ def rotvec(vec, al):
     return np.matmul(vec, rotation_mx)
 
 
-def format_table(system):
+def format_table(system): # Formating our objects, glue X and Y, replacing SPACES, and so
     lines = []
     for line in system.to_numpy():
         lines.append(
             [str(line[1]).replace(' ', ''), line[2], v([line[3], line[4]]), v([line[5], line[6]]),
              line[7].replace(' ', ''),
-             line[8]]) # Formating our objects, glue X and Y, replacing SPACES, and so
+             line[8]])
     # print(*lines, sep='\n')
     return lines
 
@@ -169,7 +169,7 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             self.v.append(analytic_f(self.r0, self.v0, (n * dt))[1])
             self.r.append(analytic_f(self.r0, self.v0, (n * dt))[0])
     
-    # Наполнение системы
+    # Initialazing system
     system = []
     for ob in objects:
         system.append(DynamicObject(ob[1], ob[2] + ranrv(delta_cur), ob[3], system, ob[4].replace("'", ''), ob[5]))

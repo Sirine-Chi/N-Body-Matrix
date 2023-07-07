@@ -33,6 +33,8 @@ Jinja2==3.1.2
 jupyter_client==8.3.0
 jupyter_core==5.3.1
 kiwisolver==1.4.4
+manim==0.17.3
+ManimPango==0.4.3
 mapbox-earcut==1.0.1
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3

@@ -6,7 +6,6 @@ import sys
 import csv
 import os
 import yaml
-original_stdout = sys.stdout
 
 # --- --- GENERATING DATA --- ---
 
@@ -36,21 +35,18 @@ for i in range(100, 102, 2):
     N = len(system)
     objects = nbl.format_table(system)
 
-    directory = '/Users/ilyabelov/PycharmProjects/N-body/Plots/Simulation/' + str(datetime3.datetime.now())
+    delta_cur = 0
+    inum = 's'
+
+    directory = '/Plots/Simulation/' + str(datetime3.datetime.now()).replace(':', '-')
     os.mkdir(directory)
-    with open(directory + '/Results.txt', 'w') as file:
-        sys.stdout = file
-        # ms = gen.formatting(objects)  # форматирование под матрицы
-        delta_cur = 0
-        inum = 's'
-        print(*objects, sep="\n")  # ПЕЧАТАТЬ С РАЗДЕЛИТЕЛЕМ \n
-        print('mode =', mode, '  method =', method)
-        print('All saved in ', directory)
-        print('N =', N, '  time_direction =', time_direction, '  end_time =', end_time, '  time_step =', time_step,
-              '  delta_cur =', delta_cur, '  inum =', inum, '  pulse_table =', pulse_table)
-        calc_time = nbl.simul(method, objects, time_direction, end_time, time_step, delta_cur, inum, pulse_table, 0, directory)
-        # calc_time = nbl.simulation(method, ms, time_direction, end_time, time_step)
-    sys.stdout = original_stdout
+
+    results = open(directory + '/Results.txt', 'w')
+    results.writelines(config)
+    results.writelines(*objects, sep="\n")
+    results.write('All saved in ' + directory)
+    results.close()
+
     print(N, calc_time, "\n")
     with open(r"Testing/Time loop.csv", 'a') as ta:
         writer = csv.writer(ta)

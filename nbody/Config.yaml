@@ -8,10 +8,10 @@ Time step: 5e-5
 Time direction: +1
 Pulse table: false
 
-Progons per delta: 2
+Progons per delta: 0
 Delta start: 0
-Delta end: 0.02
-Delta step: 0.01
+Delta end: 0
+Delta step: 0
 
-Field net step (Resolution): 0.001
+Field net step (Resolution): 0.01
 Devider: 2
