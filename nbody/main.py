@@ -5,6 +5,7 @@ from tkinter import ttk
 if __name__ == "__main__":
     handle = MainWindow()
     
-    message = ttk.Label(handle, text="Hello, World!").pack()
+    text = "This is a main window of N-Body simulation engine"
+    message = ttk.Label(handle, btext=text).pack()
 
     handle.mainloop()
