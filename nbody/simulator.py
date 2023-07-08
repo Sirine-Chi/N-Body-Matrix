@@ -3,8 +3,6 @@ import time
 import numpy as np
 import random2
 
-def v(lisst):
-    return np.array(lisst)
 
 # Типо много тел на прямой с разными координатами
 
@@ -44,19 +42,3 @@ class Simulator():
     
     def get_plot_data(self):
         return self.rs[-1]
-
-N = 10 # Bodies
-r_s = []
-v_s = []
-m_s = []
-for i in range(1, N, 1):
-    r_s.append(random2.uniform(-10, 10))
-    v_s.append(random2.uniform(-2, 2))
-    m_s.append(random2.uniform(0, 6))
-print('R', r_s, '\n', 'V', v_s, '\n', 'M', m_s)
-total_time = 100
-step = 0.1
-
-s = Simulator(v(r_s), v(v_s), v(m_s), time, step)
-s.render_simulation(total_time, step)
-print(s.get_plot_data())

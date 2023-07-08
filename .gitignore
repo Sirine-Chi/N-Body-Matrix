@@ -150,6 +150,9 @@ cython_debug/
 # Local log files
 Results/
 
+# ds.store
+.DS_Store
+
 .idea/*
 
 # PyCharm
