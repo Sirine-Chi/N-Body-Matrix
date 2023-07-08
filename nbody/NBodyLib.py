@@ -11,43 +11,28 @@ import pyopencl as cl
 
 def scal(v):  # Lenth of the vector
     return np.linalg.norm(v, ord=2)
-
-
 def v(v1):  # vector
     return np.array(v1)
-
-
 def unvec(v):  # unit vector
     uv = v / scal(v)
     return uv
-
-
 def dist(v1, v2):  # distance between vectors
     return scal(v1 - v2)
-
-
 def v12(v1, v2):
     return v1 - v2
-
-
 def ranvec(r):  # Random vector with lengh r
     rv = v([rnd.uniform(-r, r), 2 * (rnd.getrandbits(1) - 0.5) * (r ** 2 - rnd.uniform(-r, r) ** 2) ** 0.5])
     return rv
-
-
 def ranrv(r):  # Random vector with random radius < r
     a = rnd.uniform(0, 2 * math.pi)
     rr = rnd.uniform(0, r)
     rv = v([rr * math.cos(a), rr * math.sin(a)])  # radians
     return rv
-
 def rotvec(vec, al):
     # rotates 2D vector on AL degrees, multiplies rotation matrix on vector   v' = M*v
     rotation_mx = v([[math.cos(math.radians(al)), math.sin(math.radians(al))],
                      [-1 * math.sin(math.radians(al)), math.cos(math.radians(al))]])
     return np.matmul(vec, rotation_mx)
-
-
 def format_table(system): # Formating our objects, glue X and Y, replacing SPACES, and so
     lines = []
     for line in system.to_numpy():
