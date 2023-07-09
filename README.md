@@ -6,9 +6,10 @@ Here are the physical simulation of N-body problem with start positions and velo
 Program settings are stored in Config.yaml. Start conditions of the objects are in systems_data folder in CSV tables. You can run programm with Start.py, all computational functions are written in NBodyLib.py, all visual in Visualise.py. If you want to generate your own start configuration you are able to run Generator.py, it will write to table.csv new objects with random distribution parameters you can set.
 
 ## Installation
+Download source code as zip or clone with git.
 You must be sure that you have python language on your device.
 Install pip and virtualenv libraries to your global python (run in termianl `python get-pip.py`, and after `pip install virtualenv`).
-You can download source code as zip or clone with git.
+
 In your project directory that contains "nbody",
 - create python virtual enviroment (in project directory folder open terminal and run `virtualenv venv`, if troubles - google it)
 - activate virtual enviroment (unix: run `source venv/bin/activate`, windows: run `source venv\Scripts\activate`)
