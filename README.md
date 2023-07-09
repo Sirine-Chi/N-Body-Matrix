@@ -21,8 +21,9 @@ Here you can find a settings: Mode (Simulation, Progons, Field) – make 1 simu
 ## About table.csv
 In that file the data about the start positions and velocities is stored. Every line must look like this:
 dynamic,Earth,1,1.016725701,0,0,6.174482536,aqua,224
+
 Except of the header: Type,Name,Mass,R x,R y,V x, Vy, Color, Angle (Deg).
-Were first is a type of object (dynamical/analytic), second is it's unique name, third is it's mass, forth and fifth is X and Y coordinates, sixth and seventh is X and Y velocity components, eight is color, ninth is angle in degrees, measured to left side from X axis.
+In table's rows first is a type of object (dynamical/analytic), second is it's unique name, third is it's mass, forth and fifth is X and Y coordinates, sixth and seventh is X and Y velocity components, eight is color, ninth is angle in degrees, measured to left side from X axis.
 
 ## Copyright
 MIT License, open source.
