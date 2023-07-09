@@ -7,6 +7,7 @@ Program settings are stored in Config.yaml. Start conditions of the objects are 
 
 ## Installation
 Download source code as zip or clone with git.
+
 You must be sure that you have python language on your device.
 Install pip and virtualenv libraries to your global python (run in termianl `python get-pip.py`, and after `pip install virtualenv`).
 
