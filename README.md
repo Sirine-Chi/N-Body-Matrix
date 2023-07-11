@@ -45,4 +45,4 @@ Except of the header: Type,Name,Mass,R x,R y,V x, Vy, Color, Angle (Deg).
 In table's rows first is a type of object (dynamical/analytic), second is it's unique name, third is it's mass, forth and fifth is X and Y coordinates, sixth and seventh is X and Y velocity components, eight is color, ninth is angle in degrees, measured to left side from X axis.
 
 ## Copyright
-MIT License, open source.
+This software is distributed under the MIT license.
