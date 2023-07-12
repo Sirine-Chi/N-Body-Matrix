@@ -58,7 +58,7 @@ analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXA
 # CONSTANTS
 G = 0.0001184069  # 09138
 
-@jit(NoGIL=True, NoPython=True, fastmath=True)
+@jit(nogil=True, fastmath=True) #nopython=True, 
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
 
@@ -334,7 +334,7 @@ def mass_inv_matrix(ms):
     return v(mx)
 
 
-def format_matrices(s):
+def format_matrices(s) -> list[np.array]:
     # print(*s, sep="\n")
     return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), v(position_matrix(s)),
             v(velocity_matrix(s))]
@@ -342,7 +342,7 @@ def format_matrices(s):
 # если исполнить файл, то эта функция сгенирирует объекты заданных параметров
 
 
-@jit(NoGIL=True, NoPython=True, fastmath=True)
+@jit(nogil=True, fastmath=True) #nopython=True, 
 def simulation(method, objects, dir, end, h):
     matrices = format_matrices(objects)
 

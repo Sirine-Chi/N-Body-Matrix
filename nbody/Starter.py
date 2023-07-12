@@ -16,7 +16,7 @@ def print_config(config):
 
 print('[] [] [] MATRIX VERSION RUNNING [] [] []')
 
-stream = open("Config.yaml", 'r')
+stream = open("nbody/Config.yaml", 'r')
 config = yaml.load(stream, Loader=yaml.FullLoader)
 print_config(config)
 mode = config["Mode"]
@@ -26,7 +26,7 @@ time_step = float(config["Time step"])
 time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
-system = nbl.pd.read_csv('systems_data/Solar System.csv')
+system = nbl.pd.read_csv('nbody/systems_data/Solar System.csv')
 system = system[0:2]
 N = len(system)
 objects = nbl.format_table(system)
