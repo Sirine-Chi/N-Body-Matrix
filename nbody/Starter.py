@@ -13,6 +13,9 @@ except ImportError:
 def print_config(config):
     for key, value in config.items():
         print(key + ":   " + str(value))
+def write_config(config, results):
+    for key, value in config.items():
+        results.write(key + ":   " + str(value)+"\n")
 
 print('[] [] [] MATRIX VERSION RUNNING [] [] []')
 
@@ -28,6 +31,7 @@ pulse_table = config["Pulse table"]
 
 system = nbl.pd.read_csv('nbody/systems_data/Solar System.csv')
 system = system[0:2]
+print(system)
 N = len(system)
 objects = nbl.format_table(system)
 
@@ -38,7 +42,7 @@ if mode == "Simulation":
     directory = ('nbody/Results/Simulations/' + str(datetime3.datetime.now())).replace(':', '-')
     os.mkdir(directory)
     results = open(directory + '/Results.txt', 'w')
-    results.writelines(config)
+    write_config(config, results)
     results.write('All saved in ' + directory)
     results.close()
 

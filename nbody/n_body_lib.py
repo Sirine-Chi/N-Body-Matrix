@@ -8,7 +8,7 @@ import time
 import datetime
 import pyopencl as cl
 
-from numba import jit
+from numba import jit, prange
 
 
 def scal(v):  # Lenth of the vector
@@ -342,7 +342,7 @@ def format_matrices(s) -> list[np.array]:
 # если исполнить файл, то эта функция сгенирирует объекты заданных параметров
 
 
-@jit(nogil=True, fastmath=True) #nopython=True, 
+# @jit(nogil=True, fastmath=True) #nopython=True, 
 def simulation(method, objects, dir, end, h):
     matrices = format_matrices(objects)
 
