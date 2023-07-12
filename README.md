@@ -1,21 +1,32 @@
 # N-Body Simulations
 
 ## General
-Here are the physical simulation of N-body problem with start positions and velocities, in gravitational field. The space is 2-dimensional. Written on python with openCL for computing acceleration (matrix multiplication), as visualisator I use MatPlotLib library.
+Here is the physical simulation of the N-body problem with start positions and velocities, in a gravitational field. The space is 2-dimensional. Written in Python with OpenCL for computing acceleration (matrix multiplication), the MatPlotLib library is used as the visualization tool.
 
-Program settings are stored in Config.yaml. Start conditions of the objects are in systems_data folder in CSV tables. You can run programm with Start.py, all computational functions are written in NBodyLib.py, all visual in Visualise.py. If you want to generate your own start configuration you are able to run Generator.py, it will write to table.csv new objects with random distribution parameters you can set.
+Program settings are stored in Config.yaml. The start conditions of the objects are in the systems_data folder in CSV tables. You can run the program by running the Start.py file, all computational functions are written in NBodyLib.py, and all the visual tools in Visualise.py. If you want to generate your own start configuration you are able to run Generator.py, it will write to table.csv new objects with random distribution parameters you can set.
 
 ## Installation
-Download source code as zip or clone with git.
+Download the source code as a zip archive or clone the project using the Git CLI.
 
-You must be sure that you have python language on your device.
-Install pip and virtualenv libraries to your global python (run in termianl `python get-pip.py`, and after `pip install virtualenv`).
+Python 3 must be installed on your device.
 
-In your project directory that contains "nbody",
-- create python virtual enviroment (in project directory folder open terminal and run `virtualenv venv`, if troubles - google it)
-- activate virtual enviroment (unix: run `source venv/bin/activate`, windows: run `source venv\Scripts\activate`)
+### Linux and MacOS:
+In your project directory that contains "nbody":
+- create Python virtual environment (in the project directory folder open the terminal and run `python3 -m venv venv`)
+- activate virtual environment (run `source venv/bin/activate`)
 - install requirements.txt. (run `pip install -r requirements.txt`)
-If all have been installed correct, you are ready to use. If you have troubles with venv, you can manualy install all the libraries from requirements.txt to your global python, but I don't recommend this.
+
+
+
+### Windows
+In your project directory that contains "nbody":
+- create Python virtual environment (in the project directory folder open the terminal and run `python -m venv venv`)
+- activate virtual environment (run `.\venv\Scripts\activate`)
+- install the dependencies (run `pip install -r requirements.txt`)
+
+
+If all dependencies have been installed successfully, the application is ready to use. If you have troubles with venv, you can manually install all the libraries from requirements.txt to your global python, but **this way is not recommended**.
+
 
 ## Archeticture
 ![ММС 10 2](https://github.com/Sirine-Chi/N-Body-Matrix/assets/71520044/8b96fb0b-b24b-458b-8729-2494c63aa1ed)
