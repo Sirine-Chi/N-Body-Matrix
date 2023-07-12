@@ -58,22 +58,22 @@ analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXA
 # CONSTANTS
 G = 0.0001184069  # 09138
 
-@jit(nogil=True, fastmath=True) #nopython=True, 
-def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
+# @jit() #nogil=True, nopython=True, fastmath=True
+def simul(method, objects, time_direction, end_time, step, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
 
     def f12(obj1, obj2, n):  # Force between first and second given objects on time step n. Uses lambda f_ij
         return f_ij(obj1.r[n - 1], obj2.r[n - 1], obj1.m, obj2.m)
 
     def f(obj, system, n):  # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
-        f = [0, 0]
+        forces = v([])
         for other in system:
             if obj != other:
-                f += f12(obj, other, n)
-        return f
+                np.append(forces, f12(obj, other, n))
+        return np.sum(forces)
 
-    enn = int(end / dt)
-    dt = dir * dt
+    enn = int(end_time / step)
+    step *= time_direction
 
     class Object:
         # Has two underclasses, each real object from table can be initialised as one of them, or as both.
@@ -94,8 +94,8 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             self.f.append(f(self, system, 1))
 
             # FOR ADAMS, first iteration with eiler method
-            self.r.append(v(self.r[0] + dt * self.v[0]))
-            self.v.append(v(self.v[0] + dt * self.f[0] / self.m))
+            self.r.append(v(self.r[0] + step * self.v[0]))
+            self.v.append(v(self.v[0] + step * self.f[0] / self.m))
             self.t.append(1)
             self.f.append(f(self, system, 2))
 
@@ -166,13 +166,13 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
         def Pn(system, n):
             ps = v([])
             for ob in system:
-                ps.append(ob.Ps[n - 1])
+                np.append(ps, ob.Ps[n - 1])
             return scal(np.sum(ps))
 
     # ---Iterator---
     for n in range(2, enn):
         for ss in system:
-            ss.iteration(system, n, dt)
+            ss.iteration(system, n, step)
             ss.reper(n)
 
     # ---PULSE TABLE---
@@ -187,6 +187,9 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
             })
         tP.to_csv('tP.csv')
         print(PS[1] - PS[-1])
+    
+    for s in system:
+        print(s.r[-1])
 
     print('sim num= ' + str(inum) + ' ', 'delta= ' + str(delta_cur) + ' ')
 
@@ -370,7 +373,8 @@ def simulation(method, objects, dir, end, h):
         v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
         r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
         # print('s ', i)
-    print(r_sys_mx[num - 1])
+    # print(r_sys_mx[num - 1])
+    print(r_sys_mx[-1])
 
     timee = time.time() - start_time
     print('Finished! \n', 'test1_time', "--- %s seconds ---" % (timee))

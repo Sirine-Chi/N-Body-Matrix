@@ -37,7 +37,6 @@ objects = nbl.format_table(system)
 
 print('========= ^ Config Content ^ =========')
 
-
 if mode == "Simulation":
     directory = ('nbody/Results/Simulations/' + str(datetime3.datetime.now())).replace(':', '-')
     os.mkdir(directory)
