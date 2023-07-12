@@ -1,4 +1,4 @@
-import NBodyLib as nbl
+import n_body_lib as nbl
 import numpy as np
 import sys
 

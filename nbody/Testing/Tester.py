@@ -1,6 +1,6 @@
-import nbody.NBodyLib as nbl
+import nbody.n_body_lib as nbl
 import matplotlib.pyplot as plt
-import Generator as gen
+import generator as gen
 import datetime3
 import sys
 import csv

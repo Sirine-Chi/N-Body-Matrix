@@ -1,6 +1,6 @@
 from simulator import Simulator
 
-import NBodyLib as nbl
+import n_body_lib as nbl
 import time
 import numpy as np
 import random2

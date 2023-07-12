@@ -2,11 +2,13 @@ import numpy as np
 import scipy as sp
 import pandas as pd
 import math
-import Visualise as Vis
+import visualise as Vis
 import random2 as rnd
 import time
 import datetime
 import pyopencl as cl
+
+from numba import jit
 
 
 def scal(v):  # Lenth of the vector
@@ -56,7 +58,7 @@ analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXA
 # CONSTANTS
 G = 0.0001184069  # 09138
 
-
+@jit(NoGIL=True, NoPython=True, fastmath=True)
 def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, dir_n):
     simulation_time = time.time()
 
@@ -64,11 +66,11 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
         return f_ij(obj1.r[n - 1], obj2.r[n - 1], obj1.m, obj2.m)
 
     def f(obj, system, n):  # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
-        obj.fn = []
+        f = [0, 0]
         for other in system:
             if obj != other:
-                obj.fn.append(f12(obj, other, n))
-        return sum(obj.fn)
+                f += f12(obj, other, n)
+        return f
 
     enn = int(end / dt)
     dt = dir * dt
@@ -162,10 +164,10 @@ def simul(method, objects, dir, end, dt, delta_cur, inum, pulse_table, field, di
     # --define function for pulse---
     if pulse_table == True:
         def Pn(system, n):
-            ps = []
+            ps = v([])
             for ob in system:
                 ps.append(ob.Ps[n - 1])
-            return scal(sum(ps))
+            return scal(np.sum(ps))
 
     # ---Iterator---
     for n in range(2, enn):
@@ -340,6 +342,7 @@ def format_matrices(s):
 # если исполнить файл, то эта функция сгенирирует объекты заданных параметров
 
 
+@jit(NoGIL=True, NoPython=True, fastmath=True)
 def simulation(method, objects, dir, end, h):
     matrices = format_matrices(objects)
 
