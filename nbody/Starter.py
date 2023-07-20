@@ -10,9 +10,16 @@ try:
 except ImportError:
     from yaml import Loader
 
+from prettytable import PrettyTable
+from prettytable import from_csv
+import colorama
+colorama.just_fix_windows_console()
+colorama.init()
+from colorama import Fore, Back, Style
+
 def print_config(config):
     for key, value in config.items():
-        print(key + ":   " + str(value))
+        print(Fore.YELLOW, key + ":   " + str(value), Style.RESET_ALL)
 def write_config(config, results):
     for key, value in config.items():
         results.write(key + ":   " + str(value)+"\n")
@@ -31,7 +38,7 @@ pulse_table = config["Pulse table"]
 
 system = nbl.pd.read_csv('nbody/systems_data/Solar System.csv')
 system = system[0:2]
-print(system)
+print(Style.DIM, system, Style.RESET_ALL)
 N = len(system)
 objects = nbl.format_table(system)
 
@@ -49,3 +56,4 @@ if mode == "Simulation":
 
 # sys.stdout = original_stdout
 print('Finish!', '\n', 'All saved in ', directory)
+colorama.deinit()

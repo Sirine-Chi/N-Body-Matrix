@@ -7,6 +7,12 @@ import random2 as rnd
 import time
 import datetime
 import pyopencl as cl
+from tqdm import tqdm
+
+import colorama
+colorama.just_fix_windows_console()
+colorama.init()
+from colorama import Fore, Back, Style
 
 from numba import jit, prange
 
@@ -169,11 +175,11 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
                 np.append(ps, ob.Ps[n - 1])
             return scal(np.sum(ps))
 
-    # ---Iterator---
-    for n in range(2, enn):
+    # ---Iterator---    
+    for n in tqdm(range(2, enn)):
         for ss in system:
             ss.iteration(system, n, step)
-            ss.reper(n)
+            #ss.reper(n)
 
     # ---PULSE TABLE---
     if pulse_table == True:
@@ -189,17 +195,19 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
         print(PS[1] - PS[-1])
     
     for s in system:
-        print(s.r[-1])
+        print(Fore.CYAN, s.r[-1], Style.RESET_ALL)
 
     print('sim num= ' + str(inum) + ' ', 'delta= ' + str(delta_cur) + ' ')
 
     timee = time.time() - simulation_time
-    print('Finished!', 'simulation time', '/n', "--- %s seconds ---" % (timee))
-    return timee
+    print(Back.GREEN, 'Finished!', 'simulation time', '/n', "--- %s seconds ---" % (timee), Style.RESET_ALL)
 
-    print('Vis is turned off')
-    # Vis.vis_N_2D(system, inum, delta_cur, dir_n)
+    print(Back.RED, 'Vis is turned off', Style.RESET_ALL)
+    Vis.vis_N_2D(system, inum, delta_cur, dir_n)
     # MAIN VISUALISER CALL!!!!! ^^^^
+
+    colorama.deinit()
+    return timee
 
 
 def progons(method, objects, dir, end, dt, delta_step, k, delta_start, delta_end, pulse_table, dir_n):
@@ -374,8 +382,9 @@ def simulation(method, objects, dir, end, h):
         r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
         # print('s ', i)
     # print(r_sys_mx[num - 1])
-    print(r_sys_mx[-1])
+    print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
 
     timee = time.time() - start_time
-    print('Finished! \n', 'test1_time', "--- %s seconds ---" % (timee))
+    print(Back.GREEN, 'Finished! \n', 'test1_time', "--- %s seconds ---" % (timee), Style.RESET_ALL)
+    colorama.deinit()
     return timee

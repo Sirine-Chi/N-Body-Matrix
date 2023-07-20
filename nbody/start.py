@@ -4,6 +4,13 @@ import os
 import sys
 import yaml
 
+from prettytable import PrettyTable
+from prettytable import from_csv
+import colorama
+colorama.just_fix_windows_console()
+colorama.init()
+from colorama import Fore, Back, Style
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -12,7 +19,7 @@ original_stdout = sys.stdout
 
 def print_config(config):
     for key, value in config.items():
-        print(key + ":   " + str(value))
+        print(Fore.YELLOW, key + ":   " + str(value), Style.RESET_ALL)
 def write_config(config, results):
     for key, value in config.items():
         results.write(key + ":   " + str(value)+"\n")
@@ -21,8 +28,7 @@ print('~~~~~~ CLASSIC VERSION IS RUNNING ~~~~~~')
 
 stream = open("nbody/Config.yaml", 'r')
 config = yaml.load(stream, Loader=yaml.FullLoader)
-for key, value in config.items():
-    print(key + ":   " + str(value))
+print_config(config)
 mode = config["Mode"]
 method = config["Method"]
 end_time = float(config["End time"])
@@ -32,6 +38,11 @@ pulse_table = config["Pulse table"]
 
 system = nbl.pd.read_csv('nbody/systems_data/Solar System.csv')
 system = system[0:2]
+# with open('nbody/systems_data/Solar System.csv') as st:
+#     system_csv = from_csv(st)
+# x = from_csv(system_csv)
+# print(x)
+print(Style.DIM, system, Style.RESET_ALL)
 N = len(system)
 objects = nbl.format_table(system)
 
@@ -88,5 +99,5 @@ if mode == 'Field':
     f.close()
 
 sys.stdout = original_stdout
-print('finish!')
-print('All saved in ', directory)
+print(Fore.GREEN, '\nAll saved in ', directory, Style.RESET_ALL)
+colorama.deinit()
