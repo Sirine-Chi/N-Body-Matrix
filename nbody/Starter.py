@@ -17,6 +17,8 @@ colorama.just_fix_windows_console()
 colorama.init()
 from colorama import Fore, Back, Style
 
+os.environ["PYOPENCL_CTX"] = '0'
+
 def print_config(config):
     for key, value in config.items():
         print(Fore.YELLOW, key + ":   " + str(value), Style.RESET_ALL)
@@ -55,5 +57,5 @@ if mode == "Simulation":
     nbl.simulation(method, objects, time_direction, end_time, time_step) # Run simulation with config settings
 
 # sys.stdout = original_stdout
-print('Finish!', '\n', 'All saved in ', directory)
+print('Finish!', '\a\n', 'All saved in ', directory)
 colorama.deinit()

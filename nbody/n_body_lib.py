@@ -367,14 +367,14 @@ def simulation(method, objects, dir, end, h):
     r_sys_mx.append(matrices[2])
     # print('poses ', unit_vectors_matrix(matrices[2]))
     # print('invs ', matrices[1])
-    # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
-    # a_sys_mx.append(( G*nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
+    # a_sys_mx.append(( G * (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
+    # a_sys_mx.append(( G * nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
     a_sys_mx.append((G * openCL_mult(matrices[0], openCL_mult(matrices[1], unit_vectors_matrix(matrices[2]))))[0])
     # перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     # print('s 0')
 
     num = int(dir * end / h)  # Number of steps
-    for i in range(1, num):
+    for i in tqdm(range(1, num)):
         # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
         a_sys_mx.append((G * np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i - 1]))))[0])
         # a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))))[0])
@@ -384,7 +384,7 @@ def simulation(method, objects, dir, end, h):
     # print(r_sys_mx[num - 1])
     print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
 
-    timee = time.time() - start_time
-    print(Back.GREEN, 'Finished! \n', 'test1_time', "--- %s seconds ---" % (timee), Style.RESET_ALL)
+    finish_time = time.time() - start_time
+    print(Back.GREEN, 'Finished! \n', 'Runtime:', "%.4f s seconds" % (finish_time), Style.RESET_ALL, '\n')
     colorama.deinit()
-    return timee
+    return finish_time
