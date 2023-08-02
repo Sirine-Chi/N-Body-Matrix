@@ -3,15 +3,17 @@ Mode: Simulation
 Force function: Gravity
 Method: Eiler
 
-End time: 1e+1
-Time step: 5e-5
-Time direction: +1
+End time: !!float 1e+1
+Time step: !!float 5e-5
+Time direction: !!int +1
 Pulse table: false
 
-Progons per delta: 0
-Delta start: 0
-Delta end: 0
-Delta step: 0
+Progons options:
+  Progons per delta: !!int 0
+  Delta start: !!float 0
+  Delta end: !!float 0
+  Delta step: !!float 0
 
-Field net step (Resolution): 0.01
-Devider: 2
+Field options:
+  Field net step (Resolution): !!float 0.01
+  Devider: !!int 4

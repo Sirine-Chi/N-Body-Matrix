@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import array as v
 import scipy as sp
 import pandas as pd
 import math
@@ -8,6 +9,7 @@ import time
 import datetime
 import pyopencl as cl
 from tqdm import tqdm
+from typing import List
 
 import colorama
 colorama.just_fix_windows_console()
@@ -17,13 +19,11 @@ from colorama import Fore, Back, Style
 from numba import jit, prange
 
 
-def scal(v):  # Lenth of the vector
+def scal(v) -> float:  # Lenth of the vector
     return np.linalg.norm(v, ord=2)
-def v(v1):  # vector
     return np.array(v1)
 def unvec(v):  # unit vector
-    uv = v / scal(v)
-    return uv
+    return v / scal(v)
 def dist(v1, v2):  # distance between vectors
     return scal(v1 - v2)
 def v12(v1, v2):
@@ -72,16 +72,16 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
         return f_ij(obj1.r[n - 1], obj2.r[n - 1], obj1.m, obj2.m)
 
     def f(obj, system, n):  # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
-        forces = v([])
+        forces = []
         for other in system:
             if obj != other:
-                np.append(forces, f12(obj, other, n))
-        return np.sum(forces)
+                forces.append(f12(obj, other, n))
+        return sum(forces)
 
     enn = int(end_time / step)
     step *= time_direction
 
-    class Object:
+    class Particle:
         # Has two underclasses, each real object from table can be initialised as one of them, or as both.
         def __init__(self, m, r0, v0, system, colour, start_angle, *args, **kwargs):
             self.colour = colour
@@ -128,7 +128,7 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
         def reper(self, n):
             self.r[n] = self.r[n] - system[0].r[n]
 
-    class DynamicObject(Object):
+    class DynamicParticle(Particle):
         def iteration(self, system, n, dt):
             # Objects which trajectory deternined by others with force
             def eiler_method(fs, vs, rs, m):
@@ -154,7 +154,7 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
             if pulse_table == True:
                 self.Ps.append(v(self.v[n] * self.m))
 
-    class AnalyticObject(Object):
+    class AnalyticParticle(Particle):
         # Object, on which others don't affect, which is going on it's own independent trajectory
         # But others feel it's force
         def iteration(self, n, dt):
@@ -165,21 +165,21 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
     # Initialazing system
     system = []
     for ob in objects:
-        system.append(DynamicObject(ob[1], ob[2] + ranrv(delta_cur), ob[3], system, ob[4].replace("'", ''), ob[5]))
+        system.append(DynamicParticle(ob[1], ob[2] + ranrv(delta_cur), ob[3], system, ob[4].replace("'", ''), ob[5]))
 
     # --define function for pulse---
     if pulse_table == True:
         def Pn(system, n):
-            ps = v([])
+            ps = []
             for ob in system:
-                np.append(ps, ob.Ps[n - 1])
-            return scal(np.sum(ps))
+                ps.append(ob.Ps[n - 1])
+            return scal(sum(ps))
 
     # ---Iterator---    
     for n in tqdm(range(2, enn)):
         for ss in system:
             ss.iteration(system, n, step)
-            #ss.reper(n)
+            # ss.reper(n)
 
     # ---PULSE TABLE---
     if pulse_table == True:
@@ -194,15 +194,16 @@ def simul(method, objects, time_direction, end_time, step, delta_cur, inum, puls
         tP.to_csv('tP.csv')
         print(PS[1] - PS[-1])
     
+    # print last positions
     for s in system:
         print(Fore.CYAN, s.r[-1], Style.RESET_ALL)
 
     print('sim num= ' + str(inum) + ' ', 'delta= ' + str(delta_cur) + ' ')
 
     timee = time.time() - simulation_time
-    print(Back.GREEN, 'Finished!', 'simulation time', '/n', "--- %s seconds ---" % (timee), Style.RESET_ALL)
+    print(Back.GREEN, 'Finished!', 'Runtime:', "%.4f seconds" % (timee), Style.RESET_ALL)
 
-    print(Back.RED, 'Vis is turned off', Style.RESET_ALL)
+    # print(Back.RED, 'Vis is turned off', Style.RESET_ALL)
     Vis.vis_N_2D(system, inum, delta_cur, dir_n)
     # MAIN VISUALISER CALL!!!!! ^^^^
 
@@ -250,7 +251,7 @@ def openCL_mult(matrix1, matrix2):
         """).build()
     # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
 
-    t0 = datetime.datetime.now()
+    t0 = time.time()
 
     prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
 
@@ -259,37 +260,32 @@ def openCL_mult(matrix1, matrix2):
 
     # print(final_matrix)
 
-    delta_t = datetime.datetime.now() - t0
-    print('OpenCL Multiplication: ' + str(delta_t))
+    delta_t = time.time() - t0
+    # print('OpenCL Multiplication: %.4f seconds' % delta_t)
 
     return final_matrix
-
 
 def np_mult(matrix1, matrix2):  # =m1 x m2, порядок как в письме
     return matrix1.dot(matrix2)
     # return np.matmul(matrix1, matrix2)
 
-
-def gravec(r1, r2):  # единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
+def gravec(ri, rj):  # единичный вектор направления силы, действующей на тело, делённый на квадрат расстояния
     # r1, r2 - коордирнаты тел
-    d = dist(r1, r2)
+    d = dist(ri, rj)
     # print(d)
     if d == 0.0:
         return v([0, 0])
     else:
-        return v((r2 - r1) / d ** 3)
+        return v((rj - ri) / d ** 3)
 
-
-def unit_vectors_matrix(position_vectors):  # расчёт матрицы единичных векторов сил, действующих от тела j на тело i
+def gravecs_matrix(position_vectors):  # расчёт матрицы единичных векторов сил, действующих от тела j на тело i
     matrix = []  # собираем матрицу R_ij
-    for j in position_vectors:
+    for i in position_vectors:
         line = []
-        for i in position_vectors:
-            # print('gravec', gravec(i, j))
+        for j in position_vectors:
             line.append(gravec(i, j))
-            # print('line', line)
         matrix.append(line)
-    # print('rs_m', matrix, 'rs_m end')
+    # print(Style.DIM, Fore.RED, '\nMx start:\n', matrix, '\nMx end.\n', Style.RESET_ALL)
     return v(matrix)
 
 def mass_vectors(objects):
@@ -298,8 +294,7 @@ def mass_vectors(objects):
     for o in objects:
         masses.append(o[1])
         inv_masses.append(1 / o[1])
-    return [masses, inv_masses]
-
+    return [v(masses), v(inv_masses)]
 
 def position_matrix(objects):
     positions = []
@@ -307,18 +302,12 @@ def position_matrix(objects):
         positions.append(v(o[2]))
     return positions
 
-
 def velocity_matrix(objects):
     velocities = []
-
-    def vel(o):
-        return v(o[3])
-
     for o in objects:
         velocities.append(v(o[3]))
     # return map(vel, objects)
     return velocities
-
 
 def mass_matrix(ms):
     mx = []
@@ -329,7 +318,6 @@ def mass_matrix(ms):
         mx.append(ln)
     # print(mx, 'mass matris')
     return v(mx)
-
 
 def mass_inv_matrix(ms):
     mx = []
@@ -345,46 +333,73 @@ def mass_inv_matrix(ms):
     return v(mx)
 
 
-def format_matrices(s) -> list[np.array]:
+def format_matrices(s): # -> list[np.array]
     # print(*s, sep="\n")
-    return [mass_matrix(mass_vectors(s)[0]), mass_inv_matrix(mass_vectors(s)[1]), v(position_matrix(s)),
-            v(velocity_matrix(s))]
+    # Better to return dictionary
+    return [mass_matrix(mass_vectors(s)[0]),
+            mass_inv_matrix(mass_vectors(s)[1]),
+            v(position_matrix(s)),
+            v(velocity_matrix(s))
+            ]
 # По порядку: матрица произведений масс, матрица обратных масс, вектор координат системы, вектор скоростей системы
 # если исполнить файл, то эта функция сгенирирует объекты заданных параметров
+
+def new_format_matrices(s):
+    return {
+        "Mass vector": mass_vectors(s)[0],
+        "Coordinates vector": v(position_matrix(s)),
+        "Velocities vector": v(velocity_matrix(s))
+    }
 
 
 # @jit(nogil=True, fastmath=True) #nopython=True, 
 def simulation(method, objects, dir, end, h):
     matrices = format_matrices(objects)
+    new_matrices = new_format_matrices(objects)
 
     start_time = time.time()
 
     r_sys_mx = []
     v_sys_mx = []
     a_sys_mx = []
-    # метод эйлера
-    v_sys_mx.append(matrices[3])
-    r_sys_mx.append(matrices[2])
-    # print('poses ', unit_vectors_matrix(matrices[2]))
+    v_sys_mx.append(new_matrices["Velocities vector"])
+    r_sys_mx.append(new_matrices["Coordinates vector"])
+    # print('poses ', gravecs_matrix(matrices[2]))
     # print('invs ', matrices[1])
-    # a_sys_mx.append(( G * (matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(matrices[2]))) )[0])
-    # a_sys_mx.append(( G * nbl.np_mult(matrices[0], nbl.np_mult(matrices[1], unit_vectors_matrix(matrices[2]))) ) [0])
-    a_sys_mx.append((G * openCL_mult(matrices[0], openCL_mult(matrices[1], unit_vectors_matrix(matrices[2]))))[0])
+
+    
+    # a_sys_mx.append(( G * (matrices[0]).dot((matrices[1]).dot(gravecs_matrix(matrices[2]))) )[0])
+
+    # a_sys_mx.append(( G * np_mult(matrices[0], np_mult(matrices[1], gravecs_matrix(matrices[2])[0])) ) [0])
+    a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[0]), np.vstack(new_matrices["Mass vector"])) )
+
+    # a_sys_mx.append((G * openCL_mult(matrices[0], openCL_mult(matrices[1], gravecs_matrix(matrices[2]))))[0])\
+    
+
     # перемножаем соответственно матрицу произведений масс, матрицу обратных масс, матрица граввеков
     # print('s 0')
 
     num = int(dir * end / h)  # Number of steps
+    print(Fore.GREEN)
     for i in tqdm(range(1, num)):
-        # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(unit_vectors_matrix(r_sys_mx[i-1]))) )[0])
-        a_sys_mx.append((G * np_mult(matrices[0], np_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i - 1]))))[0])
-        # a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], unit_vectors_matrix(r_sys_mx[i-1]))))[0])
+        # a_sys_mx.append(( G*(matrices[0]).dot((matrices[1]).dot(gravecs_matrix(r_sys_mx[i-1]))) )[0])
+        # a_sys_mx.append( G * np_mult(matrices[0], np_mult(matrices[1], gravecs_matrix(r_sys_mx[i - 1])[0])) )
+        # if i == 5: print('Last r: ', r_sys_mx[i-1])
+        a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[i-1])[0], np.vstack(v(new_matrices["Mass vector"]))) )
+        # if i == 1:
+        #     gravecs_matrix(new_matrices["Coordinates vector"])
+        #     print( Fore.RED, 'Gravvecs: \n', gravecs_matrix(r_sys_mx[i-1])[0], '\n Masses: \n', np.vstack(new_matrices["Mass vector"]), Style.RESET_ALL)
+        # a_sys_mx.append((G * nbl.openCL_mult(matrices[0], nbl.openCL_mult(matrices[1], gravecs_matrix(r_sys_mx[i-1]))))[0])
+
+        # метод эйлера
         v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
         r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
         # print('s ', i)
     # print(r_sys_mx[num - 1])
+    print(Style.RESET_ALL)
     print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
 
     finish_time = time.time() - start_time
-    print(Back.GREEN, 'Finished! \n', 'Runtime:', "%.4f s seconds" % (finish_time), Style.RESET_ALL, '\n')
+    print(Back.GREEN, 'Finished!', 'Runtime:', "%.4f seconds" % (finish_time), Style.RESET_ALL, '\n')
     colorama.deinit()
     return finish_time

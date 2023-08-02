@@ -12,5 +12,5 @@ virtualenv==20.23.1
 tkinter
 numba==0.57.1
 tqdm
-prettytable
-
+pyopengl
+colorama

@@ -10,13 +10,13 @@ try:
 except ImportError:
     from yaml import Loader
 
-from prettytable import PrettyTable
-from prettytable import from_csv
+# Importing and initialising libraries for colored terminal
 import colorama
 colorama.just_fix_windows_console()
 colorama.init()
 from colorama import Fore, Back, Style
 
+# Set enviromental variable to don't manualy choose device during runtime
 os.environ["PYOPENCL_CTX"] = '0'
 
 def print_config(config):
@@ -28,6 +28,7 @@ def write_config(config, results):
 
 print('[] [] [] MATRIX VERSION RUNNING [] [] []')
 
+# Writing values from config dictionary to variables, converting types
 stream = open("nbody/Config.yaml", 'r')
 config = yaml.load(stream, Loader=yaml.FullLoader)
 print_config(config)
@@ -57,5 +58,5 @@ if mode == "Simulation":
     nbl.simulation(method, objects, time_direction, end_time, time_step) # Run simulation with config settings
 
 # sys.stdout = original_stdout
-print('Finish!', '\a\n', 'All saved in ', directory)
+print(Fore.GREEN, Style.DIM, '\a\n', 'All saved in ', directory, Style.RESET_ALL)
 colorama.deinit()

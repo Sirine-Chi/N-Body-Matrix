@@ -1,4 +1,4 @@
-from simulator import Simulator
+from simulator_test import Simulator
 
 import n_body_lib as nbl
 import time

@@ -1,5 +1,5 @@
 import n_body_lib as nbl
-import datetime3
+from datetime3 import datetime
 import os
 import sys
 import yaml
@@ -31,8 +31,8 @@ config = yaml.load(stream, Loader=yaml.FullLoader)
 print_config(config)
 mode = config["Mode"]
 method = config["Method"]
-end_time = float(config["End time"])
-time_step = float(config["Time step"])
+end_time = config["End time"]
+time_step = config["Time step"]
 time_direction = config["Time direction"]
 pulse_table = config["Pulse table"]
 
@@ -49,7 +49,7 @@ objects = nbl.format_table(system)
 print('========= ^ Config Content ^ =========')
 
 if mode == 'Simulation':
-    directory = 'nbody/Results/CPU_Simulations/' + str(datetime3.datetime.now()).replace(':', '-')
+    directory = 'nbody/Results/CPU_Simulations/' + str(datetime.now()).replace(':', '-')
     os.mkdir(directory)
     results = open(directory + '/Results.txt', 'w')
     write_config(config, results)
