@@ -1,6 +1,6 @@
 from visualiser import Orbits2D
-from nbody.n_body_lib import *
-from nbody.particle import DynamicParticle
+from n_body_lib import *
+from particle import DynamicParticle
 
 
 class Simulator:
