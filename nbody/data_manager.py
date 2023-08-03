@@ -22,7 +22,7 @@ def recursive_writer(iterable_object: list, func):
     # raise Exception('RecursionFailed').with_traceback(recursive_writer(iterable_object, func))
 
 
-class Reader:
+class ConfigManager:
 
     @staticmethod
     def get_config(path_to_yaml: str) -> dict:
@@ -42,6 +42,7 @@ class Reader:
             file.write(' ' * (15 - len(index)), index, ':', config[index], '\n')
         file.close()
 
+class TableManager:
     @staticmethod
     def get_table_sliced(path_to_table: str, limit_down=0, limit_up=-1):
         table = read_csv(path_to_table)

@@ -1,5 +1,5 @@
 from simulator import Simulator, SimulatorCPU
-from reader import Reader, Logger
+from data_manager import ConfigManager, TableManager, Logger
 from n_body_lib import *
 import os
 import sys
@@ -15,8 +15,8 @@ def main():
     path_to_table = 'nbody/systems_data/Solar System.csv'
     path_to_results = 'nbody/Results/CPU_Simulations' + '/' + str(datetime.now()).replace(':', '-')
     os.mkdir(path_to_results)
-    config = Reader.get_config(path_to_yaml=path_to_yaml)
-    table = Reader.get_table_sliced(path_to_table, 0, 5)
+    config = ConfigManager.get_config(path_to_yaml=path_to_yaml)
+    table = TableManager.get_table_sliced(path_to_table, 0, 5)
 
     log = Logger()
     log.add_to_log(text=config)  # , logger.trace(config)
