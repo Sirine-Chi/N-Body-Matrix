@@ -149,6 +149,7 @@ DS_store
 
 # temporary results
 nbody.Results/..
+nbody/Results
 
 # PyCharm
 #  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can
