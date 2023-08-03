@@ -145,10 +145,10 @@ dmypy.json
 cython_debug/
 
 # DS store
-.DS_store
+nbody.DS_store
 
 # temporary results
-.Results/
+nbody.Results/
 
 # PyCharm
 #  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can
