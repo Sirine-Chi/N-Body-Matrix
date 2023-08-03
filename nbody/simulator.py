@@ -5,12 +5,12 @@ from particle import DynamicParticle
 
 class Simulator:
     def __init__(self, particlesp: list, end_timep: float, stepp: float):
-        self.begin_runtime: float = time.time()
+        self.begin_runtime: float = monotonic()
         self.particles: list = particlesp
         self.end_time: float = end_timep
         self.step: float = stepp
 
-        print(Fore.GREEN, '-- Simulator initialized!', Style.RESET_ALL)
+        logger.trace('-- Simulator initialized!')
 
     def start_forces(self):
         pass
@@ -18,11 +18,11 @@ class Simulator:
     def simulation(self):
         pass
 
-    def get_positions(self) -> list:
+    def get_positions(self) -> list[list]:
         pass
 
     def get_runtime(self) -> float:
-        return time.time() - self.begin_runtime
+        return monotonic() - self.begin_runtime
 
 
 class SimulatorCPU(Simulator):
@@ -30,6 +30,8 @@ class SimulatorCPU(Simulator):
         super().__init__(particles_fp, end_timep, stepp)
         self.particles = self.initialize_particles(particles_fp)
         self.start_forces()
+
+        self.tau: float = 0
 
     @staticmethod
     def initialize_particles(table_f: list) -> list:  # WITHOUT deltas!!!!
@@ -51,7 +53,6 @@ class SimulatorCPU(Simulator):
             DynamicParticle.start_force(pcl, self.particles)
 
     def simulation(self):
-        self.tau: float = 0
         while self.tau < self.end_time:
             for element in self.particles:
                 element.iteration(self.particles, self.step)
@@ -62,13 +63,13 @@ class SimulatorCPU(Simulator):
         for pcl in self.particles:
             pcl.offset(self.particles[0], n=-1)
 
-    def get_positions(self) -> list:
+    def get_positions(self) -> list[list]:
         poses = []
         for element in self.particles:
             poses.append(element.positions)
         return poses
 
-    def get_last_positions(self) -> list:
+    def get_last_positions(self) -> list[np.ndarray]:
         last_poses = []
         for elemnt in self.particles:
             last_poses.append(elemnt.get_last_position())
@@ -113,6 +114,3 @@ class SimulatorGPU(Simulator):
 
     def get_positions(self) -> list:
         pass
-
-    def get_runtime(self) -> float:
-        return time.time() - self.begin_runtime
