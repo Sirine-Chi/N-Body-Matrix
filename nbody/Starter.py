@@ -48,7 +48,7 @@ objects = nbl.format_table(system)
 print('========= ^ Config Content ^ =========')
 
 if mode == "Simulation":
-    directory = ('nbody/Results/Simulations/' + str(datetime3.datetime.now())).replace(':', '-')
+    directory = ('nbody/Results/GPU_Simulations/' + str(datetime3.datetime.now())).replace(':', '-')
     os.mkdir(directory)
     results = open(directory + '/Results.txt', 'w')
     write_config(config, results)

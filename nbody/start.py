@@ -3,13 +3,10 @@ from datetime3 import datetime
 import os
 import sys
 import yaml
-
-from prettytable import PrettyTable
-from prettytable import from_csv
 import colorama
+from colorama import Fore, Back, Style
 colorama.just_fix_windows_console()
 colorama.init()
-from colorama import Fore, Back, Style
 
 try:
     from yaml import CLoader as Loader
@@ -51,15 +48,14 @@ print('========= ^ Config Content ^ =========')
 if mode == 'Simulation':
     directory = 'nbody/Results/CPU_Simulations/' + str(datetime.now()).replace(':', '-')
     os.mkdir(directory)
-    results = open(directory + '/Results.txt', 'w')
-    write_config(config, results)
-    results.write('All saved in ' + directory)
-    results.close()
+    with open(directory + '/Results.txt', 'w') as results:
+        write_config(config, results)
+        results.write(f'All saved in {directory}')
 
     nbl.simul(method, objects, time_direction, end_time, time_step, delta_cur=0, inum='s', pulse_table=0, field=0, dir_n=directory)
 
 if mode == 'Progons':
-    directory = '/nbody/Results/CPU_Stability/' + str(datetime3.datetime.now())
+    directory = '/nbody/Results/CPU_Stability/' + str(datetime.now())
     os.mkdir(directory)
     with open(directory + '/Results.txt', 'w') as f:
         sys.stdout = f
@@ -82,7 +78,7 @@ if mode == 'Progons':
     f.close()
 
 if mode == 'Field':
-    directory = '/nbody/Results/CPU_Field/' + str(datetime3.datetime.now())
+    directory = '/nbody/Results/CPU_Field/' + str(datetime.now())
     os.mkdir(directory)
     with open(directory + '/Results.txt', 'w') as f:
         sys.stdout = f
@@ -99,5 +95,5 @@ if mode == 'Field':
     f.close()
 
 sys.stdout = original_stdout
-print(Fore.GREEN, '\nAll saved in ', directory, Style.RESET_ALL)
+print(Fore.GREEN, f'\nAll saved in {directory}', Style.RESET_ALL)
 colorama.deinit()
