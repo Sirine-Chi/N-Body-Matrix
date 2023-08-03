@@ -4,10 +4,6 @@ from n_body_lib import *
 import os
 import sys
 from datetime3 import datetime
-from loguru import logger
-
-logger.remove(0)
-logger.add(sys.stdout, level="TRACE")
 
 
 def main():
@@ -19,12 +15,10 @@ def main():
     table = TableManager.get_table_sliced(path_to_table, 0, 5)
 
     log = Logger()
-    log.add_to_log(text=config)  # , logger.trace(config)
-    log.add_to_log(
-        ' ' * (16 - len('Number of objects')) + Fore.CYAN + 'Number of objects' + Style.RESET_ALL + '   : ' + str(
-            len(table)))
+    log.add_to_log(config)  # , logger.trace(config)
+    log.add_to_log({'Number of objects': len(table)})
 
-    particles_f = Reader.format_table_dicts(table)
+    particles_f = TableManager.format_table_dicts(table)
 
     sim = SimulatorCPU(particles_f, config['End time'], config["Time step"])
     sim.simulation()

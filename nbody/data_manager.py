@@ -66,11 +66,12 @@ class TableManager:
         limit_up: int | last object
         returns: pd.DataFrame | sliced table
         """
+
         table = read_csv(path_to_table)
         return table[limit_down:limit_up]
 
     @staticmethod
-    def format_table(table):
+    def format_table(table: DataFrame) -> list:
         lines = []
         for line in table.to_numpy():
             lines.append(
@@ -86,7 +87,7 @@ class TableManager:
         return lines
 
     @staticmethod
-    def format_table_dicts(table):
+    def format_table_dicts(table: DataFrame) -> list:
         dicts = []
         for line in table.to_numpy():
             dicts.append(

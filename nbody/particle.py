@@ -32,22 +32,32 @@ class Particle:
         self.velocities.append(rotvec(v(v0), self.start_angle))
         self.times.append(0.0)
 
-        print(Fore.GREEN, '-- Particle initialised', Style.RESET_ALL)
+        logger.trace('- Particle initialised')
 
     def first_iteration(self, system: list):
         pass
 
     def print_object(self):
-        print('New Obj: ', self.mass, 'f' + str(self.forces), 'v' + str(self.velocities), 'r' + str(self.positions),
-              't' + str(self.times, '\n'))
+        logger.trace(f'New Obj: {self.name} \n mass: {self.mass} \n forces: {str(self.forces)}\n velocities: {str(self.velocities)} \n positions: {str(self.positions)} \n times: {str(self.times)}\n')
 
     def print_object_coor(self):
-        print('Obj coordinates: ', self.positions)
+        logger.trace(f'Obj coordinates: {self.positions}\n')
 
     def offset(self, offset_object: Particle, n: int):
+        """
+        Rewrites position (on index n) to last position - position of given particle (on index n)
+        \n
+        offset_object: Particle | object, which moves positoins
+        n: int | index of position in all positions
+        """
         self.positions[n] = self.positions[n] - offset_object.positions[n]
 
-    def get_xy(self) -> list:
+    def get_xy(self) -> list[list]:
+        """
+        list, where each elememt is list with length = 2, contains coordinates of a particle in each point it's been
+        \n
+        returns: list | list of 2d points
+        """
         x_s0 = []
         y_s0 = []
         for i in self.positions:
@@ -55,10 +65,16 @@ class Particle:
             y_s0.append(i[1])
         return [x_s0, y_s0]
 
-    def get_last_position(self):
+    def get_last_position(self) -> np.ndarray:
+        """
+        Returns last position of the particle
+        \n
+        self: Particle | some particle
+        returns: np.ndarray | last position
+        """
         return self.positions[-1]
 
-    def get_positions(self) -> list:
+    def get_positions(self) -> list[np.ndarray]:
         return self.positions
 
     def get_name(self) -> str:
@@ -68,12 +84,19 @@ class Particle:
 class DynamicParticle(Particle):
     # @classmethod
 
-    def start_force(self, system: list):
+    def start_force(self, system: list[Particle]):
+        """
+        Calculates and appends forces on 0 step
+        system: list[Particle] | our initialised particles
+        """
         self.forces.append(f(self, system))
 
     # @classmethod
-    def iteration(self, system: list, dt: float):
-        # Objects which trajectory deternined by others with force
+    def iteration(self, system: list[Particle], dt: float):
+        """
+        calls f(), calculates new velocities and position using some numerical method
+        system: list | Objects which trajectory deternined by others with force
+        """
         def eiler_method(fs, vs, rs, m):
             vs.append(eiler(vs[-1], (fs[-1] / m), dt))
             rs.append(eiler(rs[-1], vs[-1], dt))
@@ -95,8 +118,11 @@ class DynamicParticle(Particle):
 
 
 class AnalyticParticle(Particle):
-    # Object, on which others don't affect, which is going on it's own independent trajectory
-    # But others feel it's force
+    """
+    Object, on which others don't affect, which is going on it's own independent trajectory
+    But others feel it's force
+    """
+
     # @classmethod
     def iteration(self, n: int, dt: float):
         self.times.append(self.times[n - 1] + dt)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 import numpy as np
 from numpy import array as v
 import pandas as pd
@@ -12,10 +13,15 @@ from tqdm import tqdm
 from typing import Final
 import colorama
 from colorama import Fore, Back, Style
+from loguru import logger
+
 colorama.just_fix_windows_console()
 colorama.init()
 
-def scal(vec: np.ndarray) -> float:  # Lenth of the vector
+logger.remove(0)
+logger.add(sys.stdout, level="TRACE")
+
+def scal(vec: np.ndarray) -> float:
     """
     Vector length in Euclidian space (l2 norm, or scalar)
     \n
@@ -25,7 +31,7 @@ def scal(vec: np.ndarray) -> float:  # Lenth of the vector
     return np.linalg.norm(vec, ord=2)
 
 
-def unvec(vec: np.ndarray) -> np.ndarray:  # unit vector
+def unvec(vec: np.ndarray) -> np.ndarray:
     """
     Vector with same direction as on input, but with length = 1 (unit-vector)
     \n
@@ -60,7 +66,8 @@ def ranrv(r: float) -> np.ndarray:
 
 
 def rotvec(vec: np.ndarray, al: float) -> np.ndarray:
-    """Rotates 2D vector on AL degrees, multiplies rotation matrix on vector   v' = M*v
+    """
+    Rotates 2D vector on AL degrees, multiplies rotation matrix on vector   v' = M*v
     \n
     vec: np.ndarray | vector to rotate
     al: float | rotation angle in degrees
