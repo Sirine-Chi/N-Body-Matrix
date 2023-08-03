@@ -1,6 +1,6 @@
 from __future__ import annotations
 import yaml
-from pandas import read_csv
+from pandas import read_csv, DataFrame
 from numpy import array as v
 import colorama
 from colorama import Fore, Back, Style
@@ -20,6 +20,19 @@ def recursive_writer(iterable_object: list, func):
                 recursive_writer(element, func)
         calls += 1
     # raise Exception('RecursionFailed').with_traceback(recursive_writer(iterable_object, func))
+
+
+def parallel(something: list) -> list:
+    parl = []
+    if isinstance(something, list) or isinstance(something, tuple):
+        for element in something:
+            parl += parallel(element)
+    elif isinstance(something, dict):
+        for index in something:
+            parl.append([index, something[index]])
+    else:
+        parl.append(something)
+    return parl
 
 
 class ConfigManager:
@@ -44,7 +57,15 @@ class ConfigManager:
 
 class TableManager:
     @staticmethod
-    def get_table_sliced(path_to_table: str, limit_down=0, limit_up=-1):
+    def get_table_sliced(path_to_table: str, limit_down=0, limit_up=-1 ) -> DataFrame:
+        """
+        Reads table from files, gives away table, sliced from one object to other
+        \n
+        path_to_table: str | path to the table
+        limit_down: int | first object
+        limit_up: int | last object
+        returns: pd.DataFrame | sliced table
+        """
         table = read_csv(path_to_table)
         return table[limit_down:limit_up]
 
@@ -83,29 +104,38 @@ class TableManager:
 
 class Logger:
     def __init__(self):
+        """
+        Class constructor
+        """
         self.log_text = []
 
-    def add_to_log(self, text):
+    def add_to_log(self, *text):
+        """
+        Adds any object to log 
+        \n
+        *text: auto | any number of any objects, that we add to log
+        """
         def log_append(something):
             self.log_text.append(something)
 
-        recursive_writer(iterable_object=text, func=log_append)
-        self.log_text.append('\n')
+            for item in text:
+                log_append(item)
+            
+            # recursive_writer(iterable_object=text, func=log_append)
 
     def get_log(self) -> list:
         return self.log_text
 
     def print_log_to_console(self):
-        for line in self.log_text:
-            if type(line) == dict:
-                for index in line:
-                    print(' ' * (16 - len(index)), Fore.CYAN, index, Style.RESET_ALL, ':', line[index])
-            elif type(line) == list:
-                for element in line:
-                    print(element)
-            else:
-                print(line)
+        for item in parallel(self.log_text):
+            print(item)
 
     def save_log_to_txt(self, path_to_log: str):
         file = open(path_to_log + '/results.txt', 'w')
-        recursive_writer(iterable_object=self.log_text, func=file.write())
+        for item in parallel(self.log_text):
+            if isinstance(item[0], list) or isinstance(item, tuple):
+                for element in item:
+                    file.write(str(element) + ', ')
+            else:
+                file.write(str(item)[1:-1] + '\n')
+        file.close()
