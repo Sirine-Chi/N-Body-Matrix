@@ -12,7 +12,7 @@ def main():
     path_to_results = 'nbody/Results/CPU_Simulations' + '/' + str(datetime.now()).replace(':', '-')
     os.mkdir(path_to_results)
     config = ConfigManager.get_config(path_to_yaml=path_to_yaml)
-    table = TableManager.get_table_sliced(path_to_table, 0, 5)
+    table = TableManager.get_table_sliced(path_to_table, 0, 7)
 
     log = Logger()
     log.add_to_log(config)  # , logger.trace(config)
