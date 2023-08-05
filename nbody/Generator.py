@@ -1,5 +1,3 @@
-import sys
-
 import n_body_lib as nbl
 import numpy as np
 

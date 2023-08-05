@@ -1,8 +1,6 @@
-import logging
+import datetime
 import os
-import sys
 
-import datetime3
 import generator as gn
 import n_body_lib as nbl
 import yaml
@@ -36,7 +34,7 @@ def write_config(config, results):
 print("[] [] [] MATRIX VERSION RUNNING [] [] []")
 
 # Writing values from config dictionary to variables, converting types
-stream = open("nbody/Config.yaml", "r")
+stream = open("nbody/config.yaml", "r")
 config = yaml.load(stream, Loader=yaml.FullLoader)
 print_config(config)
 mode = config["Mode"]
@@ -56,7 +54,7 @@ print("========= ^ Config Content ^ =========")
 
 if mode == "Simulation":
     directory = (
-        "nbody/Results/GPU_Simulations/" + str(datetime3.datetime.now())
+        "nbody/Results/GPU_Simulations/" + str(datetime.datetime.now())
     ).replace(":", "-")
     os.mkdir(directory)
     results = open(directory + "/Results.txt", "w")
