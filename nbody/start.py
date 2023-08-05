@@ -1,10 +1,11 @@
-import n_body_lib as nbl
-from datetime3 import datetime
 import os
 import sys
-import yaml
+
 import colorama
-from colorama import Fore, Back, Style
+import n_body_lib as nbl
+import yaml
+from colorama import Back, Fore, Style
+from datetime3 import datetime
 
 colorama.just_fix_windows_console()
 colorama.init()

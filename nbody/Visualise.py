@@ -1,11 +1,11 @@
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.animation as anima
-import numpy as np
 import datetime
 import os
 from random import uniform
 
+import matplotlib.animation as anima
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 
 # plot_colortable(mcolors.CSS4_COLORS)
 

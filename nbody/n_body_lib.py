@@ -1,22 +1,21 @@
-import numpy as np
-from numpy import array as v
-import scipy as sp
-import pandas as pd
-import math
-import visualise as Vis
-import random2 as rnd
-import time
 import datetime
-import pyopencl as cl
-from tqdm import tqdm
+import math
+import time
 from typing import List
 
 import colorama
+import numpy as np
+import pandas as pd
+import pyopencl as cl
+import random2 as rnd
+import scipy as sp
+import visualise as Vis
+from numpy import array as v
+from tqdm import tqdm
 
 colorama.just_fix_windows_console()
 colorama.init()
-from colorama import Fore, Back, Style
-
+from colorama import Back, Fore, Style
 from numba import jit, prange
 
 

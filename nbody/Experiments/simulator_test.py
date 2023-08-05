@@ -1,8 +1,8 @@
-import n_body_lib as nbl
 import time
+
+import n_body_lib as nbl
 import numpy as np
 import random2
-
 
 # Типо много тел на прямой с разными координатами
 

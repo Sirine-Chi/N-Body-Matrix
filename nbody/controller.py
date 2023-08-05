@@ -1,9 +1,9 @@
-from simulator_test import Simulator
+import time
 
 import n_body_lib as nbl
-import time
 import numpy as np
 import random2
+from simulator_test import Simulator
 
 # === === Set variables === ===
 

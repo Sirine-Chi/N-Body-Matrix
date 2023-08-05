@@ -1,6 +1,7 @@
-from window import MainWindow
 import tkinter as tk
 from tkinter import ttk
+
+from window import MainWindow
 
 if __name__ == "__main__":
     handle = MainWindow()

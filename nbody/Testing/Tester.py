@@ -1,11 +1,13 @@
-import nbody.n_body_lib as nbl
-import matplotlib.pyplot as plt
-import generator as gen
-import datetime3
-import sys
 import csv
 import os
+import sys
+
+import datetime3
+import generator as gen
+import matplotlib.pyplot as plt
 import yaml
+
+import nbody.n_body_lib as nbl
 
 # --- --- GENERATING DATA --- ---
 

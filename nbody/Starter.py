@@ -1,9 +1,10 @@
-import n_body_lib as nbl
-import generator as gn
-import datetime3
 import logging
-import sys
 import os
+import sys
+
+import datetime3
+import generator as gn
+import n_body_lib as nbl
 import yaml
 
 try:
@@ -16,7 +17,7 @@ import colorama
 
 colorama.just_fix_windows_console()
 colorama.init()
-from colorama import Fore, Back, Style
+from colorama import Back, Fore, Style
 
 # Set enviromental variable to don't manualy choose device during runtime
 os.environ["PYOPENCL_CTX"] = "0"

@@ -1,12 +1,12 @@
-import n_body_lib as nbl
 import os
 import time
 
 import colorama
+import n_body_lib as nbl
 
 colorama.just_fix_windows_console()
 colorama.init()
-from colorama import Fore, Back, Style
+from colorama import Back, Fore, Style
 
 os.environ["PYOPENCL_CTX"] = "0"
 

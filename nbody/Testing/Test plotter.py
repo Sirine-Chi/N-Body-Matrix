@@ -1,7 +1,7 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 import nbody.n_body_lib as nbl
-import matplotlib.pyplot as plt
 
 # --- --- PLOT DRAWING --- ---
 
