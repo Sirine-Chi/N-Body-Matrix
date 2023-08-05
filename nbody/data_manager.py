@@ -103,14 +103,14 @@ class TableManager:
         return dicts
 
 
-class Logger:
+class ReportManager:
     def __init__(self):
         """
         Class constructor
         """
         self.log_text = []
 
-    def add_to_log(self, *text):
+    def add_to_report(self, *text):
         """
         Adds any object to log 
         \n
@@ -119,20 +119,22 @@ class Logger:
         def log_append(something):
             self.log_text.append(something)
 
-            for item in text:
-                log_append(item)
+        for item in text:
+            log_append(item)
             
-            # recursive_writer(iterable_object=text, func=log_append)
+        # recursive_writer(iterable_object=text, func=log_append)
 
-    def get_log(self) -> list:
+    def get_report(self) -> list:
         return self.log_text
+    
 
-    def print_log_to_console(self):
+    # Make abstract fabric
+    def print_report_to_console(self):
         for item in parallel(self.log_text):
             print(item)
 
-    def save_log_to_txt(self, path_to_log: str):
-        file = open(path_to_log + '/results.txt', 'w')
+    def save_report_to_txt(self, path_to_report: str):
+        file = open(path_to_report + '/report.txt', 'w', encoding='utf-8')
         for item in parallel(self.log_text):
             if isinstance(item[0], list) or isinstance(item, tuple):
                 for element in item:
@@ -140,3 +142,7 @@ class Logger:
             else:
                 file.write(str(item)[1:-1] + '\n')
         file.close()
+
+    def save_report_to_yaml(self, path_to_report: str):
+        stream = open(path_to_report+'/report.yaml', 'w')
+        # yaml.dump_all()

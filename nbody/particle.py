@@ -3,25 +3,45 @@ from __future__ import annotations
 from n_body_lib import *
 
 
-def f12(obj1: Particle, obj2: Particle):  # Force between first and second given objects on last position. Uses lambda f_ij
+def force_obj_obj(obj1: Particle, obj2: Particle):
+    """
+    Force between first and second given objects on last position. Uses lambda f_ij
+    obj1: Particle | Object, on which force is acting
+    obj2: Particle | Object, from which force is acting
+    return: np.ndarray | Force acting on obj1 from obj2
+    """
     return f_ij(obj1.positions[-1], obj2.positions[-1], obj1.mass, obj2.mass)
 
 
-def f(obj: Particle, system: list):  # Sum of forces affected on given object in system on time step n. Uses lambda f_ij
+def force_obj_sys(obj: Particle, system: list[Particle]):
+    """
+    Sum of forces affected on given object in system on time step n. Uses lambda f_ij
+
+    obj: Particle | Object, on which force is acting
+    system: list[Particle] | Systems of objects, which forces are acting
+    return: np.ndarray | Summary force
+    """
     forces = []
     for other in system:
         if obj != other:
-            forces.append(f12(obj, other))
+            forces.append(force_obj_obj(obj, other))
     return sum(forces)
 
 
 class Particle:
-    # Has two subclasses, each real object from table can be initialised as one of them, or as both.
-    def __init__(self, name: str, m: float, r0: list, v0: list, colour: str, start_angle: float, *args, **kwargs):
+    """
+    Has two subclasses, each real object from table can be initialised as one of them, or as both.
+    """
+
+    def __init__(self, name: str, mass: float, r0: list, v0: list, colour: str, start_angle: float, *args, **kwargs):
+        """
+        Particle class constructor
+        """
+        
         self.name: str = name
         self.colour: str = colour
         self.start_angle: float = start_angle
-        self.mass: float = m
+        self.mass: float = mass
 
         self.positions = []
         self.velocities = []
@@ -32,16 +52,19 @@ class Particle:
         self.velocities.append(rotvec(v(v0), self.start_angle))
         self.times.append(0.0)
 
-        logger.trace('- Particle initialised')
+        logger.trace(self.__str__())
 
-    def first_iteration(self, system: list):
+    def first_iteration(self, system: list[Particle]):
         pass
 
-    def print_object(self):
-        logger.trace(f'New Obj: {self.name} \n mass: {self.mass} \n forces: {str(self.forces)}\n velocities: {str(self.velocities)} \n positions: {str(self.positions)} \n times: {str(self.times)}\n')
+    # def print_object(self):
+    #     logger.trace(f'New Obj: {self.name} \n mass: {self.mass} \n forces: {str(self.forces)}\n velocities: {str(self.velocities)} \n positions: {str(self.positions)} \n times: {str(self.times)}\n')
 
-    def print_object_coor(self):
-        logger.trace(f'Obj coordinates: {self.positions}\n')
+    def __str__(self) -> str:
+        return f"Name: {self.name}, Mass: {self.mass}, Positions: {self.positions}, Colour: {self.colour}, Angle: {self.start_angle}"
+
+    # def print_object_coor(self):
+    #     logger.trace(f'Obj coordinates: {self.positions}\n')
 
     def offset(self, offset_object: Particle, n: int):
         """
@@ -89,7 +112,7 @@ class DynamicParticle(Particle):
         Calculates and appends forces on 0 step
         system: list[Particle] | our initialised particles
         """
-        self.forces.append(f(self, system))
+        self.forces.append(force_obj_sys(self, system))
 
     # @classmethod
     def iteration(self, system: list[Particle], dt: float):
@@ -112,7 +135,7 @@ class DynamicParticle(Particle):
             # rs.append(v(rs[n - 1] + dt / 2 * (3 * vs[n] - vs[n - 1])))
 
         self.times.append(self.times[-1] + dt)
-        self.forces.append(f(self, system))
+        self.forces.append(force_obj_sys(self, system))
 
         eiler_method(self.forces, self.velocities, self.positions, self.mass)
 
@@ -124,7 +147,7 @@ class AnalyticParticle(Particle):
     """
 
     # @classmethod
-    def iteration(self, n: int, dt: float):
-        self.times.append(self.times[n - 1] + dt)
-        self.velocities.append(analytic_f(self.positions[0], self.velocities[0], (n * dt))[1])
-        self.positions.append(analytic_f(self.positions[0], self.velocities[0], (n * dt))[0])
+    def iteration(self, tau: float, dt: float):
+        self.times.append(self.times[-1] + dt)
+        self.velocities.append(analytic_f(self.positions[0], self.velocities[0], (tau))[1])
+        self.positions.append(analytic_f(self.positions[0], self.velocities[0], (tau))[0])

@@ -3,8 +3,8 @@ Mode: Simulation
 Force function: Gravity
 Method: Eiler
 
-End time: !!float 1e+5
-Time step: !!float 5e-4
+End time: !!float 1e+1
+Time step: !!float 5e-5
 Time direction: !!int +1
 Pulse table: false
 

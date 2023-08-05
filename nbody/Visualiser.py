@@ -18,6 +18,16 @@ class Visualisator:
 
 
 class Animated2D(Visualisator):
+    """
+    Code draft:
+
+    Make something like frame with X, Y
+
+    Make shot with points on start positions
+    On each next shot make previos positions ligther
+    Link all the shots together and give as video
+    """
+
     def __init__(self, particles: list, path_to_results: str):
         super().__init__()
 
