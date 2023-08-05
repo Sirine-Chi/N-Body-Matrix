@@ -13,7 +13,7 @@ import yaml
 
 # --- --- SETTINGS --- ---
 
-stream = open("Config.yaml", 'r')
+stream = open("Config.yaml", "r")
 config = yaml.load(stream, Loader=yaml.FullLoader)
 for key, value in config.items():
     print(key + ":   " + str(value))
@@ -30,29 +30,29 @@ pulse_table = config["Pulse table"]
 # --- --- LOOP FOR SIMULATIONS, getting T, N from each --- ---
 
 for i in range(100, 102, 2):
-    system = nbl.pd.read_csv('Table.csv')
+    system = nbl.pd.read_csv("Table.csv")
     system = system[0:i]
     N = len(system)
     objects = nbl.format_table(system)
 
     delta_cur = 0
-    inum = 's'
+    inum = "s"
 
-    directory = '/Plots/Simulation/' + str(datetime3.datetime.now()).replace(':', '-')
+    directory = "/Plots/Simulation/" + str(datetime3.datetime.now()).replace(":", "-")
     os.mkdir(directory)
 
-    results = open(directory + '/Results.txt', 'w')
+    results = open(directory + "/Results.txt", "w")
     results.writelines(config)
     results.writelines(*objects, sep="\n")
-    results.write('All saved in ' + directory)
+    results.write("All saved in " + directory)
     results.close()
 
     print(N, calc_time, "\n")
-    with open(r"Testing/Time loop.csv", 'a') as ta:
+    with open(r"Testing/Time loop.csv", "a") as ta:
         writer = csv.writer(ta)
         writer.writerow([N, calc_time])
     # test_data._append([N, calc_time], ignore_index=True)
     file.close()
 
-print('finish!', "\n",'All saved in ', directory)
+print("finish!", "\n", "All saved in ", directory)
 # time_data = nbl.pd.DataFrame(test_data)

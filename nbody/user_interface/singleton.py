@@ -6,5 +6,6 @@ class Singleton(object):
         cls.__it__ = it = object.__new__(cls)
         it.init(*args, **kwds)
         return it
+
     def init(self, *args, **kwds):
         pass
