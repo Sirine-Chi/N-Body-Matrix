@@ -145,7 +145,7 @@ dmypy.json
 cython_debug/
 
 # DS store
-DS_store
+.DS_store
 
 # temporary results
 nbody.Results/..

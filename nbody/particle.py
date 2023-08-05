@@ -115,7 +115,7 @@ class DynamicParticle(Particle):
         self.forces.append(force_obj_sys(self, system))
 
     # @classmethod
-    def iteration(self, system: list[Particle], dt: float):
+    def iteration(self, system: list[Particle], dt: float, velocity_depth=1):
         """
         calls f(), calculates new velocities and position using some numerical method
         system: list | Objects which trajectory deternined by others with force
@@ -138,6 +138,11 @@ class DynamicParticle(Particle):
         self.forces.append(force_obj_sys(self, system))
 
         eiler_method(self.forces, self.velocities, self.positions, self.mass)
+
+        # Cleaning velocities
+        if len(self.velocities) == (velocity_depth+1):
+            self.velocities.pop(0)
+        # logger.debug(len(self.velocities))
 
 
 class AnalyticParticle(Particle):
