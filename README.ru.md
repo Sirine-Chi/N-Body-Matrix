@@ -2,14 +2,14 @@
 
 ## О проекте
 
-Данный проект представляет из себя инструмент для физической симуляции N-тел с их начальными позициями и скоростями. На данный момент поддерживается только двумерное пространство. 
+Данный проект представляет из себя инструмент для физической симуляции N-тел с их начальными позициями и скоростями. На данный момент поддерживается только двумерное пространство.
 Код написан на Python с использованием библиотек OpenCL (для вычисления ускорения с помощью матричных перемножений) и Matplotlib для визуального представления.
 
-Настройки приложения находятся в файле [`Config.yaml`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/Config.yaml). 
-Начальное состояние объектов задаётся через CSV-таблицы в папке [`systems_data`](https://github.com/Sirine-Chi/N-Body-Matrix/tree/main/nbody/systems_data). 
-Для запуска приложения используется файл [`start.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/start.py). 
-Весь вычислительный функционал реализован в файле [`n_body_lib.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/n_body_lib.py), 
-инструменты визуального представления в [`Visualise.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/Visualise.py). 
+Настройки приложения находятся в файле [`config.yaml`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/config.yaml).
+Начальное состояние объектов задаётся через CSV-таблицы в папке [`systems_data`](https://github.com/Sirine-Chi/N-Body-Matrix/tree/main/nbody/systems_data).
+Для запуска приложения используется файл [`start.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/start.py).
+Весь вычислительный функционал реализован в файле [`n_body_lib.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/n_body_lib.py),
+инструменты визуального представления в [`Visualise.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/Visualise.py).
 Если Вы хотите сгенерировать свои собственные начальные условия, для этого используется [`Generator.py`](https://github.com/Sirine-Chi/N-Body-Matrix/blob/main/nbody/Generator.py).
 
 ## Установка
@@ -18,7 +18,7 @@
 
 Для успешной работы приложения, [Python 3](https://www.python.org/) (версии 3.11 и выше) должен быть установлен на Вашем устройстве.
 
-### Linux and MacOS:
+### Linux и MacOS:
 
 В установленной директории (в ней находится папка "nbody"):
 
@@ -36,6 +36,23 @@
 
 Если во время установки не возникло ошибок, приложение готово к использованию. Если у Вас возникли трудности с созданием виртуальной среды, Вы можете установить зависимости из `requirements.txt` глобально, однако **так лучше не делать**.
 
+## Запуск
+
+### Linux и MacOS
+В установленной директории (в ней находится папка "nbody"):
+
+
+- Запустите следующую команду: ```python3 -m nbody```
+- Для изучения дополнительных возможностей введите: ```python3 -m nbody --help``` 
+
+### Windows
+В установленной директории (в ней находится папка "nbody"):
+
+
+- Запустите следующую командуd: ```python -m nbody```
+- Для изучения дополнительных возможностей введите: ```python -m nbody --help``` 
+
+
 ## Архитектура
 
 ![ММС 10 2](https://github.com/Sirine-Chi/N-Body-Matrix/assets/71520044/8b96fb0b-b24b-458b-8729-2494c63aa1ed)
@@ -46,7 +63,7 @@
 
 [Здесь](https://github.com/Sirine-Chi/n-body-simulations) я занимаюсь созданием C++-версии.
 
-## Подробно про `Config.yaml`
+## Подробно про `config.yaml`
 
 Перечень возможных настроек:
 
