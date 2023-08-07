@@ -4,6 +4,7 @@ from pandas import read_csv, DataFrame
 from numpy import array as v
 import colorama
 from colorama import Fore, Back, Style
+import n_body_lib
 
 colorama.just_fix_windows_console()
 colorama.init()
@@ -39,8 +40,16 @@ class ConfigManager:
 
     @staticmethod
     def get_config(path_to_yaml: str) -> dict:
-        stream = open(path_to_yaml, 'r')
-        config = yaml.load(stream, Loader=yaml.FullLoader)
+        """
+        Reads config file on given path
+        """
+        try:
+            stream = open(path_to_yaml, 'r')
+            config = yaml.load(stream, Loader=yaml.FullLoader)
+        except FileNotFoundError:
+            logger.tr
+            return {}
+            raise FileNotFoundError
         return config
 
     @staticmethod
@@ -108,7 +117,8 @@ class ReportManager:
         """
         Class constructor
         """
-        self.log_text = []
+        self.report_list = []
+        self.report_dict = {}
 
     def add_to_report(self, *text):
         """
@@ -117,25 +127,26 @@ class ReportManager:
         *text: auto | any number of any objects, that we add to log
         """
         def log_append(something):
-            self.log_text.append(something)
+            self.report_list.append(something)
+            if isinstance(*text, dict):
+                self.report_dict[text] = text[text]
 
         for item in text:
             log_append(item)
-            
         # recursive_writer(iterable_object=text, func=log_append)
 
     def get_report(self) -> list:
-        return self.log_text
+        return self.report_list
     
 
     # Make abstract fabric
     def print_report_to_console(self):
-        for item in parallel(self.log_text):
+        for item in parallel(self.report_list):
             print(item)
 
     def save_report_to_txt(self, path_to_report: str):
         file = open(path_to_report + '/report.txt', 'w', encoding='utf-8')
-        for item in parallel(self.log_text):
+        for item in parallel(self.report_list):
             if isinstance(item[0], list) or isinstance(item, tuple):
                 for element in item:
                     file.write(str(element) + ', ')

@@ -25,8 +25,8 @@ def scal(vec: np.ndarray) -> float:
     """
     Vector length in Euclidian space (l2 norm, or scalar)
     \n
-    v: np.ndarray | vector
-    return: float | scalar
+    :param v: np.ndarray | vector
+    :return: float | scalar
     """
     return np.linalg.norm(vec, ord=2)
 
