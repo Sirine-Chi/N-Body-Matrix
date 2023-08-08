@@ -47,7 +47,7 @@ class ConfigManager:
             stream = open(path_to_yaml, 'r')
             config = yaml.load(stream, Loader=yaml.FullLoader)
         except FileNotFoundError:
-            logger.tr
+            # logger.trpip install pyinstaller
             return {}
             raise FileNotFoundError
         return config
