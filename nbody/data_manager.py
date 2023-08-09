@@ -1,16 +1,12 @@
 from __future__ import annotations
 import yaml
 from pandas import read_csv, DataFrame
-from numpy import array as v
-import colorama
-from colorama import Fore, Back, Style
-import n_body_lib
-
-colorama.just_fix_windows_console()
-colorama.init()
-
+from n_body_lib import *
 
 def recursive_writer(iterable_object: list, func):
+    """
+    Function to write iterables, even if they can't be written as one object
+    """
     limit: int = 1
     calls: int = 0
     while calls <= limit:
@@ -24,6 +20,9 @@ def recursive_writer(iterable_object: list, func):
 
 
 def parallel(something: list) -> list:
+    """
+    Function to unfold iterables to one parallel iterable
+    """
     parl = []
     if isinstance(something, list) or isinstance(something, tuple):
         for element in something:
@@ -36,35 +35,66 @@ def parallel(something: list) -> list:
     return parl
 
 
-class ConfigManager:
+class YamlManager:
+    """
+    Functions to work with yaml files and it's content
+    """
 
     @staticmethod
-    def get_config(path_to_yaml: str) -> dict:
+    def get_yaml(path_to_yaml: str) -> dict:
         """
-        Reads config file on given path
+        Reads yaml file on given path, as dictonary
+        If not found, returns empty dictionary.
         """
         try:
-            stream = open(path_to_yaml, 'r')
-            config = yaml.load(stream, Loader=yaml.FullLoader)
-        except FileNotFoundError:
-            # logger.trpip install pyinstaller
+            with open(path_to_yaml, 'r', encoding="utf-8") as stream:
+                content = yaml.load(stream, Loader=yaml.FullLoader)
+        except (FileNotFoundError, FileExistsError) as error:
+            message = f"File not found on path {path_to_yaml}, \n {error}"
+            logger.trace(message)
             return {}
-            raise FileNotFoundError
-        return config
+        return content
 
     @staticmethod
-    def print_config_to_console(config: dict):
-        for index in config:
-            print(' ' * (16 - len(index)), Fore.CYAN, index, Style.RESET_ALL, ':', config[index])
+    def print_yaml(yaml_content: dict):
+        maxlen = max(list(map(len, yaml_content.keys())))
+        for index in yaml_content.items():
+            print(" " * (maxlen - len(index)), Fore.CYAN, index, Style.RESET_ALL, ":", yaml_content[index])
 
     @staticmethod
-    def save_config_to_txt(config: dict, path_to_txt: str):
-        file = open(path_to_txt + '/results.txt', 'w')
-        for index in config:
-            file.write(' ' * (15 - len(index)), index, ':', config[index], '\n')
-        file.close()
+    def save_yaml_to_txt(yaml_content: dict, path_to_txt: str, file_name="yaml_content.txt"):
+        try:
+            with open(path_to_txt + file_name, 'w', encoding="utf-8") as file:
+                maxlen = max(list(map(len, yaml_content.keys())))
+                for key in yaml_content:
+                    file.write(" " * (maxlen - len(key)) + f"{key} : {yaml_content[key]}")
+        except (FileExistsError, FileNotFoundError) as error:
+            message = f"Can't write file, maybe there's no such directory as {path_to_txt + file_name},\n {error}"
+            logger.trace(message)
+
+
+class ConfigManager:
+    """
+    Class to work with config
+    """
+    def __init__(self, path_to_config: str) -> None:
+        self.config: dict = YamlManager.get_yaml(path_to_yaml=path_to_config)
+
+    def get_config(self, path_to_config: str) -> dict:
+        return self.config
+    
+    def print_config_to_console(self):
+        YamlManager.print_yaml(self.config)
+    
+    def save_config_to_txt(self, path_to_txt: str, file_name="config.txt"):
+        YamlManager.save_yaml_to_txt(self, path_to_txt, file_name)
+
 
 class TableManager:
+    """
+    Class to work with configuration tables
+    """
+
     @staticmethod
     def get_table_sliced(path_to_table: str, limit_down=0, limit_up=-1 ) -> DataFrame:
         """
@@ -113,6 +143,9 @@ class TableManager:
 
 
 class ReportManager:
+    """
+    Class to work with report
+    """
     def __init__(self):
         """
         Class constructor

@@ -1,3 +1,14 @@
+"""
+N Body Library
+=====
+
+Provides:
+    1. Vector math functions
+    2. Numerical methods as lambda functions
+    3. Physical and astronomical constants
+    4. Imports for numpy, pandas, pyopencl, pyopengl, numba, tqdm, colorama, loguru
+"""
+
 from __future__ import annotations
 import sys
 import numpy as np
@@ -25,7 +36,7 @@ def scal(vec: np.ndarray) -> float:
     """
     Vector length in Euclidian space (l2 norm, or scalar)
     \n
-    :param v: np.ndarray | vector
+    :param: np.ndarray | vector
     :return: float | scalar
     """
     return np.linalg.norm(vec, ord=2)

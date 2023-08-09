@@ -4,18 +4,19 @@ from n_body_lib import *
 import os
 import sys
 from datetime3 import datetime
- 
+
 
 def main():
     """
     Simple CPU simulation example
     """
-    
+
     path_to_yaml = 'nbody/Config.yaml'
     path_to_table = 'nbody/systems_data/Solar System.csv'
     path_to_results = 'nbody/Results/CPU_Simulations' + '/' + str(datetime.now()).replace(':', '-')
+
     os.mkdir(path_to_results)
-    config = ConfigManager.get_config(path_to_yaml)
+    config = ConfigManager(path_to_yaml).get_config(path_to_yaml)
     table = TableManager.get_table_sliced(path_to_table, 0, 7)
 
     report = ReportManager()
