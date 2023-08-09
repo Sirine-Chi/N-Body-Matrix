@@ -9,8 +9,9 @@ random2
 scipy
 Sphinx==7.0.1
 virtualenv==20.23.1
-tkinter
-numba
+# tkinter
+numba==0.57.1
 tqdm
 pyopengl
 colorama
+loguru

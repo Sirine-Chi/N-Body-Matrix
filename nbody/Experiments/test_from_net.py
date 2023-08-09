@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 """
 Create Your Own N-body Simulation (With Python)
@@ -29,7 +29,7 @@ def getAcc(pos, mass, G, softening):
     dz = z.T - z
 
     # matrix that stores 1/r^3 for all particle pairwise particle separations
-    inv_r3 = (dx ** 2 + dy ** 2 + dz ** 2 + softening ** 2)
+    inv_r3 = dx**2 + dy**2 + dz**2 + softening**2
     inv_r3[inv_r3 > 0] = inv_r3[inv_r3 > 0] ** (-1.5)
 
     ax = G * (dx * inv_r3) @ mass
@@ -53,7 +53,7 @@ def getEnergy(pos, vel, mass, G):
     PE is the potential energy of the system
     """
     # Kinetic Energy:
-    KE = 0.5 * np.sum(np.sum(mass * vel ** 2))
+    KE = 0.5 * np.sum(np.sum(mass * vel**2))
 
     # Potential Energy:
 
@@ -68,17 +68,17 @@ def getEnergy(pos, vel, mass, G):
     dz = z.T - z
 
     # matrix that stores 1/r for all particle pairwise particle separations
-    inv_r = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+    inv_r = np.sqrt(dx**2 + dy**2 + dz**2)
     inv_r[inv_r > 0] = 1.0 / inv_r[inv_r > 0]
 
     # sum over upper triangle, to count each interaction only once
     PE = G * np.sum(np.sum(np.triu(-(mass * mass.T) * inv_r, 1)))
 
-    return KE, PE;
+    return KE, PE
 
 
 def main():
-    """ N-body simulation """
+    """N-body simulation"""
 
     # Simulation parameters
     N = 100  # Number of particles
@@ -152,20 +152,30 @@ def main():
         if plotRealTime or (i == Nt - 1):
             plt.sca(ax1)
             plt.cla()
-            xx = pos_save[:, 0, max(i - 50, 0):i + 1]
-            yy = pos_save[:, 1, max(i - 50, 0):i + 1]
-            plt.scatter(xx, yy, s=1, color=[.7, .7, 1])
-            plt.scatter(pos[:, 0], pos[:, 1], s=10, color='blue')
+            xx = pos_save[:, 0, max(i - 50, 0) : i + 1]
+            yy = pos_save[:, 1, max(i - 50, 0) : i + 1]
+            plt.scatter(xx, yy, s=1, color=[0.7, 0.7, 1])
+            plt.scatter(pos[:, 0], pos[:, 1], s=10, color="blue")
             ax1.set(xlim=(-2, 2), ylim=(-2, 2))
-            ax1.set_aspect('equal', 'box')
+            ax1.set_aspect("equal", "box")
             ax1.set_xticks([-2, -1, 0, 1, 2])
             ax1.set_yticks([-2, -1, 0, 1, 2])
 
             plt.sca(ax2)
             plt.cla()
-            plt.scatter(t_all, KE_save, color='red', s=1, label='KE' if i == Nt - 1 else "")
-            plt.scatter(t_all, PE_save, color='blue', s=1, label='PE' if i == Nt - 1 else "")
-            plt.scatter(t_all, KE_save + PE_save, color='black', s=1, label='Etot' if i == Nt - 1 else "")
+            plt.scatter(
+                t_all, KE_save, color="red", s=1, label="KE" if i == Nt - 1 else ""
+            )
+            plt.scatter(
+                t_all, PE_save, color="blue", s=1, label="PE" if i == Nt - 1 else ""
+            )
+            plt.scatter(
+                t_all,
+                KE_save + PE_save,
+                color="black",
+                s=1,
+                label="Etot" if i == Nt - 1 else "",
+            )
             ax2.set(xlim=(0, tEnd), ylim=(-300, 300))
             ax2.set_aspect(0.007)
 
@@ -173,12 +183,12 @@ def main():
 
     # add labels/legend
     plt.sca(ax2)
-    plt.xlabel('time')
-    plt.ylabel('energy')
-    ax2.legend(loc='upper right')
+    plt.xlabel("time")
+    plt.ylabel("energy")
+    ax2.legend(loc="upper right")
 
     # Save figure
-    plt.savefig('nbody.png', dpi=240)
+    plt.savefig("nbody.png", dpi=240)
     plt.show()
 
     return 0

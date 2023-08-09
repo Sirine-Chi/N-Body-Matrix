@@ -1,14 +1,18 @@
-from simulator_test import Simulator
-
-import n_body_lib as nbl
 import time
-import numpy as np
-import random2
+
+import nbody.n_body_lib as nbl
+
+import random
+
+# FIXME: I have no idea where this module comes from,
+# so it should be gotten from somewhere or
+# there's gonna be an error otherwise ¯\_(ツ)_/¯
+from simulator_test import Simulator
 
 # === === Set variables === ===
 
 # Global variables
-N = 10 # Bodies
+N = 10  # Bodies
 total_time = 100
 step = 0.1
 
@@ -16,11 +20,13 @@ step = 0.1
 r_s = []
 v_s = []
 m_s = []
+
 for i in range(1, N, 1):
-    r_s.append(random2.uniform(-10, 10))
-    v_s.append(random2.uniform(-2, 2))
-    m_s.append(random2.uniform(0, 6))
-print('R', r_s, '\n', 'V', v_s, '\n', 'M', m_s)
+    r_s.append(random.uniform(-10, 10))
+    v_s.append(random.uniform(-2, 2))
+    m_s.append(random.uniform(0, 6))
+
+print("R", r_s, "\n", "V", v_s, "\n", "M", m_s)
 
 # === === Actual Run === ===
 
