@@ -1,4 +1,4 @@
-Type,Name,Mass,R x,R y,V x, Vy, Color, Angle (Deg),Orbital Inclination (Deg)
+Type,Name,Mass,R x,R y,V x, Vy, Color,Angle (Deg),Orbital Inclination (Deg)
 dynamic,Sun,332840,0,0,0,0,y,0.0,0.0
 dynamic,Mercury,0.0553,0.4667045037,0,0,8.19188772,maroon,192.12,7.0
 dynamic,Venus,0.815,0.7282256057,0,0,7.333910803,tomato,84.73,3.4
