@@ -3,8 +3,7 @@
 ## General
 
 Here is the physical simulation of the N-body problem with start positions and velocities, in a gravitational field. The space is 2-dimensional. Written in Python with OpenCL for computing acceleration (matrix multiplication), the MatPlotLib library is used as the visualization tool.
-
-Program settings are stored in config.yaml. The start conditions of the objects are in the systems_data folder in CSV tables. All computational functions are written in nbody/n_body_lib.py, and all the visual tools in nbody/visualise.py. If you want to generate your own start configuration you are able to run nbody/generator.py, it will write to table.csv new objects with random distribution parameters you can set.
+Program settings are stored in Config.yaml. The start conditions of the objects are in the systems_data folder in CSV tables. You can run the program by running the Start.py file, all computational functions are written in NBodyLib.py, and all the visual tools in Visualise.py. If you want to generate your own start configuration you are able to run Generator.py, it will write to table.csv new objects with random distribution parameters you can set.
 
 ## Installation
 
@@ -16,7 +15,7 @@ Python 3 must be installed on your device.
 
 In your project directory that contains "nbody":
 
-- create Python virtual environment (in the project directory folder open the terminal and run `python3 -m venv venv`)
+- create Python virtual environment (in the project directory folder open the terminal and run `python -m venv venv`)
 - activate virtual environment (run `source venv/bin/activate`)
 - install requirements.txt. (run `pip install -r requirements.txt`)
 
@@ -29,22 +28,6 @@ In your project directory that contains "nbody":
 - install the dependencies (run `pip install -r requirements.txt`)
 
 If all dependencies have been installed successfully, the application is ready to use. If you have troubles with venv, you can manually install all the libraries from requirements.txt to your global python, but **this way is not recommended**.
-
-## Running
-
-### Linux and MacOS
-In your project directory that contains "nbody":
-
-- Run next command: ```python3 -m nbody```
-- For studying additional features run ```python3 -m nbody --help``` 
-
-### Windows
-In your project directory that contains "nbody":
-
-- Run next command: ```python -m nbody```
-- For studying additional features run ```python -m nbody --help``` 
-
-
 
 ## Archeticture
 
