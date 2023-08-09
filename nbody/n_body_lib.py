@@ -32,6 +32,7 @@ colorama.init()
 logger.remove(0)
 logger.add(sys.stdout, level="TRACE")
 
+
 def scal(vec: np.ndarray) -> float:
     """
     Vector length in Euclidian space (l2 norm, or scalar)
@@ -88,10 +89,12 @@ def rotvec(vec: np.ndarray, al: float) -> np.ndarray:
                      [-1 * math.sin(math.radians(al)), math.cos(math.radians(al))]])
     return np.matmul(vec, rotation_mx)
 
+
 class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
+
 
 class Stack:
     def __init__(self):
@@ -131,6 +134,7 @@ class Stack:
         self.head.next = self.head.next.next
         self.size -= 1
         return remove.value
+
 
 # numerical methods
 eiler = lambda x_nm, y_n, h: x_nm + h * y_n
