@@ -2,20 +2,21 @@ from typing import Optional as opt
 from data_manager import YamlManager
 from n_body_lib import *
 
+DEFAULT_GENERATING_PATTERN: dict = {
+    "number of objects": 2,
+    "center": v([0.0, 0.0]),
+    "medium radius": 1.0,
+    "crit radius delta": 0.25,
+    "medium mass": 1.0,
+    "mass center velocity": v([0.0, 0.0]),
+    "medium velocity scalar": 0.0,
+    "velocity crit delta": 0.0
+}
+
 class GeneratingPattern:
     def __init__(self) -> None:
-        self.DEFAULT_GENERATING_PATTERN: dict = {
-            "number of objects": 2,
-            "center": v([0.0, 0.0]),
-            "medium radius": 1.0,
-            "crit radius delta": 0.25,
-            "medium mass": 1.0,
-            "mass center velocity": v([0.0, 0.0]),
-            "medium velocity scalar": 0.0,
-            "velocity crit delta": 0.0
-            }
-        self.pattern: dict = self.DEFAULT_GENERATING_PATTERN
-    
+        self.pattern: dict = DEFAULT_GENERATING_PATTERN
+
     def set_pattern(self, pattern: dict) -> None:
         """
         Set pattern from dictionary
@@ -23,7 +24,8 @@ class GeneratingPattern:
         self.validate_pattern()
         self.pattern: dict = pattern
 
-    def set_pattern_manually(self, num: int, cen: np.ndarray, med_rad: float, crit_rad_d: float, med_m: float, crit_m_d: float, m_cen_vel: np.ndarray, med_vel_scal: float, vel_crit_d: float) -> None:
+    def set_pattern_manually(self, num: int, cen: np.ndarray, med_rad: float, crit_rad_d: float, med_m: float,
+                             crit_m_d: float, m_cen_vel: np.ndarray, med_vel_scal: float, vel_crit_d: float) -> None:
         """
         Manually sets parametres to generating pattern dictionary
         """
@@ -44,25 +46,29 @@ class GeneratingPattern:
         Loads pattern from yaml file and sets it
         """
         self.pattern = YamlManager.get_yaml(path_to_yaml)
+        self.validate_pattern()
 
     def __str__(self) -> str:
         return str(self.pattern)
 
     def validate_pattern(self):
+        lines = []
         for key in self.DEFAULT_GENERATING_PATTERN.items():
             if type(self.DEFAULT_GENERATING_PATTERN[key]) != type(self.pattern[key]):
                 line = f"Mistake in option {key},\n your type is {type(self.pattern[key])}, but must be {type(self.DEFAULT_GENERATING_PATTERN[key])}"
                 logger.error(line)
-        return line
+                lines.append(line)
+        return lines
+
 
 class TableGenerator:
     def __init__(self) -> None:
-        pass
+        self.default_pattern = DEFAULT_GENERATING_PATTERN
 
-    def spherical_sc(self, pattern: opt[dict] = GeneratingPattern().DEFAULT_GENERATING_PATTERN):
+    def spherical(self, pattern: opt[dict] = DEFAULT_GENERATING_PATTERN) -> list:
         """
-        :param pattern: dict | 
-        :returns list | 
+        :param pattern: dict |
+        :returns list | data to write to csv table
         """
         objects_data = []
         object_type = "dynamic"
@@ -85,14 +91,10 @@ class TableGenerator:
         # print(*objects_data, sep="\n")
         return objects_data
 
-
     def write_table(objects_data, path_to_table):
         names = ["Type", "Name", "Mass", "R x", "R y", "V x", "Vy", "Color", "Angle (Deg)"]  # str(type),
         tab = pd.DataFrame(data=objects_data)
         tab.to_csv(path_to_table + 'Generated Table.csv', header=names, index=False)
 
-# Writing generated data to System.TXT
-# write_objects(spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
-
 # Writing generated data to System.CSV table
-write_table(TableGenerator.spherical_sc(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+TableGenerator.write_table(TableGenerator.spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
