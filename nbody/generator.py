@@ -1,6 +1,6 @@
 from typing import Optional as opt
-from data_manager import YamlManager
-from n_body_lib import *
+from nbody.data_manager import YamlManager
+from nbody.n_body_lib import *
 
 DEFAULT_GENERATING_PATTERN: dict = {
     "number of objects": 2,
@@ -53,9 +53,9 @@ class GeneratingPattern:
 
     def validate_pattern(self):
         lines = []
-        for key in self.DEFAULT_GENERATING_PATTERN.items():
-            if type(self.DEFAULT_GENERATING_PATTERN[key]) != type(self.pattern[key]):
-                line = f"Mistake in option {key},\n your type is {type(self.pattern[key])}, but must be {type(self.DEFAULT_GENERATING_PATTERN[key])}"
+        for key in DEFAULT_GENERATING_PATTERN.items():
+            if type(DEFAULT_GENERATING_PATTERN[key]) != type(self.pattern[key]):
+                line = f"Mistake in option {key},\n your type is {type(self.pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}"
                 logger.error(line)
                 lines.append(line)
         return lines
@@ -91,10 +91,10 @@ class TableGenerator:
         # print(*objects_data, sep="\n")
         return objects_data
 
-    def write_table(objects_data, path_to_table):
+    def write_table(self, objects_data, path_to_table):
         names = ["Type", "Name", "Mass", "R x", "R y", "V x", "Vy", "Color", "Angle (Deg)"]  # str(type),
         tab = pd.DataFrame(data=objects_data)
-        tab.to_csv(path_to_table + 'Generated Table.csv', header=names, index=False)
+        tab.to_csv(path_to_table + str(datetime.now()).replace(":", "-") + 'Generated Table.csv', header=names, index=False)
 
 # Writing generated data to System.CSV table
-TableGenerator.write_table(TableGenerator.spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0))
+TableGenerator.write_table(TableGenerator.spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0), path_to_table="nbody/systems_data")

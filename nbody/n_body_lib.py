@@ -10,18 +10,18 @@ Provides:
 """
 
 from __future__ import annotations
+from typing import Final
 import sys
+import os
+import math
+from time import monotonic
 import numpy as np
 from numpy import array as v
 import pandas as pd
-import math
 import random2 as rnd
-from time import monotonic
-import datetime
 import pyopencl as cl
 from numba import jit, prange
 from tqdm import tqdm
-from typing import Final
 import colorama
 from colorama import Fore, Back, Style
 from loguru import logger
@@ -89,6 +89,20 @@ def rotvec(vec: np.ndarray, al: float) -> np.ndarray:
                      [-1 * math.sin(math.radians(al)), math.cos(math.radians(al))]])
     return np.matmul(vec, rotation_mx)
 
+
+
+def maximize_function(values, function):
+    return max(list(map(function, values)))
+
+def minimize_function(values, function):
+    return max(list(map(function, values)))
+
+
+# For GPU
+os.environ["PYOPENCL_CTX"] = "0"
+
+
+# Matrices >>>
 
 class Node:
     def __init__(self, value):

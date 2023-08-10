@@ -56,13 +56,13 @@ class YamlManager:
         return content
 
     @staticmethod
-    def print_yaml(yaml_content: dict):
+    def print_yaml(yaml_content: dict) -> None:
         maxlen = max(list(map(len, yaml_content.keys())))
         for index in yaml_content.items():
             print(" " * (maxlen - len(index)), Fore.CYAN, index, Style.RESET_ALL, ":", yaml_content[index])
 
     @staticmethod
-    def save_yaml_to_txt(yaml_content: dict, path_to_txt: str, file_name="yaml_content.txt"):
+    def save_yaml_to_txt(yaml_content: dict, path_to_txt: str, file_name="yaml_content.txt") -> None:
         try:
             with open(path_to_txt + file_name, 'w', encoding="utf-8") as file:
                 maxlen = max(list(map(len, yaml_content.keys())))
@@ -71,6 +71,11 @@ class YamlManager:
         except (FileExistsError, FileNotFoundError) as error:
             message = f"Can't write file, maybe there's no such directory as {path_to_txt + file_name},\n {error}"
             logger.trace(message)
+
+    @staticmethod
+    def save_to_yaml(yaml_content: dict, path_to_yaml: str, file_name="yaml_content.txt") -> None:
+        with open(path_to_yaml + '/report.yaml', 'w', encoding="utf-8") as stream:
+            yaml.dump(yaml_content, stream, default_flow_style=False)
 
 
 class ConfigManager:
@@ -144,49 +149,41 @@ class TableManager:
 
 class ReportManager:
     """
-    Class to work with report
+    Class to work with report, that stores values as dictionary
     """
     def __init__(self):
         """
         Class constructor
         """
-        self.report_list = []
         self.report_dict = {}
 
-    def add_to_report(self, *text):
+    def add_to_report(self, item: dict) -> None:
         """
         Adds any object to log 
         \n
-        *text: auto | any number of any objects, that we add to log
+        :param: item: dict | any number of any objects, that we add to log
         """
-        def log_append(something):
-            self.report_list.append(something)
-            if isinstance(*text, dict):
-                self.report_dict[text] = text[text]
-
-        for item in text:
-            log_append(item)
+        for key in item.keys():
+            self.report_dict[key] = item[key]
         # recursive_writer(iterable_object=text, func=log_append)
 
     def get_report(self) -> list:
-        return self.report_list
+        return self.report_dict
     
 
     # Make abstract fabric
-    def print_report_to_console(self):
-        for item in parallel(self.report_list):
+    def print_report_to_console(self) -> None:
+        for item in parallel(self.report_dict):
             print(item)
 
-    def save_report_to_txt(self, path_to_report: str):
-        file = open(path_to_report + '/report.txt', 'w', encoding='utf-8')
-        for item in parallel(self.report_list):
-            if isinstance(item[0], list) or isinstance(item, tuple):
-                for element in item:
-                    file.write(str(element) + ', ')
-            else:
-                file.write(str(item)[1:-1] + '\n')
-        file.close()
+    def save_report_to_txt(self, path_to_report: str) -> None:
+        with open(path_to_report + '/report.txt', 'w', encoding='utf-8') as file:
+            for item in parallel(self.report_dict):
+                if isinstance(item[0], list) or isinstance(item, tuple):
+                    for element in item:
+                        file.write(str(element) + ', ')
+                else:
+                    file.write(str(item)[1:-1] + '\n')
 
-    def save_report_to_yaml(self, path_to_report: str):
-        stream = open(path_to_report+'/report.yaml', 'w')
-        # yaml.dump_all()
+    def save_report_to_yaml(self, path_to_report: str) -> None:
+        YamlManager.save_to_yaml(self.report_dict, path_to_report, file_name="report.yaml")
