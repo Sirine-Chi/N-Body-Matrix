@@ -94,11 +94,16 @@ def rotvec(vec: np.ndarray, al: float) -> np.ndarray:
     return np.matmul(vec, rotation_mx)
 
 
-
 def maximize_function(values, function):
+    """
+    returns maximum value of a function affected on container of values
+    """
     return max(list(map(function, values)))
 
 def minimize_function(values, function):
+    """
+    returns minimum value of a function affected on container of values
+    """
     return max(list(map(function, values)))
 
 
@@ -107,6 +112,7 @@ os.environ["PYOPENCL_CTX"] = "0"
 
 
 # Matrices >>>
+
 
 class Node:
     def __init__(self, value):
