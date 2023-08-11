@@ -33,6 +33,10 @@ logger.remove(0)
 logger.add(sys.stdout, level="TRACE")
 
 
+# CONSTANTS
+G: Final = 0.0001184069  # 09138
+
+
 def scal(vec: np.ndarray) -> float:
     """
     Vector length in Euclidian space (l2 norm, or scalar)
@@ -158,6 +162,3 @@ adams = lambda x_nm, y_n, y_nd, h: x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
 f_ij = lambda ri, rj, mi, mj: v(((rj - ri) * mi * mj * G) / (
     scal(ri - rj)) ** 3)  # функция силы Ньютоновской гравитации, действующей между двумя телами, даны массы и положения
 analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXAMPLE!
-
-# CONSTANTS
-G: Final = 0.0001184069  # 09138

@@ -32,7 +32,8 @@ def main():
     report.add_to_report({'Runtime': sim.get_runtime()})
     print('REPORT: ')
     report.print_report_to_console()
-    report.save_report_to_txt(path_to_report=path_to_results)
+    # report.save_report_to_txt(path_to_report=path_to_results)
+    report.save_report_to_yaml(path_to_report=path_to_results)
 
 
 if __name__ == '__main__':

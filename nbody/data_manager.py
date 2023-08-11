@@ -74,8 +74,8 @@ class YamlManager:
 
     @staticmethod
     def save_to_yaml(yaml_content: dict, path_to_yaml: str, file_name="yaml_content.txt") -> None:
-        with open(path_to_yaml + '/report.yaml', 'w', encoding="utf-8") as stream:
-            yaml.dump(yaml_content, stream, default_flow_style=False)
+        with open(path_to_yaml + "/" + file_name, 'w', encoding="utf-8") as stream:
+            yaml.dump(yaml_content, stream, default_flow_style=False, sort_keys=False)
 
 
 class ConfigManager:
