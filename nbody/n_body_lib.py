@@ -106,12 +106,133 @@ def minimize_function(values, function):
     """
     return max(list(map(function, values)))
 
+# MATRIX FUNCTIONS
 
-# For GPU
-os.environ["PYOPENCL_CTX"] = "0"
+def openCL_mult(matrix1, matrix2):
+    os.environ["PYOPENCL_CTX"] = "0"
+    ctx = cl.create_some_context()
+    queue = cl.CommandQueue(ctx)
+
+    mf = cl.mem_flags
+    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
+    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
+    dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
+
+    prg = cl.Program(ctx, """
+        __kernel void multiplymatrices(const unsigned int size, __global float * matrix1, __global float * matrix2, __global float * res) {
+
+        int i = get_global_id(1); 
+        int j = get_global_id(0);
+
+        res[i + size * j] = 0;
+
+        for (int k = 0; k < size; k++)
+        {
+            res[i + size * j] += matrix1[k + size * i] * matrix2[j + size * k];
+        }
+
+        }
+        """).build()
+    # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
+
+    t0 = time.time()
+
+    prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
+
+    final_matrix = np.empty_like(matrix1)
+    cl.enqueue_copy(queue, final_matrix, dest_buf)
+
+    # print(final_matrix)
+
+    delta_t = time.time() - t0
+    # print('OpenCL Multiplication: %.4f seconds' % delta_t)
+
+    return final_matrix
+
+def np_mult(matrix1, matrix2):  # =m1 x m2, порядок как в письме
+    return matrix1.dot(matrix2)
+    # return np.matmul(matrix1, matrix2)
+
+def gravec(ri: np.ndarray, rj:np.ndarray) -> np.ndarray:
+    """
+    Unit vector of force, acting from body J to body I, devided by the squared distance
+    \n
+    :param: ri: np.ndarray | Position vector of first body (on which force acts)
+    :param: rj: np.ndarray | Position vector of second body (which acts)
+    """
+    d = scal(ri - rj)
+    if d == 0.0:
+        return v([0, 0])
+    else:
+        return v((rj - ri) / d ** 3)
+
+def gravecs_matrix(position_vectors):  # расчёт матрицы единичных векторов сил, действующих от тела j на тело i
+    matrix = []  # собираем матрицу R_ij
+    for i in position_vectors:
+        line = []
+        for j in position_vectors:
+            line.append(gravec(i, j))
+        matrix.append(line)
+    # print(Style.DIM, Fore.RED, '\nMx start:\n', matrix, '\nMx end.\n', Style.RESET_ALL)
+    return v(matrix)
+
+def mass_vectors(objects):
+    masses = []
+    inv_masses = []
+    for o in objects:
+        masses.append(o[1])
+        inv_masses.append(1 / o[1])
+    return [v(masses), v(inv_masses)]
+
+def position_matrix(objects):
+    positions = []
+    for o in objects:
+        positions.append(v(o[2]))
+    return positions
+
+def velocity_matrix(objects):
+    velocities = []
+    for o in objects:
+        velocities.append(v(o[3]))
+    # return map(vel, objects)
+    return velocities
+
+def new_format_matrices(s):
+    return {
+        "Mass vector": mass_vectors(s)[0],
+        "Coordinates vector": v(position_matrix(s)),
+        "Velocities vector": v(velocity_matrix(s))
+    }
 
 
-# Matrices >>>
+# @jit(nogil=True, fastmath=True) #nopython=True, 
+def simulation(method="eiler", objects, dir, end, h):
+    matrices = format_matrices(objects)
+    new_matrices = new_format_matrices(objects)
+
+    r_sys_mx = []
+    v_sys_mx = []
+    a_sys_mx = []
+    v_sys_mx.append(new_matrices["Velocities vector"])
+    r_sys_mx.append(new_matrices["Coordinates vector"])
+
+    a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[0]), np.vstack(new_matrices["Mass vector"])) )
+
+    num = int(dir * end / h)  # Number of steps
+    print(Fore.GREEN)
+
+    for i in tqdm(range(1, num)):
+        a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[i-1])[0], np.vstack(v(new_matrices["Mass vector"]))) )
+
+        # метод эйлера
+        v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
+        r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
+    
+    print(Style.RESET_ALL)
+    print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
+
+    print(Back.GREEN, 'Finished!', 'Runtime:', "%.4f seconds" % (finish_time), Style.RESET_ALL, '\n')
+
 
 
 class Node:
