@@ -10,7 +10,7 @@ Provides:
 """
 
 from __future__ import annotations
-from typing import Final
+from typing import Any, Final
 import sys
 import os
 import math
@@ -35,6 +35,7 @@ logger.add(sys.stdout, level="TRACE")
 
 # CONSTANTS
 G: Final = 0.0001184069  # 09138
+K: Final = 4.0
 
 
 def scal(vec: np.ndarray) -> float:
@@ -135,7 +136,7 @@ def openCL_mult(matrix1, matrix2):
         """).build()
     # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
 
-    t0 = time.time()
+    t0 = monotonic()
 
     prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
 
@@ -144,7 +145,7 @@ def openCL_mult(matrix1, matrix2):
 
     # print(final_matrix)
 
-    delta_t = time.time() - t0
+    delta_t = monotonic() - t0
     # print('OpenCL Multiplication: %.4f seconds' % delta_t)
 
     return final_matrix
@@ -206,32 +207,32 @@ def new_format_matrices(s):
 
 
 # @jit(nogil=True, fastmath=True) #nopython=True, 
-def simulation(method="eiler", objects, dir, end, h):
-    matrices = format_matrices(objects)
-    new_matrices = new_format_matrices(objects)
+# def simulation(method="eiler", objects: list, dir, end, h):
+#     matrices = format_matrices(objects)
+#     new_matrices = new_format_matrices(objects)
 
-    r_sys_mx = []
-    v_sys_mx = []
-    a_sys_mx = []
-    v_sys_mx.append(new_matrices["Velocities vector"])
-    r_sys_mx.append(new_matrices["Coordinates vector"])
+#     r_sys_mx = []
+#     v_sys_mx = []
+#     a_sys_mx = []
+#     v_sys_mx.append(new_matrices["Velocities vector"])
+#     r_sys_mx.append(new_matrices["Coordinates vector"])
 
-    a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[0]), np.vstack(new_matrices["Mass vector"])) )
+#     a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[0]), np.vstack(new_matrices["Mass vector"])) )
 
-    num = int(dir * end / h)  # Number of steps
-    print(Fore.GREEN)
+#     num = int(dir * end / h)  # Number of steps
+#     print(Fore.GREEN)
 
-    for i in tqdm(range(1, num)):
-        a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[i-1])[0], np.vstack(v(new_matrices["Mass vector"]))) )
+#     for i in tqdm(range(1, num)):
+#         a_sys_mx.append(G * np_mult(gravecs_matrix(r_sys_mx[i-1])[0], np.vstack(v(new_matrices["Mass vector"]))) )
 
-        # метод эйлера
-        v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
-        r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
+#         # метод эйлера
+#         v_sys_mx.append(v_sys_mx[i - 1] + h * a_sys_mx[i])
+#         r_sys_mx.append(r_sys_mx[i - 1] + h * v_sys_mx[i])
     
-    print(Style.RESET_ALL)
-    print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
+#     print(Style.RESET_ALL)
+#     print(Fore.BLUE, r_sys_mx[-1], Style.RESET_ALL)
 
-    print(Back.GREEN, 'Finished!', 'Runtime:', "%.4f seconds" % (finish_time), Style.RESET_ALL, '\n')
+#     print(Back.GREEN, 'Finished!', 'Runtime:', "%.4f seconds" % (finish_time), Style.RESET_ALL, '\n')
 
 
 
@@ -281,11 +282,21 @@ class Stack:
         return remove.value
 
 
+class NumericalIntegrationMethod:
+    def __init__(self, name: str, depth: int) -> None:
+        pass
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        pass
+
+
 # numerical methods
 eiler = lambda x_nm, y_n, h: x_nm + h * y_n
 adams = lambda x_nm, y_n, y_nd, h: x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
+
 
 # force functions
 f_ij = lambda ri, rj, mi, mj: v(((rj - ri) * mi * mj * G) / (
     scal(ri - rj)) ** 3)  # функция силы Ньютоновской гравитации, действующей между двумя телами, даны массы и положения
 analytic_f = lambda r0, v0, t: [(r0 + v0 * t - 5 * t ** 2), (v0 - 5 * t)]  # EXAMPLE!
+f_gyk_ij = lambda ri, rj, mi, mj: v((rj-ri)*K)

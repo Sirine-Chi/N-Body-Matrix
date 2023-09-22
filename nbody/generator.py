@@ -1,6 +1,7 @@
 from typing import Optional as opt
-from nbody.data_manager import YamlManager
-from nbody.n_body_lib import *
+from datetime3 import datetime
+from data_manager import YamlManager
+from n_body_lib import *
 
 DEFAULT_GENERATING_PATTERN: dict = {
     "number of objects": 2,
@@ -8,6 +9,7 @@ DEFAULT_GENERATING_PATTERN: dict = {
     "medium radius": 1.0,
     "crit radius delta": 0.25,
     "medium mass": 1.0,
+    "crit mass delta": 0.0,
     "mass center velocity": v([0.0, 0.0]),
     "medium velocity scalar": 0.0,
     "velocity crit delta": 0.0
@@ -67,7 +69,7 @@ class TableGenerator:
 
     def spherical(self, pattern: opt[dict] = DEFAULT_GENERATING_PATTERN) -> list:
         """
-        :param pattern: dict |
+        :param pattern: dict | dictionary with settings for generator
         :returns list | data to write to csv table
         """
         objects_data = []
@@ -75,7 +77,7 @@ class TableGenerator:
         for i in range(0, pattern["number of objects"]):
             st_der = pattern["crit mass delta"] / 3
             position = pattern["center"] + ranvec(pattern["medium radius"])
-            velocity = pattern["center mass velocity"] + ranvec(pattern["medium velocity scalar"])
+            velocity = pattern["mass center velocity"] + ranvec(pattern["medium velocity scalar"])
             objects_data.append(
                 [
                     str(object_type),
@@ -94,7 +96,20 @@ class TableGenerator:
     def write_table(self, objects_data, path_to_table):
         names = ["Type", "Name", "Mass", "R x", "R y", "V x", "Vy", "Color", "Angle (Deg)"]  # str(type),
         tab = pd.DataFrame(data=objects_data)
-        tab.to_csv(path_to_table + str(datetime.now()).replace(":", "-") + 'Generated Table.csv', header=names, index=False)
+        tab.to_csv(path_to_table + "/" + str(datetime.now()).replace(":", "-") + 'Generated Table.csv', header=names, index=False)
 
+
+my_pattern = {
+    "number of objects": 1000,
+    "center": v([0.0, 0.0]),
+    "medium radius": 50.0,
+    "crit radius delta": 0.0,
+    "medium mass": 10.0,
+    "crit mass delta": 0.0,
+    "mass center velocity": v([0.0, 0.0]),
+    "medium velocity scalar": 2.0,
+    "velocity crit delta": 0.0
+}
 # Writing generated data to System.CSV table
-TableGenerator.write_table(TableGenerator.spherical(50, [1, 1], 3, 0, 2, 0.4, [0.2, 0.3], 0.1, 0), path_to_table="nbody/systems_data")
+gen = TableGenerator()
+TableGenerator.write_table(gen, objects_data=TableGenerator.spherical(gen, pattern=my_pattern), path_to_table="nbody/systems_data")

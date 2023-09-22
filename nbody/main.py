@@ -12,12 +12,12 @@ def main():
     """
 
     path_to_yaml = 'nbody/Config.yaml'
-    path_to_table = 'nbody/systems_data/Solar System.csv'
+    path_to_table = 'nbody/systems_data/2023-08-12 17-46-52.425399Generated Table.csv'
     path_to_results = 'nbody/Results/CPU_Simulations' + '/' + str(datetime.now()).replace(':', '-')
 
     os.mkdir(path_to_results)
     config = ConfigManager(path_to_yaml).get_config(path_to_yaml)
-    table = TableManager.get_table_sliced(path_to_table, 0, 7)
+    table = TableManager.get_table_sliced(path_to_table, 0, 100)
 
     report = ReportManager()
     report.add_to_report(config)  # , logger.trace(config)
@@ -26,7 +26,8 @@ def main():
     particles_f = TableManager.format_table_dicts(table)
 
     sim = SimulatorCPU(particles_f, config['End time'], config["Time step"])
-    sim.simulation()
+    for _ in tqdm(sim.simulation(), desc="Runtime", ncols=100):
+        pass
     sim.vis(path_to_results)
     # log.add_to_log(sim.get_last_positions())
     report.add_to_report({'Runtime': sim.get_runtime()})
