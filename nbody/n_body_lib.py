@@ -205,7 +205,7 @@ def new_format_matrices(s):
         "Velocities vector": v(velocity_matrix(s))
     }
 
-def hadamar_product(matrix1, matrix2):
+def hadamar_product_cl(matrix1, matrix2):
     ctx = cl.create_some_context()
     queue = cl.CommandQueue(ctx)
 
@@ -240,6 +240,9 @@ def hadamar_product(matrix1, matrix2):
     # print('OpenCL Hadamar: %.4f seconds' % delta_t)
 
     return final_matrix
+
+def hadamar_product_np(matrix1, matrix2):
+    return np.multiply(matrix1, matrix2)
 
 # @jit(nogil=True, fastmath=True) #nopython=True, 
 # def simulation(method="eiler", objects: list, dir, end, h):
