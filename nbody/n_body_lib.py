@@ -76,8 +76,8 @@ def ranrv(r: float) -> np.ndarray:
     r: float | length
     return: np.ndarray | random vector
     """
-    a = rnd.uniform(0, 2 * math.pi)
-    rr = rnd.uniform(0, r)
+    a = np.random.uniform(0.0, 2 * math.pi)
+    rr = abs(np.random.normal(0.0, r, size=1))
     rv = v([rr * math.cos(a), rr * math.sin(a)])  # radians
     return rv
 
