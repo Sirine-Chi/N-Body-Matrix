@@ -31,7 +31,7 @@ If all dependencies have been installed successfully, the application is ready t
 
 ## Archeticture
 
-![ММС 10 2](https://github.com/Sirine-Chi/N-Body-Matrix/assets/71520044/8b96fb0b-b24b-458b-8729-2494c63aa1ed)
+...Reloading...
 
 ## Plans
 
