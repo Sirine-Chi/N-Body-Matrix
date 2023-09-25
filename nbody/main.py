@@ -1,5 +1,5 @@
 from simulator import SimulatorCPU
-from data_manager import ConfigManager, TableManager, ReportManager
+from data_manager import ConfigManager, TableManager, Report
 from n_body_lib import *
 import os
 import sys
@@ -12,14 +12,14 @@ def main():
     """
 
     path_to_yaml = 'nbody/Config.yaml'
-    path_to_table = 'nbody/systems_data/2023-08-12 17-46-52.425399Generated Table.csv'
+    path_to_table = 'nbody/systems_data/Solar System.csv'
     path_to_results = 'nbody/Results/CPU_Simulations' + '/' + str(datetime.now()).replace(':', '-')
 
     os.mkdir(path_to_results)
     config = ConfigManager(path_to_yaml).get_config(path_to_yaml)
-    table = TableManager.get_table_sliced(path_to_table, 0, 100)
+    table = TableManager.get_table_sliced(path_to_table, 0, 3)
 
-    report = ReportManager()
+    report = Report()
     report.add_to_report(config)  # , logger.trace(config)
     report.add_to_report({'Number of objects': len(table)})
 

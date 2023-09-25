@@ -147,7 +147,7 @@ class TableManager:
         return dicts
 
 
-class ReportManager:
+class Report:
     """
     Class to work with report, that stores values as dictionary
     """
@@ -170,8 +170,6 @@ class ReportManager:
     def get_report(self) -> list:
         return self.report_dict
     
-
-    # Make abstract fabric
     def print_report_to_console(self) -> None:
         for item in parallel(self.report_dict):
             print(item)

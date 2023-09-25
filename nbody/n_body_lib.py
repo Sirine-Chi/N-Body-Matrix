@@ -205,6 +205,41 @@ def new_format_matrices(s):
         "Velocities vector": v(velocity_matrix(s))
     }
 
+def hadamar_product(matrix1, matrix2):
+    ctx = cl.create_some_context()
+    queue = cl.CommandQueue(ctx)
+
+    mf = cl.mem_flags
+    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
+    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
+    dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
+
+    prg = cl.Program(ctx, """
+        __kernel void product(__global const float *Z, __global float *P)
+        {
+            const int size = get_global_size(0);
+            int j = get_global_id(0);
+            P[j] = 0;
+            for (int i = 0; i < size; ++i)
+            {
+                P[j] += a[size*i] *a[j + size*i];
+            }
+        }
+        """).build()
+    
+    t0 = monotonic()
+
+    prg.product(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
+
+    final_matrix = np.empty_like(matrix1)
+    cl.enqueue_copy(queue, final_matrix, dest_buf)
+
+    # print(final_matrix)
+
+    delta_t = monotonic() - t0
+    # print('OpenCL Hadamar: %.4f seconds' % delta_t)
+
+    return final_matrix
 
 # @jit(nogil=True, fastmath=True) #nopython=True, 
 # def simulation(method="eiler", objects: list, dir, end, h):
