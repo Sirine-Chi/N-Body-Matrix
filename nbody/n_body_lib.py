@@ -65,7 +65,11 @@ def ranvec(r: float) -> np.ndarray:
     r: float | vector length
     return: np.ndarray | random vector
     """
-    rv = v([rnd.uniform(-r, r), 2 * (rnd.getrandbits(1) - 0.5) * (r ** 2 - rnd.uniform(-r, r) ** 2) ** 0.5])
+    a = np.random.uniform(0.0, 2 * math.pi)
+    rv = v([
+        r*math.cos(a),
+        r*math.sin(a)
+    ])
     return rv
 
 
@@ -77,7 +81,8 @@ def ranrv(r: float) -> np.ndarray:
     return: np.ndarray | random vector
     """
     a = np.random.uniform(0.0, 2 * math.pi)
-    rr = abs(np.random.normal(0.0, r, size=1))
+    # rr = abs(np.random.normal(0.0, r, size=1))
+    rr = float(abs(np.random.normal(0, r, size=1)))
     rv = v([rr * math.cos(a), rr * math.sin(a)])  # radians
     return rv
 
@@ -98,6 +103,8 @@ def rotvec(vec: np.ndarray, al: float) -> np.ndarray:
 def maximize_function(values, function):
     """
     returns maximum value of a function affected on container of values
+    values : iterable
+    function : callable
     """
     return max(list(map(function, values)))
 
@@ -105,7 +112,14 @@ def minimize_function(values, function):
     """
     returns minimum value of a function affected on container of values
     """
-    return max(list(map(function, values)))
+    return min(list(map(function, values)))
+
+def maximize_dist(points, dist: callable):
+    distances = []
+    for i in points:
+        for j in points:
+            distances.append(dist(i, j))
+    return max(distances)
 
 # MATRIX FUNCTIONS
 

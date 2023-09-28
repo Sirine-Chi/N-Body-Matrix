@@ -17,7 +17,7 @@ def main():
 
     os.mkdir(path_to_results)
     config = ConfigManager(path_to_yaml).get_config(path_to_yaml)
-    table = TableManager.get_table_sliced(path_to_table, 0, 3)
+    table = TableManager.get_table_sliced(path_to_table, 0, 2)
 
     report = Report()
     report.add_to_report(config)  # , logger.trace(config)
@@ -35,6 +35,7 @@ def main():
     report.print_report_to_console()
     # report.save_report_to_txt(path_to_report=path_to_results)
     report.save_report_to_yaml(path_to_report=path_to_results)
+    print(sim.get_last_positions())
 
 
 if __name__ == '__main__':
