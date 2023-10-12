@@ -20,7 +20,7 @@ from numpy import array as v
 import pandas as pd
 import random2 as rnd
 import pyopencl as cl
-from numba import jit, prange
+from numba import njit, prange
 from tqdm import tqdm
 import colorama
 from colorama import Fore, Back, Style
