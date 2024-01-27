@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as anima
 from particle import Particle
 from time import monotonic
-from n_body_lib import logger
+from n_body_lib import logger, v
 
 class Visualisator:
     def __init__(self):
@@ -71,3 +71,38 @@ class Realtime2D(Visualisator):
 
 class Realtime3D(Visualisator):
     pass
+
+
+class DistributionVisualisator:
+    import matplotlib.pyplot as plt
+    from n_body_lib import *
+
+    @staticmethod
+    def dist_check(values: list):
+        # print(f"1 {values}")
+
+        plt.clf()
+        plt.hist(values, bins=len(values)//10)
+        plt.show()
+
+    @staticmethod
+    def make_xy(points: list) -> list:
+        x_s0 = []
+        y_s0 = []
+        for i in points:
+            x_s0.append(i[0])
+            y_s0.append(i[1])
+        return v([x_s0, y_s0])
+
+    @staticmethod
+    def dist_check_2d(list_of_vectors: list[np.ndarray]):
+        print(f"Vectors: {list_of_vectors}")
+        v_shaped = DistributionVisualisator.make_xy(list_of_vectors)
+
+        plt.clf()
+        plt.hist2d(
+            v_shaped[0],
+            v_shaped[1],
+            bins=len(list_of_vectors)//10
+            )
+        plt.show()

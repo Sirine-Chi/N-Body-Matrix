@@ -58,6 +58,7 @@ class SimulatorCPU(Simulator):
                 element.iteration(self.particles, self.step)
             self.sys_offset()
             self.tau += self.step
+            yield
 
     def sys_offset(self):
         for pcl in self.particles:
@@ -90,6 +91,7 @@ class SimulatorGPU(Simulator):
         self.acceleration_vectors = []
         self.positions_vectors.append(SimulatorGPU.smth_vector(particles_fp, 'start_position'))
         self.velocity_vectors.append(SimulatorGPU.smth_vector(particles_fp, 'start_velocity'))
+        self.tau: float = 0.0
 
     @staticmethod
     def smth_vector(particles: list, key: str) -> np.ndarray:
@@ -110,7 +112,8 @@ class SimulatorGPU(Simulator):
         pass
 
     def simulation(self):
-        pass
+        while tau < self.end_time:
+            pass
 
     def get_positions(self) -> list:
         pass

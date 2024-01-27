@@ -2,7 +2,6 @@ from __future__ import annotations
 # import n_body_lib as nbl
 from n_body_lib import *
 
-
 def force_obj_obj(obj1: Particle, obj2: Particle):
     """
     Force between first and second given objects on last position. Uses lambda f_ij
@@ -10,6 +9,7 @@ def force_obj_obj(obj1: Particle, obj2: Particle):
     obj2: Particle | Object, from which force is acting
     return: np.ndarray | Force acting on obj1 from obj2
     """
+    # return f_ij(obj1.positions[-1], obj2.positions[-1], obj1.mass, obj2.mass)
     return f_ij(obj1.positions[-1], obj2.positions[-1], obj1.mass, obj2.mass)
 
 
@@ -27,6 +27,18 @@ def force_obj_sys(obj: Particle, system: list[Particle]):
             forces.append(force_obj_obj(obj, other))
     return sum(forces)
 
+
+# def potential_at_point(point: np.ndarray, force_obj_sys: callable, system: list[Particle]):
+#     point = Particle("unit", 1.0, point, [0.0, 0.0], 'w', 0.0)
+#     return np.gradient(force_obj_sys(point, system))
+
+
+# def kinetic_energy(obj: Particle):
+#     return obj.mass*(scal(obj.velocities[-1]))**2 / 2
+
+# def potential_Energy(obj: Particle, system: list[Particle]):
+#     pass
+#     return sum(potential_at_point(Particle.get_last_position, force_obj_sys(Particle, system=system), system=system))
 
 class Particle:
     """
@@ -102,6 +114,10 @@ class Particle:
 
     def get_name(self) -> str:
         return self.name
+
+    def get_function(self, function):
+        pass
+        return 
 
 
 class DynamicParticle(Particle):
