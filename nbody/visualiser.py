@@ -75,7 +75,7 @@ class Realtime3D(Visualisator):
 
 class DistributionVisualisator:
     import matplotlib.pyplot as plt
-    from n_body_lib import *
+    # from n_body_lib import *
 
     @staticmethod
     def dist_check(values: list):
@@ -95,7 +95,7 @@ class DistributionVisualisator:
         return v([x_s0, y_s0])
 
     @staticmethod
-    def dist_check_2d(list_of_vectors: list[np.ndarray]):
+    def dist_check_2d(list_of_vectors: list[v]):
         print(f"Vectors: {list_of_vectors}")
         v_shaped = DistributionVisualisator.make_xy(list_of_vectors)
 
