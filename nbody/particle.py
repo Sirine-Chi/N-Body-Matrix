@@ -172,3 +172,6 @@ class AnalyticParticle(Particle):
         self.times.append(self.times[-1] + dt)
         self.velocities.append(analytic_f(self.positions[0], self.velocities[0], (tau))[1])
         self.positions.append(analytic_f(self.positions[0], self.velocities[0], (tau))[0])
+
+class ManagableParticle(Particle):
+    pass
