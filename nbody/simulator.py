@@ -58,7 +58,8 @@ class SimulatorCPU(Simulator):
                 element.iteration(self.particles, self.step)
             self.sys_offset()
             self.tau += self.step
-            yield
+            yield self.tau
+            # yield self.tau
 
     def sys_offset(self):
         for pcl in self.particles:

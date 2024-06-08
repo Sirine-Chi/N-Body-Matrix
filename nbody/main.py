@@ -1,3 +1,4 @@
+from operator import truediv
 from simulator import SimulatorCPU
 from data_manager import ConfigManager, TableManager, Report
 from n_body_lib import *
@@ -54,8 +55,26 @@ def main():
     particles_f = TableManager.format_table_dicts(table)
 
     sim = SimulatorCPU(particles_f, config['End time'], config["Time step"])
-    for _ in tqdm(sim.simulation(), desc="Runtime", ncols=100):
-        pass
+    # for _ in tqdm(sim.simulation(), desc="Runtime", ncols=100):
+    #     pass
+
+    tot : float = 0.0
+    with tqdm(desc="Runtime", total=config['End time']+config["Time step"], bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.RED, Fore.RESET)) as pbar:
+        first = True
+        done = False
+        for i in sim.simulation():
+            # if first:
+            #     first = False
+            #     continue
+            # if i != config['End time']:
+            #     pbar.update(i-tot)
+            #     tot = i
+            pbar.update(i-tot)
+            tot = i
+            # if i > 0.99*config["End time"]: print(Fore.GREEN)
+        
+    print(Style.RESET_ALL)
+
     sim.vis(path_to_results)
     # log.add_to_log(sim.get_last_positions())
     report.add_to_report({'Runtime': sim.get_runtime()})

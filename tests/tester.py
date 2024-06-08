@@ -47,7 +47,7 @@ for i in range(2, 50, 2):
 
     # NOTE: Should there be any plots in the correspondig directory?
     # Because there are none for now
-
+    
 
     directory = "nbody/Plots/Simulation/" + str(datetime.datetime.now()).replace(
         ":", "-"
