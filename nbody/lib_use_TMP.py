@@ -1,5 +1,5 @@
 import numpy as np
-import nbody.linal_lib as l
+import linal_lib as l
 
 an = np.ndarray([1.0, 2.0, 3.0, 4.0])
 

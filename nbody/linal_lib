@@ -21,7 +21,7 @@ class Plane:
         self.a2 = ax_2
 
 class Angle(float):
-    """In radians by default
+    """In radians by default, >0 - forced
 
     Args:
         float (_type_): _description_
@@ -29,12 +29,24 @@ class Angle(float):
     
     @staticmethod
     def new_deg_angle(d: float):
+        d = Angle.normalise_angle(d, 360.0)
         return(Angle(d*2*math.pi/360.0))
     # phi / 2pi = alpha / 360
 
     @staticmethod
-    def new_rad_angle(d: float):
-        return(Angle(d))
+    def new_rad_angle(r: float):
+        r = Angle.normalise_angle(r, 2*math.pi)
+        return(Angle(r))
+    
+    @staticmethod
+    def normalise_angle(a: Angle, p: Angle) -> Angle:
+        # angle in (0, Period)
+        i = 0
+        while a < 0:
+            a += (p*i)
+            i+=1
+        return a
+
 
 class Mx:
     """Matrix class
@@ -119,21 +131,34 @@ class Array(Mx):
         return ar / Array.scal(ar)
     
     def rotation(self, angle: float, p: Plane, d: int = 3):
-        self.a *= Mx.rotation_matrix(angle, p, d).m
+        """Method rotating Array
 
-# array.rotation(30, Plane(Axis(1), Axis(4)))
+        Args:
+            angle (float): rotation angle
+            p (Plane): rotation plane
+            d (int, optional): Number of diemensions. Defaults to 3.
+        """
+        self.a *= Mx.rotation_matrix(angle, p, d).m
 
 
 # 3d
-class D3(Array):
-    pass
+# class D3(Array):
+#     pass
 
-def rotate_3d(m1 : D3, *args) -> D3:
-    pass
+# def cart2sph(x, y, z):
+#     hxy = np.hypot(x, y)
+#     r = np.hypot(hxy, z)
+#     el = np.arctan2(z, hxy)
+#     az = np.arctan2(y, x)
+#     return az, el, r
 
-# 2d
-class D2(D3):
-    pass
+# def sph2cart(az, el, r):
+#     rcos_theta = r * np.cos(el)
+#     x = rcos_theta * np.cos(az)
+#     y = rcos_theta * np.sin(az)
+#     z = r * np.sin(el)
+#     return x, y, z
 
-def rotate_2d(m1: D2, *args) -> D2:
-	pass
+# # 2d
+# class D2(D3):
+#     pass
