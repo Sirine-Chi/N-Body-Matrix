@@ -1,10 +1,40 @@
 # parentness: Mx -> arr? -> 3d -> 2d
 
 from __future__ import annotations
+from platform import machine
 from typing import Any, Final, Self
 import sys
 import math
 import numpy as np
+
+class Axis:
+    """
+    numerates up from 0
+    """
+    def __init__(self, n: int):
+        self.n = n
+
+class Plane:
+
+    def __init__(self, ax_1: Axis, ax_2: Axis):
+        self.a = ax_1
+        self.a2 = ax_2
+
+class Angle(float):
+    """In radians by default
+
+    Args:
+        float (_type_): _description_
+    """
+    
+    @staticmethod
+    def new_deg_angle(d: float):
+        return(Angle(d*2*math.pi/360.0))
+    # phi / 2pi = alpha / 360
+
+    @staticmethod
+    def new_rad_angle(d: float):
+        return(Angle(d))
 
 class Mx:
     """Matrix class
@@ -27,7 +57,7 @@ class Mx:
     def __add__(self, other) -> Mx:
         return Mx(self.m + other.m)
 
-    # - 
+    # -
     def __sub__(self, other) -> Mx:
         return Mx(self.m - other.m)
 
@@ -35,13 +65,22 @@ class Mx:
     def __mul__(self, other) -> Mx:
         return Mx(np.dot(self.m, other.m))
 
-    # hadamar
+    # hadamar %
     def __mod__(self, other) -> Mx:
         return Mx(np.multiply(self.m, other.m))
 
     # transpose
     def transpose(self) -> Mx:
         return(Mx(np.matrix_transpose(self.m)))
+    
+    @staticmethod
+    def rotation_matrix(angle: Angle, p: Plane, d: int = 3) -> Mx:
+        m = np.zeros(d, d)
+        m[p.a1, p.a1] = math.cos(angle)
+        m[p.a1, p.a2] = -1*math.sin(angle)
+        m[p.a2, p.a1] = math.sin(angle)
+        m[p.a2, p.a2] = math.cos(angle)
+        return Mx(m)
 
 class Array(Mx):
 
@@ -49,11 +88,40 @@ class Array(Mx):
         self.a = ar
     
     @staticmethod
+    def cartesian_array(*args: list[float]):
+        """Constructor for arrays in cartesian coordinates
+
+        Args:
+            *args (list[float]): x_1, x_2, x_3...
+
+        Returns:
+            Array: _description_
+        """
+        return Array(np.ndarray(args))
+    
+    @staticmethod
+    def polar_array(*args: list[float]):
+        """Constructor for arrays in polar coordinates
+
+        Args:
+            *args (list[float]): r, phi_1, phi_2...
+
+        Returns:
+            Array: _description_
+        """
+        return Array(np.ndarray(args)) # FIXME fake polar initialisation
+    
+    @staticmethod
     def scal(a: Array) -> float:
         return np.linalg.norm(a.a, ord=2)
     
     def unitise(self, ar: Array) -> Array:
-        return ar / scal(ar)
+        return ar / Array.scal(ar)
+    
+    def rotation(self, angle: float, p: Plane, d: int = 3):
+        self.a *= Mx.rotation_matrix(angle, p, d).m
+
+# array.rotation(30, Plane(Axis(1), Axis(4)))
 
 
 # 3d

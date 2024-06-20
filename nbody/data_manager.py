@@ -116,7 +116,7 @@ class TableManager:
         return table[limit_down:limit_up]
 
     @staticmethod
-    def format_table_dicts(table: DataFrame) -> list(dict):
+    def format_table_dicts(table: DataFrame) -> list[dict]:
         """returns list of dicts containing object initialisation parameters
 
         Args:
