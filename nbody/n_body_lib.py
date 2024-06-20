@@ -19,7 +19,7 @@ import numpy as np
 from numpy import array as v
 import pandas as pd
 import random2 as rnd
-import pyopencl as cl
+# import pyopencl as cl
 from numba import njit, prange
 from tqdm import tqdm
 import colorama
@@ -123,46 +123,46 @@ def maximize_dist(points, dist: callable):
 
 # MATRIX FUNCTIONS
 
-def openCL_mult(matrix1, matrix2):
-    os.environ["PYOPENCL_CTX"] = "0"
-    ctx = cl.create_some_context()
-    queue = cl.CommandQueue(ctx)
+# def openCL_mult(matrix1, matrix2):
+#     os.environ["PYOPENCL_CTX"] = "0"
+#     ctx = cl.create_some_context()
+#     queue = cl.CommandQueue(ctx)
 
-    mf = cl.mem_flags
-    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
-    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
-    dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
+#     mf = cl.mem_flags
+#     a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
+#     b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
+#     dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
 
-    prg = cl.Program(ctx, """
-        __kernel void multiplymatrices(const unsigned int size, __global float * matrix1, __global float * matrix2, __global float * res) {
+#     prg = cl.Program(ctx, """
+#         __kernel void multiplymatrices(const unsigned int size, __global float * matrix1, __global float * matrix2, __global float * res) {
 
-        int i = get_global_id(1); 
-        int j = get_global_id(0);
+#         int i = get_global_id(1); 
+#         int j = get_global_id(0);
 
-        res[i + size * j] = 0;
+#         res[i + size * j] = 0;
 
-        for (int k = 0; k < size; k++)
-        {
-            res[i + size * j] += matrix1[k + size * i] * matrix2[j + size * k];
-        }
+#         for (int k = 0; k < size; k++)
+#         {
+#             res[i + size * j] += matrix1[k + size * i] * matrix2[j + size * k];
+#         }
 
-        }
-        """).build()
-    # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
+#         }
+#         """).build()
+#     # res[i + size * j] += matrix1[i + size * k] * matrix2[k + size * j];
 
-    t0 = monotonic()
+#     t0 = monotonic()
 
-    prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
+#     prg.multiplymatrices(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
 
-    final_matrix = np.empty_like(matrix1)
-    cl.enqueue_copy(queue, final_matrix, dest_buf)
+#     final_matrix = np.empty_like(matrix1)
+#     cl.enqueue_copy(queue, final_matrix, dest_buf)
 
-    # print(final_matrix)
+#     # print(final_matrix)
 
-    delta_t = monotonic() - t0
-    # print('OpenCL Multiplication: %.4f seconds' % delta_t)
+#     delta_t = monotonic() - t0
+#     # print('OpenCL Multiplication: %.4f seconds' % delta_t)
 
-    return final_matrix
+#     return final_matrix
 
 def np_mult(matrix1, matrix2):  # =m1 x m2, порядок как в письме
     return matrix1.dot(matrix2)
@@ -219,41 +219,41 @@ def new_format_matrices(s):
         "Velocities vector": v(velocity_matrix(s))
     }
 
-def hadamar_product_cl(matrix1, matrix2):
-    ctx = cl.create_some_context()
-    queue = cl.CommandQueue(ctx)
+# def hadamar_product_cl(matrix1, matrix2):
+#     ctx = cl.create_some_context()
+#     queue = cl.CommandQueue(ctx)
 
-    mf = cl.mem_flags
-    a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
-    b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
-    dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
+#     mf = cl.mem_flags
+#     a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix1)
+#     b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=matrix2)
+#     dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, matrix1.nbytes)
 
-    prg = cl.Program(ctx, """
-        __kernel void product(__global const float *Z, __global float *P)
-        {
-            const int size = get_global_size(0);
-            int j = get_global_id(0);
-            P[j] = 0;
-            for (int i = 0; i < size; ++i)
-            {
-                P[j] += a[size*i] *a[j + size*i];
-            }
-        }
-        """).build()
+#     prg = cl.Program(ctx, """
+#         __kernel void product(__global const float *Z, __global float *P)
+#         {
+#             const int size = get_global_size(0);
+#             int j = get_global_id(0);
+#             P[j] = 0;
+#             for (int i = 0; i < size; ++i)
+#             {
+#                 P[j] += a[size*i] *a[j + size*i];
+#             }
+#         }
+#         """).build()
     
-    t0 = monotonic()
+#     t0 = monotonic()
 
-    prg.product(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
+#     prg.product(queue, matrix1.shape, None, np.int32(len(matrix1)), a_buf, b_buf, dest_buf)
 
-    final_matrix = np.empty_like(matrix1)
-    cl.enqueue_copy(queue, final_matrix, dest_buf)
+#     final_matrix = np.empty_like(matrix1)
+#     cl.enqueue_copy(queue, final_matrix, dest_buf)
 
-    # print(final_matrix)
+#     # print(final_matrix)
 
-    delta_t = monotonic() - t0
-    # print('OpenCL Hadamar: %.4f seconds' % delta_t)
+#     delta_t = monotonic() - t0
+#     # print('OpenCL Hadamar: %.4f seconds' % delta_t)
 
-    return final_matrix
+#     return final_matrix
 
 def hadamar_product_np(matrix1, matrix2):
     return np.multiply(matrix1, matrix2)

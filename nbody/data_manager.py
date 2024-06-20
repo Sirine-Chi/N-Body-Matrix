@@ -116,33 +116,26 @@ class TableManager:
         return table[limit_down:limit_up]
 
     @staticmethod
-    def format_table(table: DataFrame) -> list:
-        lines = []
-        for line in table.to_numpy():
-            lines.append(
-                [
-                    str(line[1]).replace(' ', ''),
-                    line[2],
-                    v([line[3], line[4]]),
-                    v([line[5], line[6]]),
-                    line[7].replace(' ', ''),
-                    line[8]
-                ]
-            )
-        return lines
+    def format_table_dicts(table: DataFrame) -> list(dict):
+        """returns list of dicts containing object initialisation parameters
 
-    @staticmethod
-    def format_table_dicts(table: DataFrame) -> list:
+        Args:
+            table (DataFrame): _description_
+
+        Returns:
+            list(dict): _description_
+        """
         dicts = []
         for line in table.to_numpy():
             dicts.append(
                 {
-                    'name': str(line[1]),
+                    'name': str(line[0]),
+                    'type': str(line[1]),
                     'mass': line[2],
-                    'start_position': v([line[3], line[4]]),
-                    'start_velocity': v([line[5], line[6]]),
-                    'color': str(line[7]),
-                    'start_angle': line[8]
+                    'start_position': v([line[3], line[4], line[5]]),
+                    'start_velocity': v([line[6], line[7], line[8]]),
+                    'color': str(line[9]),
+                    'start_angle': line[10]
                 }
             )
         return dicts

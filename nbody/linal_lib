@@ -1,0 +1,71 @@
+# parentness: Mx -> arr? -> 3d -> 2d
+
+from __future__ import annotations
+from typing import Any, Final, Self
+import sys
+import math
+import numpy as np
+
+class Mx:
+    """Matrix class
+    """
+	
+    def __init__(self, ms : np.ndarray):
+        """Matrix constructor
+
+        Args:
+            m (np.ndarray): _description_
+        """
+		
+        self.m : np.ndarray = ms
+
+    # print
+    def __str__(self) -> str:
+        return f"Matrix: {self.m}"
+
+	# +
+    def __add__(self, other) -> Mx:
+        return Mx(self.m + other.m)
+
+    # - 
+    def __sub__(self, other) -> Mx:
+        return Mx(self.m - other.m)
+
+    # dot product
+    def __mul__(self, other) -> Mx:
+        return Mx(np.dot(self.m, other.m))
+
+    # hadamar
+    def __mod__(self, other) -> Mx:
+        return Mx(np.multiply(self.m, other.m))
+
+    # transpose
+    def transpose(self) -> Mx:
+        return(Mx(np.matrix_transpose(self.m)))
+
+class Array(Mx):
+
+    def __init__(self, ar: np.ndarray):
+        self.a = ar
+    
+    @staticmethod
+    def scal(a: Array) -> float:
+        return np.linalg.norm(a.a, ord=2)
+    
+    def unitise(self, ar: Array) -> Array:
+        return ar / scal(ar)
+
+
+# 3d
+class D3(Array):
+    pass
+
+def rotate_3d(m1 : D3, *args) -> D3:
+    pass
+
+# 2d
+class D2(D3):
+    pass
+
+def rotate_2d(m1: D2, *args) -> D2:
+	pass

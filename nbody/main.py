@@ -46,7 +46,7 @@ def main():
 
     os.mkdir(path_to_results)
     config = ConfigManager(path_to_yaml).get_config(path_to_yaml)
-    table = TableManager.get_table_sliced(path_to_table, 0, 2)
+    table = TableManager.get_table_sliced(path_to_table, 0, 5)
 
     report = Report()
     report.add_to_report(config)  # , logger.trace(config)
@@ -60,8 +60,7 @@ def main():
 
     tot : float = 0.0
     with tqdm(desc="Runtime", total=config['End time']+config["Time step"], bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.RED, Fore.RESET)) as pbar:
-        first = True
-        done = False
+        # first = True
         for i in sim.simulation():
             # if first:
             #     first = False

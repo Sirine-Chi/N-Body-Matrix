@@ -59,7 +59,8 @@ class SimulatorCPU(Simulator):
             self.sys_offset()
             self.tau += self.step
             yield self.tau
-            # yield self.tau
+
+            # FIXME one more step than needed
 
     def sys_offset(self):
         for pcl in self.particles:
@@ -113,7 +114,7 @@ class SimulatorGPU(Simulator):
         pass
 
     def simulation(self):
-        while tau < self.end_time:
+        while self.tau < self.end_time:
             pass
 
     def get_positions(self) -> list:

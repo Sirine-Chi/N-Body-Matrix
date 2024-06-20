@@ -60,6 +60,7 @@ class Particle:
         self.forces = []
         self.times = []
 
+        # FIXME rotvec depends on 2d
         self.positions.append(rotvec(v(r0), self.start_angle))
         self.velocities.append(rotvec(v(v0), self.start_angle))
         self.times.append(0.0)
@@ -69,14 +70,8 @@ class Particle:
     def first_iteration(self, system: list[Particle]):
         pass
 
-    # def print_object(self):
-    #     logger.trace(f'New Obj: {self.name} \n mass: {self.mass} \n forces: {str(self.forces)}\n velocities: {str(self.velocities)} \n positions: {str(self.positions)} \n times: {str(self.times)}\n')
-
     def __str__(self) -> str:
         return f"Name: {self.name}, Mass: {self.mass}, Positions: {self.positions}, Colour: {self.colour}, Angle: {self.start_angle}"
-
-    # def print_object_coor(self):
-    #     logger.trace(f'Obj coordinates: {self.positions}\n')
 
     def offset(self, offset_object: Particle, n: int):
         """
@@ -140,9 +135,10 @@ class DynamicParticle(Particle):
             vs.append(eiler(vs[-1], (fs[-1] / m), dt))
             rs.append(eiler(rs[-1], vs[-1], dt))
 
-        def midpoint_method(fs, vs, rs, m):
-            vs.append(v(vs[-1] + dt * f(rs[-1] + dt / 2 * f(rs[-1])) / m))  # Midpoint
-            rs.append(v(rs[-1] + dt / 2 * (vs[-1] + vs[-2])))
+        # FIXME f - fs
+        # def midpoint_method(fs, vs, rs, m):
+        #     vs.append(v(vs[-1] + dt * fs(rs[-1] + dt / 2 * fs(rs[-1])) / m))  # Midpoint
+        #     rs.append(v(rs[-1] + dt / 2 * (vs[-1] + vs[-2])))
 
         def adams_method(fs, vs, rs, m):
             vs.append(adams(vs[-1], (fs[-1] / m), (fs[-2] / m), dt))
@@ -174,4 +170,10 @@ class AnalyticParticle(Particle):
         self.positions.append(analytic_f(self.positions[0], self.velocities[0], (tau))[0])
 
 class ManagableParticle(Particle):
+    """Experimental subclass for particle that can be managed on the run \n
+    Empty yet
+
+    Args:
+        Particle (_type_): _description_
+    """
     pass
