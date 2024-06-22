@@ -9,4 +9,6 @@
 ## TODO
 
 1. FIT THE ARCH!!!!!!:
-    1.1 
+    1.1 data
+    1.2 controller
+    1.3 visulisation
