@@ -1,0 +1,10 @@
+---
+number of objects: !!int 2
+center: [0.0, 0.0, 0.0]
+medium radius: !!float 1.0
+crit radius delta: !!float 0.25
+medium mass: !!float 1.0
+crit mass delta: !!float 0.0
+mass center velocity: [0.0, 0.0, 0.0]
+medium velocity scalar: !!float 0.0
+velocity crit delta: !!float 0.0

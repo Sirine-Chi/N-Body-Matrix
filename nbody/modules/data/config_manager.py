@@ -7,7 +7,7 @@ class ConfigManager:
     def __init__(self, path_to_config: str) -> None:
         self.config: dict = YamlManager.get_yaml(path_to_yaml=path_to_config)
 
-    def get_config(self, path_to_config: str) -> dict:
+    def get_config(self) -> dict:
         return self.config
     
     def print_config_to_console(self):

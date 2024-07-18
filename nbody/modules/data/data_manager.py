@@ -1,5 +1,7 @@
 from __future__ import annotations
+import trace
 import yaml
+from loguru import logger
 
 def recursive_writer(iterable_object: list, func):
     """
@@ -57,7 +59,8 @@ class YamlManager:
     def print_yaml(yaml_content: dict) -> None:
         maxlen = max(list(map(len, yaml_content.keys())))
         for index in yaml_content.items():
-            print(" " * (maxlen - len(index)), Fore.CYAN, index, Style.RESET_ALL, ":", yaml_content[index])
+            print(" " * (maxlen - len(index)), index, ":", yaml_content[index])
+            # print(" " * (maxlen - len(index)), Fore.CYAN, index, Style.RESET_ALL, ":", yaml_content[index])
 
     @staticmethod
     def save_yaml_to_txt(yaml_content: dict, path_to_txt: str, file_name="yaml_content.txt") -> None:
