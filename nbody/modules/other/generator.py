@@ -1,12 +1,10 @@
 # from typing import Optional as opt
 from typing import Final
-from numpy import random
 import copy
+from numpy import random
 from loguru import logger
 from nbody.modules.linal.mylinal import Array
 from nbody.modules.data.data_manager import YamlManager
-# from nbody.modules.data.data_manager import YamlManager # for commented code
-# from n_body_lib import *
 
 DEFAULT_GENERATING_PATTERN: Final = {
     "number of objects": 2,
@@ -19,7 +17,6 @@ DEFAULT_GENERATING_PATTERN: Final = {
     "medium velocity scalar": 0.0,
     "velocity crit delta": 0.0
 }
-
 
 class TableGenerator:
     def __init__(self) -> None:
@@ -47,8 +44,6 @@ class TableGenerator:
                 ])
         # print(*objects_data, sep="\n")
         return objects_data
-
-# TODO pattern(dict) class, 
 
 DEFAULT_PATH: str = "nbody/tmp/patterns"
 class GeneratingPattern:
