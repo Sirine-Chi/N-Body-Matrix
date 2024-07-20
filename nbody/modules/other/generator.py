@@ -1,6 +1,7 @@
 # from typing import Optional as opt
 from numpy import random
-from loguru import logger
+import copy
+# from loguru import logger
 from nbody.modules.linal.linal_lib import Array
 from nbody.modules.data.data_manager import YamlManager
 # from nbody.modules.data.data_manager import YamlManager # for commented code
@@ -18,61 +19,12 @@ DEFAULT_GENERATING_PATTERN: dict = {
     "velocity crit delta": 0.0
 }
 
-# FIXME haven't find implementation, TODO read and understad, what it's doing
-
-# class GeneratingPattern:
-#     def __init__(self) -> None:
-#         self.pattern: dict = DEFAULT_GENERATING_PATTERN
-
-#     def set_pattern(self, pattern: dict) -> None:
-#         """
-#         Set pattern from dictionary
-#         """
-#         self.validate_pattern()
-#         self.pattern: dict = pattern
-
-#     def set_pattern_manually(self, num: int, cen: np.ndarray, med_rad: float, crit_rad_d: float, med_m: float,
-#                              crit_m_d: float, m_cen_vel: np.ndarray, med_vel_scal: float, vel_crit_d: float) -> None:
-#         """
-#         Manually sets parametres to generating pattern dictionary
-#         """
-#         self.pattern = {
-#             "number of objects": num,
-#             "center": cen,
-#             "medium radius": med_rad,
-#             "crit radius delta": crit_rad_d,
-#             "medium mass": med_m,
-#             "crit mass delta": crit_m_d,
-#             "mass center velocity": m_cen_vel,
-#             "medium velocity scalar": med_vel_scal,
-#             "velocity crit delta": vel_crit_d
-#         }
-
-#     def load_pattern_from_yaml(self, path_to_yaml):
-#         """
-#         Loads pattern from yaml file and sets it
-#         """
-#         self.pattern = YamlManager.get_yaml(path_to_yaml)
-#         self.validate_pattern()
-
-#     def __str__(self) -> str:
-#         return str(self.pattern)
-
-#     def validate_pattern(self):
-#         lines = []
-#         for key in DEFAULT_GENERATING_PATTERN.items():
-#             if type(DEFAULT_GENERATING_PATTERN[key]) != type(self.pattern[key]):
-#                 line = f"Mistake in option {key},\n your type is {type(self.pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}"
-#                 logger.error(line)
-#                 lines.append(line)
-#         return lines
-
 
 class TableGenerator:
     def __init__(self) -> None:
         self.default_pattern = DEFAULT_GENERATING_PATTERN
 
-    def spherical(self, pattern: dict = DEFAULT_GENERATING_PATTERN) -> list:
+    def spherical(self, pattern: dict = copy.deepcopy(DEFAULT_GENERATING_PATTERN)) -> list:
         """
         :param pattern: dict | dictionary with settings for generator
         :returns list | data to write to csv table
@@ -97,24 +49,29 @@ class TableGenerator:
 
 # TODO pattern(dict) class, 
 
-default_path: str = "nbody/tmp/patterns"
-class GeneratingPattern(dict):
+DEFAULT_PATH: str = "nbody/tmp/patterns"
+class GeneratingPattern:
     
-    def __init__(self):
-        self.pattern = {"a": "a"}
+    def __init__(self, pattern: dict = copy.deepcopy(DEFAULT_GENERATING_PATTERN)):
+        self.pattern = pattern
 
-    def read_pattern_from_yaml(self, path_to_pattern: str = default_path+'/pattern.yaml'):
-        self.pattern = YamlManager.get_yaml(path_to_pattern)
-        print(self.pattern)
-        
-    def validate_pattern(self):
-        lines = []
+    def __str__(self) -> str:
+        return self.pattern
+
+    def read_pattern_from_yaml(self, path_to_pattern: str = DEFAULT_PATH+'/pattern.yaml'):
+        p = YamlManager.get_yaml(path_to_pattern)
+        if GeneratingPattern.pattern_is_valid(p):
+            self.pattern = p
+            print(self.pattern)
+    
+    @staticmethod
+    def pattern_is_valid(pattern: dict):
         for key in DEFAULT_GENERATING_PATTERN.items():
-            if type(DEFAULT_GENERATING_PATTERN[key]) is not type(self.pattern[key]):
-                line = f"Mistake in option {key},\n your type is {type(self.pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}"
-                logger.error(line)
-                lines.append(line)
-        return lines
+            if type(DEFAULT_GENERATING_PATTERN[key]) is not type(pattern[key]):
+                # line = f"Mistake in option {key},\n your type is {type(pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}"
+                # logger.error(line)
+                return False
+        return True
 
 g = GeneratingPattern()
 g.read_pattern_from_yaml()
