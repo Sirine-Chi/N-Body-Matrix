@@ -1,13 +1,14 @@
 # from typing import Optional as opt
+from typing import Final
 from numpy import random
 import copy
 from loguru import logger
-from nbody.modules.linal.linal_lib import Array
+from nbody.modules.linal.mylinal import Array
 from nbody.modules.data.data_manager import YamlManager
 # from nbody.modules.data.data_manager import YamlManager # for commented code
 # from n_body_lib import *
 
-DEFAULT_GENERATING_PATTERN: dict = {
+DEFAULT_GENERATING_PATTERN: Final = {
     "number of objects": 2,
     "center": Array.cartesian_array([0.0, 0.0, 0.0]),
     "medium radius": 1.0,

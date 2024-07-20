@@ -2,6 +2,7 @@ from __future__ import annotations
 import trace
 import yaml
 from loguru import logger
+from typing import Iterable
 
 def recursive_writer(iterable_object: list, func):
     """
@@ -19,7 +20,7 @@ def recursive_writer(iterable_object: list, func):
     # raise Exception('RecursionFailed').with_traceback(recursive_writer(iterable_object, func))
 
 
-def parallel(something: list) -> list:
+def parallel(something: Iterable) -> Iterable:
     """
     Function to unfold iterables to one parallel iterable
     """

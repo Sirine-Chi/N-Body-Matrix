@@ -16,6 +16,18 @@ def mul(args: Iterable):
         # print(f"m: {m}")
     return m
 
+def lmap(f, values: Iterable):
+    """list(map)
+
+    Args:
+        f (Function): _description_
+        values (Iterable): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    return list(map(f, values))
+
 def maximize_function(values: Iterable, function: Iterable):
     """
     returns maximum value of a function affected on container of values

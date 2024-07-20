@@ -1,6 +1,6 @@
 from generator import TableGenerator
 from nbody.modules.data.table_manager import TableManager
-from nbody.modules.linal.linal_lib import Array
+from nbody.modules.linal.mylinal import Array
 
 # TODO make more global class
 
