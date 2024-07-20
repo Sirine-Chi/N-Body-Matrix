@@ -2,7 +2,6 @@ from __future__ import annotations
 import math
 import numpy as np
 from mymath import Plane, Angle, polar_to_decart
-from nbody.modules.linal import mymath
 # from random import randrange
     
 # parentness: Mx -> arr? -> 3d -> 2d
@@ -75,7 +74,10 @@ class Mx:
 
 class Array(Mx):
 
-    def __str__(self):
+    def __init__(self, ms: list[float]):
+        self.m = np.array(ms)
+
+    def __str__(self) -> str:
         return f"Array: {self.m}"
 
     @staticmethod
@@ -88,7 +90,7 @@ class Array(Mx):
     def polar_array(args: list[float]) -> Array:
         """Constructor for arrays in polar coordinates
         """
-        return Array(np.array(mymath.polar_to_decart(args) ))
+        return Array(np.array(polar_to_decart(args) ))
 
     def scal(self) -> float:
         return np.linalg.norm(self.m, ord=2)

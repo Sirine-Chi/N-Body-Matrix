@@ -1,7 +1,7 @@
 # from typing import Optional as opt
 from numpy import random
 import copy
-# from loguru import logger
+from loguru import logger
 from nbody.modules.linal.linal_lib import Array
 from nbody.modules.data.data_manager import YamlManager
 # from nbody.modules.data.data_manager import YamlManager # for commented code
@@ -9,12 +9,12 @@ from nbody.modules.data.data_manager import YamlManager
 
 DEFAULT_GENERATING_PATTERN: dict = {
     "number of objects": 2,
-    "center": Array.new_mx_from_list([0.0, 0.0, 0.0]),
+    "center": Array.cartesian_array([0.0, 0.0, 0.0]),
     "medium radius": 1.0,
     "crit radius delta": 0.25,
     "medium mass": 1.0,
     "crit mass delta": 0.0,
-    "mass center velocity": Array.new_mx_from_list([0.0, 0.0, 0.0]),
+    "mass center velocity": Array.cartesian_array([0.0, 0.0, 0.0]),
     "medium velocity scalar": 0.0,
     "velocity crit delta": 0.0
 }
@@ -68,8 +68,7 @@ class GeneratingPattern:
     def pattern_is_valid(pattern: dict):
         for key in DEFAULT_GENERATING_PATTERN.items():
             if type(DEFAULT_GENERATING_PATTERN[key]) is not type(pattern[key]):
-                # line = f"Mistake in option {key},\n your type is {type(pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}"
-                # logger.error(line)
+                logger.error(f"Mistake in option {key},\n your type is {type(pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}")
                 return False
         return True
 
