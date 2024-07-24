@@ -125,6 +125,8 @@ def polar_to_decart(polar: list[float]) -> list[float]:
     return d
 
 def decart_to_polar(decart: list[float]) -> list[float]:
+    """Cartesian to polar coordinates connversion, angles in radians, using atan2
+    """
     lenght: int = len(decart)
     pol: list = [None] * lenght
     r = float(np.linalg.norm(np.array(decart), ord=2))
@@ -136,3 +138,17 @@ def decart_to_polar(decart: list[float]) -> list[float]:
         pol[i] = math.atan2((sum(list(map(square, decart[i+1:lenght]))))**0.5, decart[i])
         
     return decart
+
+class numeric_methods:
+
+    @staticmethod
+    def eiler(x_nm, y_n, h):
+        return x_nm + h * y_n
+    
+    @staticmethod
+    def adams(x_nm, y_n, y_nd, h):
+        return x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
+
+    @staticmethod
+    def runge_kutta(order: int):
+        pass
