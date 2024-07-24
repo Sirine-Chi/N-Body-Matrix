@@ -17,14 +17,7 @@ def mul(args: Iterable):
     return m
 
 def lmap(f, values: Iterable):
-    """list(map)
-
-    Args:
-        f (Function): _description_
-        values (Iterable): _description_
-
-    Returns:
-        _type_: _description_
+    """list(map(...))
     """
     return list(map(f, values))
 
@@ -32,13 +25,13 @@ def maximize_function(values: Iterable, function: Iterable):
     """
     returns maximum value of a function affected on container of values
     """
-    return max(list(map(function, values)))
+    return max(lmap(function, values))
 
 def minimize_function(values: Iterable, function: Iterable):
     """
     returns minimum value of a function affected on container of values
     """
-    return min(list(map(function, values)))
+    return min(lmap(function, values))
 
 class Axis:
     """
@@ -118,9 +111,9 @@ def polar_to_decart(polar: list[float]) -> list[float]:
         case _:
             d[0] = r * cos(polar[1])
             for i in range(2, lenght): # i correspondes to angle in pol
-                d[i-1] = r * cos(polar[i]) * mul(list(map(sin, polar[1:i])))
+                d[i-1] = r * cos(polar[i]) * mul(lmap(sin, polar[1:i]))
                 # r*cos(a_n-1)* sin(a_1)*...*sin(a_n-2)
-            d[lenght-1] = r * mul(list(map( sin, polar[1:lenght] )))
+            d[lenght-1] = r * mul(lmap( sin, polar[1:lenght] ))
 
     return d
 
@@ -135,7 +128,7 @@ def decart_to_polar(decart: list[float]) -> list[float]:
         return a**2
     
     for i in range(1, lenght):
-        pol[i] = math.atan2((sum(list(map(square, decart[i+1:lenght]))))**0.5, decart[i])
+        pol[i] = math.atan2((sum(lmap(square, decart[i+1:lenght])))**0.5, decart[i])
         
     return decart
 

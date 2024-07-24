@@ -70,6 +70,7 @@ class Mx:
         m[p.a1.n, p.a2.n] = -1*math.sin(angle)
         m[p.a2.n, p.a1.n] = math.sin(angle)
         m[p.a2.n, p.a2.n] = math.cos(angle)
+        
         return Mx(m)
     
     @staticmethod
