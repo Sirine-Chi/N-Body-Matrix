@@ -1,4 +1,5 @@
 # from typing import Optional as opt
+from dataclasses import dataclass
 from typing import Final
 import copy
 from numpy import random
@@ -46,7 +47,18 @@ class TableGenerator:
         return objects_data
 
 DEFAULT_PATH: str = "nbody/tmp/patterns"
+
+@dataclass
 class GeneratingPattern:
+    number_of_objects: int = 2
+    center_pos: Array = Array.cartesian_array([0.0, 0.0, 0.0])
+    medium_radius: float = 1.0
+    crit_radius_delta: float = 0.25
+    medium_mass: float = 1.0
+    crit_mass_delta: float = 0.0
+    center_mass_vel: Array = Array.cartesian_array([0.0, 0.0, 0.0])
+    medium_value_vel: float = 0.0
+    velocity_crit_delta: float = 0.0
     
     def __init__(self, pattern: dict = copy.deepcopy(DEFAULT_GENERATING_PATTERN)):
         self.pattern = pattern

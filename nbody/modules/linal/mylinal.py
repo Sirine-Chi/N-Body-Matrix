@@ -26,11 +26,24 @@ class Mx:
 
 	# +
     def __add__(self, other) -> Mx:
-        return Mx(self.m + other.m)
+        if isinstance(other, Mx):
+            return Mx(self.m + other.m)
+        else:
+            return Mx(self.m + other)
+
+    # +=
+    def __iadd__(self, other) -> None:
+        if isinstance(other, Mx):
+            self.m += other.m
+        else:
+            self.m += other
 
     # -
     def __sub__(self, other) -> Mx:
-        return Mx(self.m - other.m)
+        if isinstance(other, Mx):
+            return Mx(self.m - other.m)
+        else:
+            return Mx(self.m - other)
 
     # dot product
     def __mul__(self, other) -> Mx:
@@ -38,7 +51,13 @@ class Mx:
 
     # hadamar %
     def __mod__(self, other) -> Mx:
-        return Mx(np.multiply(self.m, other.m))
+        if isinstance(other, Mx):
+            return Mx(np.multiply(self.m, other.m))
+        else:
+            try:
+                return Mx(np.multiply(self.m, other))
+            except TypeError:
+                print("Oops! Not a matrix type")
 
     # transpose
     def transpose(self) -> Mx:

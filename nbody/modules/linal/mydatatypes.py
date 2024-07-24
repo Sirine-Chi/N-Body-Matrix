@@ -1,15 +1,50 @@
 from typing import Iterable
+from collections.abc import MutableSequence
+from dataclasses import dataclass
 
-
-class TubeList:
+@dataclass
+class TubeList(MutableSequence):
     """List with fixed lenght, where you can read any element,\n
     but adding just on top like in stack,\n
     If the tubelist is full, adding new values will pop the bottom element\n
     When tubelist is created, the lenght is checked, gives error when you trying to init it with more element\n
     """
-    def __init__(self, values: Iterable, depth: int):
-        self.values = values
-        self.depth = depth
+    tube: list
+
+    def __str__(self) -> str:
+        return str(self.tube)
+
+    def __init__(self, thelist: Iterable, depth: int):
+        self.depth: int = depth
+        self.tube = thelist
+
+        if len(thelist) > depth:
+            raise ValueError
+    
+    def __len__(self):
+        return len(self.tube)
+    
+    def __getitem__(self, index):
+        return self.tube[index]
+
+    def __delitem__(self, index):
+        del self.tube[index]
+
+    def check_depth(self):
+        if len(self) == self.depth+1:
+            self.pop(0)
+    
+    def __setitem__(self, index, value):
+        """There's no way to insert element anywhere in tubelist)
+        """
+        raise IndexError
+
+    def insert(self, index, value):
+        if index == len(self):
+            self.tube.insert(index, value)
+            self.check_depth()
+        else:
+            raise IndexError
 
 class Node:
     """Node for stack
@@ -42,7 +77,7 @@ class Stack:
     def peek(self):
 
         if self.isEmpty():
-            raise Exception("Peeking from an empty stack")
+            raise IndexError("Peeking from an empty stack")
         return self.head.next.value
 
     def push(self, value):
@@ -53,7 +88,7 @@ class Stack:
 
     def pop(self):
         if self.isEmpty():
-            raise Exception("Popping from an empty stack")
+            raise IndexError("Popping from an empty stack")
         remove = self.head.next
         self.head.next = self.head.next.next
         self.size -= 1
