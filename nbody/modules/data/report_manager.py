@@ -1,4 +1,4 @@
-from data_manager import YamlManager
+from data_manager import YamlManager, parallel
 
 class Report:
     """
