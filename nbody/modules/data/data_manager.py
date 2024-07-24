@@ -37,7 +37,7 @@ def parallel(something: Iterable) -> Iterable:
 
 class YamlManager:
     """
-    Functions to work with yaml files and it's content
+    Functions to work with yaml files and get it's content
     """
 
     @staticmethod
