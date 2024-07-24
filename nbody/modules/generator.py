@@ -5,7 +5,7 @@ import copy
 from numpy import random
 from loguru import logger
 from nbody.modules.data.data_manager import YamlManager
-from nbody.modules.linal.mylinal import Array
+from nbody.modules.core.mylinal import Array
 
 DEFAULT_GENERATING_PATTERN: Final = {
     "number of objects": 2,
