@@ -132,6 +132,8 @@ def decart_to_polar(decart: list[float]) -> list[float]:
         
     return decart
 
+# FIXME make tubelists of vels, poss as inputs
+
 class numeric_methods:
 
     @staticmethod
