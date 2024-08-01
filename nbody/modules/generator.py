@@ -57,7 +57,7 @@ class TableGenerator:
     def __init__(self) -> None:
         pass
 
-    def spherical(self, pattern: dict = copy.deepcopy(Pattern.get_pattern_from_yaml(DEFAULT_PATH + '/pattern_benchmark.yaml'))) -> list:
+    def spherical(self, pattern: dict = Pattern.get_pattern_from_yaml(DEFAULT_PATH+'/pattern_benchmark.yaml')) -> list:
         """
         :param pattern: dict | dictionary with settings for generator
         :returns list | data to write to csv table
