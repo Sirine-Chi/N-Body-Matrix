@@ -1,7 +1,8 @@
 ---
 Mode: Simulation
 Force function: Gravity
-Method: Eiler
+Method: Euler
+Order: !!float 1
 
 End time: !!float 1e+1
 Time step: !!float 5e-5

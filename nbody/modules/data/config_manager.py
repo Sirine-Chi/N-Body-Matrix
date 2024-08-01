@@ -13,5 +13,5 @@ class ConfigManager:
     def print_config_to_console(self):
         YamlManager.print_yaml(self.config)
     
-    def save_config_to_txt(self, path_to_txt: str, file_name="config.txt"):
-        YamlManager.save_yaml_to_txt(self, path_to_txt, file_name)
+    # def save_config_to_txt(self, path_to_txt: str, file_name="config.txt"):
+    #     YamlManager.save_yaml_to_txt(self, path_to_txt, file_name)

@@ -3,6 +3,8 @@ from typing import Final, Iterable
 import math
 import numpy as np
 
+from nbody.modules.core.mydatatypes import TubeList
+
 # CONSTANTS
 G: Final = 0.0001184069  # 09138
 K: Final = 4.0
@@ -136,14 +138,43 @@ def decart_to_polar(decart: list[float]) -> list[float]:
 
 class numeric_methods:
 
+    def __init__(self, order=1) -> None:
+        self.order = order
+
+    #input: previous Y, previous X, Step, Order
+    # input: vel, pos, step, order
+
     @staticmethod
-    def eiler(x_nm, y_n, h):
+    def euler(x_nm, y_n, h):
         return x_nm + h * y_n
     
     @staticmethod
-    def adams(x_nm, y_n, y_nd, h):
-        return x_nm + h * 3 / 2 * y_n - h / 2 * y_nd
+    def eiler(pos: TubeList,
+              vel: TubeList,
+              step: float): # order: int = 1
+        return pos[-1] + step*vel[-1]
+        # if order != 1:
+        #     raise IndexError(f"Method with order 1 was called with order {order}")
+    
+    @staticmethod
+    def adams(pos: TubeList,
+              vel: TubeList,
+              step: float): # order: int = 2
+        return pos[-1] + step * 3 / 2 * vel[-1] - step / 2 * vel[-2]
+        # if order != 2:
+        #     raise IndexError(f"Method with order 1 was called with order {order}")
 
     @staticmethod
-    def runge_kutta(order: int):
+    def runge_kutta(pos: TubeList, vel: TubeList, step: float, func, order: int):
+        def 
+        sum_bk = []
+        for i in range(order):
+            sum_ak = []
+            for i in range(i-1):
+                sum_ak.append(a_i_1*k_1)
+            k_i = func(t_n + c_i*step, y_n + (sum(sum_ak)))
+            sum_bk.append(b(i) * k_i)
+        y_n = y_nm + step*sum(sum_bk)
+
+        
         pass
