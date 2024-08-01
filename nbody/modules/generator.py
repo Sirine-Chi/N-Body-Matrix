@@ -1,4 +1,3 @@
-# from typing import Optional as opt
 from dataclasses import dataclass
 from typing import Final
 import copy
@@ -7,23 +6,58 @@ from loguru import logger
 from nbody.modules.data.data_manager import YamlManager
 from nbody.modules.core.mylinal import Array
 
-DEFAULT_GENERATING_PATTERN: Final = {
-    "number of objects": 2,
-    "center": Array.cartesian_array([0.0, 0.0, 0.0]),
-    "medium radius": 1.0,
-    "crit radius delta": 0.25,
-    "medium mass": 1.0,
-    "crit mass delta": 0.0,
-    "mass center velocity": Array.cartesian_array([0.0, 0.0, 0.0]),
-    "medium velocity scalar": 0.0,
-    "velocity crit delta": 0.0
-}
+DEFAULT_PATH: str = "nbody/tmp/patterns"
+
+@dataclass
+class Pattern:
+    number_of_objects: int = 2
+    center_pos: Array = Array.cartesian_array([0.0, 0.0, 0.0])
+    medium_radius: float = 1.0
+    crit_radius_delta: float = 0.25
+    medium_mass: float = 1.0
+    crit_mass_delta: float = 0.0
+    center_mass_vel: Array = Array.cartesian_array([0.0, 0.0, 0.0])
+    medium_value_vel: float = 0.0
+    velocity_crit_delta: float = 0.0
+
+    def get_pattern_from_yaml(self, path_to_pattern: str = DEFAULT_PATH+'/pattern.yaml'):
+        p = YamlManager.get_yaml(path_to_pattern)
+        p["center"] = Array.new_mx_from_list(p["center"])
+        p["mass center velocity"] = Array.new_mx_from_list(p["mass center velocity"])
+        if Pattern.pattern_is_valid(p):
+            self.pattern = p
+            return self.pattern
+    
+    def __init__(self, pattern = get_pattern_from_yaml()):
+        self.pattern = pattern
+
+    def __str__(self) -> str:
+        return self.pattern
+    
+    @staticmethod
+    def pattern_is_valid(pattern: dict):
+        DEFAULT_GENERATING_PATTERN: Final = {
+            "number of objects": 2,
+            "center": Array.cartesian_array([0.0, 0.0, 0.0]),
+            "medium radius": 1.0,
+            "crit radius delta": 0.25,
+            "medium mass": 1.0,
+            "crit mass delta": 0.0,
+            "mass center velocity": Array.cartesian_array([0.0, 0.0, 0.0]),
+            "medium velocity scalar": 0.0,
+            "velocity crit delta": 0.0
+        }
+        for key in DEFAULT_GENERATING_PATTERN.items():
+            if type(DEFAULT_GENERATING_PATTERN[key]) is not type(pattern[key]):
+                logger.error(f"Mistake in option {key},\n your type is {type(pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}")
+                return False
+        return True
 
 class TableGenerator:
     def __init__(self) -> None:
-        self.default_pattern = DEFAULT_GENERATING_PATTERN
+        pass
 
-    def spherical(self, pattern: dict = copy.deepcopy(DEFAULT_GENERATING_PATTERN)) -> list:
+    def spherical(self, pattern: dict = copy.deepcopy(Pattern.get_pattern_from_yaml(DEFAULT_PATH + '/pattern_benchmark.yaml'))) -> list:
         """
         :param pattern: dict | dictionary with settings for generator
         :returns list | data to write to csv table
@@ -46,39 +80,4 @@ class TableGenerator:
         # print(*objects_data, sep="\n")
         return objects_data
 
-DEFAULT_PATH: str = "nbody/tmp/patterns"
-
-@dataclass
-class GeneratingPattern:
-    number_of_objects: int = 2
-    center_pos: Array = Array.cartesian_array([0.0, 0.0, 0.0])
-    medium_radius: float = 1.0
-    crit_radius_delta: float = 0.25
-    medium_mass: float = 1.0
-    crit_mass_delta: float = 0.0
-    center_mass_vel: Array = Array.cartesian_array([0.0, 0.0, 0.0])
-    medium_value_vel: float = 0.0
-    velocity_crit_delta: float = 0.0
-    
-    def __init__(self, pattern: dict = copy.deepcopy(DEFAULT_GENERATING_PATTERN)):
-        self.pattern = pattern
-
-    def __str__(self) -> str:
-        return self.pattern
-
-    def read_pattern_from_yaml(self, path_to_pattern: str = DEFAULT_PATH+'/pattern.yaml'):
-        p = YamlManager.get_yaml(path_to_pattern)
-        if GeneratingPattern.pattern_is_valid(p):
-            self.pattern = p
-            print(self.pattern)
-    
-    @staticmethod
-    def pattern_is_valid(pattern: dict):
-        for key in DEFAULT_GENERATING_PATTERN.items():
-            if type(DEFAULT_GENERATING_PATTERN[key]) is not type(pattern[key]):
-                logger.error(f"Mistake in option {key},\n your type is {type(pattern[key])}, but must be {type(DEFAULT_GENERATING_PATTERN[key])}")
-                return False
-        return True
-
-g = GeneratingPattern()
-g.read_pattern_from_yaml()
+print( Pattern.get_pattern_from_yaml() )

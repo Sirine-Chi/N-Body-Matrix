@@ -1,2 +1,7 @@
 import click
-import 
+from nbody.modules import controller as ctrl
+
+@click.command()
+@click.option(
+    
+)

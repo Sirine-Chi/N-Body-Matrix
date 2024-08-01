@@ -1,12 +1,46 @@
 from nbody.modules.generator import TableGenerator
 from nbody.modules.data.table_manager import TableManager
+from nbody.modules.data.data_manager import YamlManager
 from nbody.modules.core.mylinal import Array
 
 # TODO make more global class
 
 class Command():
+
+    # --- --- --- --- --- General
+
+    def hello(self):
+        """
+        A short guide to basics of an app and interface
+        """
+        pass
+
+    def version(self):
+        """
+        Gives acess to version and general program data
+        """
+        DEFAULT_INFO_PATH = 'nbody/info.yaml'
+        return YamlManager.get_yaml(DEFAULT_INFO_PATH)
+    
+    def load(self):
+        pass
+
+    def generate(self):
+        pass
+
+    def generate_table(self):
+        gen = TableGenerator()
+        TableManager.write_to_table(objects_data=TableGenerator.spherical(gen), path_to_table="nbody/data_tables")
+
+
+    # --- --- --- --- --- Simulation
+
+
     def simulation(self, path_to_config, path_to_results_folder):
         pass
+
+
+    # --- --- --- --- --- Benchmark
 
     def benchmark(self):
         pass
@@ -14,24 +48,6 @@ class Command():
     def benchmark_n(self):
         self.benchmark()
 
-    def generate_table(self):
-
-        # TODO incapsulate this
-
-        my_pattern = {
-            "number of objects": 1000,
-            "center": Array.new_mx_from_list([0.0, 0.0, 0.0]),
-            "medium radius": 50.0,
-            "crit radius delta": 0.0,
-            "medium mass": 10.0,
-            "crit mass delta": 0.0,
-            "mass center velocity": Array.new_mx_from_list([0.0, 0.0, 0.0]),
-            "medium velocity scalar": 2.0,
-            "velocity crit delta": 0.0
-            }
-
-        gen = TableGenerator()
-        TableManager.write_to_table(objects_data=TableGenerator.spherical(gen, pattern=my_pattern), path_to_table="nbody/data_tables")
-
+    
 c = Command()
 c.generate_table()
