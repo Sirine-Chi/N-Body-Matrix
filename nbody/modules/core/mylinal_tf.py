@@ -2,7 +2,7 @@ from __future__ import annotations
 import math
 import numpy as np
 import tensorflow as tf
-from mymath import Plane, Angle, polar_to_decart
+from .mymath import Plane, Angle, polar_to_decart
 # from random import randrange
     
 # parentness: Mx -> arr? -> 3d -> 2d
@@ -30,7 +30,7 @@ class Mx:
         if isinstance(other, Mx):
             return Mx(tf.add(self.m, other.m))
         else:
-            return Mx(tf.add(self.m + other))
+            return Mx(tf.add(self.m, other))
 
     # +=
     def __iadd__(self, other) -> None:
