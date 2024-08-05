@@ -15,7 +15,7 @@ class Mx:
         """Matrix constructor
         """
 		
-        self.m : np.array = ms
+        self.m : tf.Tensor = tf.constant(ms)
     
     @staticmethod
     def new_mx_from_list( m: list):
@@ -28,41 +28,41 @@ class Mx:
 	# +
     def __add__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(self.m + other.m)
+            return Mx(tf.add(self.m, other.m))
         else:
-            return Mx(self.m + other)
+            return Mx(tf.add(self.m + other))
 
     # +=
     def __iadd__(self, other) -> None:
         if isinstance(other, Mx):
-            self.m += other.m
+            self.m = tf.add(self.m, other.m)
         else:
-            self.m += other
+            self.m = tf.add(self.m, other)
 
     # -
     def __sub__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(self.m - other.m)
+            return Mx(tf.add(self.m, -1*other.m))
         else:
-            return Mx(self.m - other)
+            return Mx(tf.add(self.m, -1*other))
 
     # dot product
     def __mul__(self, other) -> Mx:
-        return Mx(np.dot(self.m, other.m))
+        return Mx(tf.matmul(self.m, other.m))
 
     # hadamar %
     def __mod__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(np.multiply(self.m, other.m))
+            return Mx(tf.multiply(self.m, other.m))
         else:
             try:
-                return Mx(np.multiply(self.m, other))
+                return Mx(tf.multiply(self.m, other))
             except TypeError:
                 print("Oops! Not a matrix type")
 
     # transpose
     def transpose(self) -> Mx:
-        return(Mx(np.matrix_transpose(self.m)))
+        return(Mx(np.matrix_transpose(self.m))) # TODO Dangerous initialisation!!!
     
     @staticmethod
     def rotation_matrix(angle: Angle, p: Plane, d: int = 3) -> Mx:
@@ -96,7 +96,7 @@ class Mx:
 class Array(Mx):
 
     def __init__(self, ms: list[float]):
-        self.m = np.array(ms)
+        self.m = tf.Tensor(np.array(ms))
 
     def __str__(self) -> str:
         return f"Array: {self.m}"
