@@ -9,8 +9,9 @@ class Command:
     childs: list[Command]
     arguments: list[str]
 
-    def __init__(self, name):
+    def __init__(self, name: str, args: list):
         self.name = name
+        self.args = args
     
     def do(self):
         print(f"{self.name} Done!")
