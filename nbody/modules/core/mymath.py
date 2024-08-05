@@ -164,17 +164,18 @@ class numeric_methods:
         # if order != 2:
         #     raise IndexError(f"Method with order 1 was called with order {order}")
 
-    @staticmethod
-    def runge_kutta(pos: TubeList, vel: TubeList, step: float, func, order: int):
-        def 
-        sum_bk = []
-        for i in range(order):
-            sum_ak = []
-            for i in range(i-1):
-                sum_ak.append(a_i_1*k_1)
-            k_i = func(t_n + c_i*step, y_n + (sum(sum_ak)))
-            sum_bk.append(b(i) * k_i)
-        y_n = y_nm + step*sum(sum_bk)
+
+    # @staticmethod
+    # def runge_kutta(pos: TubeList, vel: TubeList, step: float, func, order: int):
+    #     def 
+    #     sum_bk = []
+    #     for i in range(order):
+    #         sum_ak = []
+    #         for i in range(i-1):
+    #             sum_ak.append(a_i_1*k_1)
+    #         k_i = func(t_n + c_i*step, y_n + (sum(sum_ak)))
+    #         sum_bk.append(b(i) * k_i)
+    #     y_n = y_nm + step*sum(sum_bk)
 
         
-        pass
+    #     pass

@@ -35,7 +35,7 @@ class TubeList(MutableSequence):
             self.pop(0)
     
     def __setitem__(self, index, value):
-        """There's no way to insert element anywhere in tubelist)
+        """There's no way to insert element anywhere in tubelist =)
         """
         raise IndexError
 

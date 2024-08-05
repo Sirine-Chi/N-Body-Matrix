@@ -3,15 +3,14 @@ datetime3
 matplotlib
 numpy==2.0.0
 pandas==2.2.2
-pyopencl
 PyYAML
 random2
 scipy
 Sphinx==7.0.1
 virtualenv==20.23.1
-# tkinter
 numba==0.60.0
 tqdm
 pyopengl
-colorama
 loguru
+tensorflow
+tensorflow-metal

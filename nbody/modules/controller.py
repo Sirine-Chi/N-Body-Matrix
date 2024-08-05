@@ -39,6 +39,9 @@ class Command():
     def simulation(self, path_to_config, path_to_results_folder):
         pass
 
+    def simulation_series(self, path_to_config, path_to_results_folder):
+        pass
+
 
     # --- --- --- --- --- Benchmark
 
