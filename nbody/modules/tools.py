@@ -12,10 +12,11 @@ class Timer(object):
     Class to make timer decorators for VOID functions
     """
     dtime: float
+    isabsolute: bool = False
 
-    def timer(self, func: t.Callable, isabsolute: bool = False):
+    def timer(self, func: t.Callable):
         timer_mode: t.Callable = time.process_time
-        if isabsolute:
+        if self.isabsolute:
             timer_mode = time.time
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -25,8 +26,8 @@ class Timer(object):
             self.dtime = end - start
         return wrapper
 
-    def __call__(self, func):
-        self.timer(func)
+    def set_mode_absolute(self, isabsolute: bool = False):
+        self.isabsolute = isabsolute
 
     def float_time(self) -> float:
         """
@@ -44,8 +45,10 @@ class Timer(object):
         return time.strftime("%H:%M:%S", time.gmtime(self.dtime))
 
 # --- --- --- --- --- EXAMPLE
+
 # timer = Timer()
 
+# timer.set_mode_absolute(True)
 # @timer.timer
 # def waiter(timing: float):
 #     time.sleep(timing)
