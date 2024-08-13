@@ -1,3 +1,8 @@
+"""
+Some custom data types
+"""
+
+from __future__ import annotations
 from typing import Iterable
 from collections.abc import MutableSequence
 from dataclasses import dataclass
@@ -20,10 +25,10 @@ class TubeList(MutableSequence):
 
         if len(thelist) > depth:
             raise ValueError
-    
+
     def __len__(self):
         return len(self.tube)
-    
+
     def __getitem__(self, index):
         return self.tube[index]
 
@@ -33,7 +38,7 @@ class TubeList(MutableSequence):
     def check_depth(self):
         if len(self) == self.depth+1:
             self.pop(0)
-    
+
     def __setitem__(self, index, value):
         """There's no way to insert element anywhere in tubelist =)
         """
@@ -45,6 +50,19 @@ class TubeList(MutableSequence):
             self.check_depth()
         else:
             raise IndexError
+
+class PseudoEnum(MutableSequence):
+    """
+    Special type for creating declared Enums
+    """
+    registery: list[PseudoEnum] = []
+    values: list = []
+
+    def __init__(self, values: list):
+        self.values += values
+
+        self.registery.append(self)
+
 
 class Node:
     """Node for stack
