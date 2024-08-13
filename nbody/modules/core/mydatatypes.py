@@ -51,7 +51,7 @@ class TubeList(MutableSequence):
         else:
             raise IndexError
 
-class PseudoEnum(MutableSequence):
+class PseudoEnum:
     """
     Special type for creating declared Enums
     """
