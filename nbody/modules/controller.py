@@ -1,7 +1,7 @@
 from nbody.modules.generator import TableGenerator
 from nbody.modules.data.table_manager import TableManager
 from nbody.modules.data.data_manager import YamlManager
-from nbody.modules.core.mylinal import Array
+# from nbody.modules.core.mylinal import Array
 
 # TODO make more global class
 

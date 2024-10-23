@@ -1,0 +1,5 @@
+""" Partcile
+"""
+
+class Particle:
+    pass
