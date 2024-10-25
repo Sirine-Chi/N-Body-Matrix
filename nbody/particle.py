@@ -27,19 +27,6 @@ def force_obj_sys(obj: Particle, system: list[Particle]):
             forces.append(force_obj_obj(obj, other))
     return sum(forces)
 
-
-# def potential_at_point(point: np.ndarray, force_obj_sys: callable, system: list[Particle]):
-#     point = Particle("unit", 1.0, point, [0.0, 0.0], 'w', 0.0)
-#     return np.gradient(force_obj_sys(point, system))
-
-
-# def kinetic_energy(obj: Particle):
-#     return obj.mass*(scal(obj.velocities[-1]))**2 / 2
-
-# def potential_Energy(obj: Particle, system: list[Particle]):
-#     pass
-#     return sum(potential_at_point(Particle.get_last_position, force_obj_sys(Particle, system=system), system=system))
-
 class Particle:
     """
     Has two subclasses, each real object from table can be initialised as one of them, or as both.
