@@ -1,10 +1,10 @@
 from __future__ import annotations
 import math
 import numpy as np
-import tensorflow as tf
-from .mymath import Plane, Angle, polar_to_decart
+from mymath import Plane, Angle, polar_to_decart
 # from random import randrange
-    
+from mydatatypes import timer
+
 # parentness: Mx -> arr? -> 3d -> 2d
 
 class Mx:
@@ -15,7 +15,7 @@ class Mx:
         """Matrix constructor
         """
 		
-        self.m : tf.Tensor = tf.constant(ms)
+        self.m : np.array = ms
     
     @staticmethod
     def new_mx_from_list( m: list):
@@ -28,41 +28,41 @@ class Mx:
 	# +
     def __add__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(tf.add(self.m, other.m))
+            return Mx(self.m + other.m)
         else:
-            return Mx(tf.add(self.m, other))
+            return Mx(self.m + other)
 
     # +=
     def __iadd__(self, other) -> None:
         if isinstance(other, Mx):
-            self.m = tf.add(self.m, other.m)
+            self.m += other.m
         else:
-            self.m = tf.add(self.m, other)
+            self.m += other
 
     # -
     def __sub__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(tf.add(self.m, -1*other.m))
+            return Mx(self.m - other.m)
         else:
-            return Mx(tf.add(self.m, -1*other))
+            return Mx(self.m - other)
 
     # dot product
     def __mul__(self, other) -> Mx:
-        return Mx(tf.matmul(self.m, other.m))
+        return Mx(np.dot(self.m, other.m))
 
     # hadamar %
     def __mod__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(tf.multiply(self.m, other.m))
+            return Mx(np.multiply(self.m, other.m))
         else:
             try:
-                return Mx(tf.multiply(self.m, other))
+                return Mx(np.multiply(self.m, other))
             except TypeError:
                 print("Oops! Not a matrix type")
 
     # transpose
     def transpose(self) -> Mx:
-        return(Mx(np.matrix_transpose(self.m))) # TODO Dangerous initialisation!!!
+        return(Mx(np.matrix_transpose(self.m)))
     
     @staticmethod
     def rotation_matrix(angle: Angle, p: Plane, d: int = 3) -> Mx:
@@ -96,7 +96,7 @@ class Mx:
 class Array(Mx):
 
     def __init__(self, ms: list[float]):
-        self.m = tf.Tensor(np.array(ms))
+        self.m = np.array(ms)
 
     def __str__(self) -> str:
         return f"Array: {self.m}"
@@ -156,3 +156,19 @@ class Array(Mx):
             args.append(np.random.uniform(0.0, 2 * math.pi))
         
         return Array.polar_array(args)
+
+class LinalTest:
+
+    ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
+    bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
+
+    a = Mx(ap)
+    b = Mx(bp)
+
+    @timer
+    def test_add(self):
+        print(self.a + self.b)
+    
+
+lt = LinalTest()
+lt.test_add()

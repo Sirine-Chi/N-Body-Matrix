@@ -6,6 +6,8 @@ from __future__ import annotations
 from typing import Iterable
 from collections.abc import MutableSequence
 from dataclasses import dataclass
+from time import perf_counter
+from functools import wraps
 
 @dataclass
 class TubeList(MutableSequence):
@@ -22,6 +24,8 @@ class TubeList(MutableSequence):
     def __init__(self, thelist: Iterable, depth: int):
         self.depth: int = depth
         self.tube = thelist
+        
+        # FIXME #12 tube inherits thelist type, which causes error, if it's tuple
 
         if len(thelist) > depth:
             raise ValueError
@@ -111,3 +115,36 @@ class Stack:
         self.head.next = self.head.next.next
         self.size -= 1
         return remove.value
+
+def timer(func):
+    """Decorator for measuring runtime
+    """
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        start_time = perf_counter()
+
+        result = func(self, *args, **kwargs)
+
+        end_time = perf_counter()
+        execution_time = end_time - start_time
+        print(f"Function {func.__name__} took {execution_time:.4f} seconds")
+
+        return result
+    return wrapper
+
+class mdtesting:
+    # ap = np.array( (0.7, 1.2) )
+    # bp = np.array( (1.0, 2.0) )
+
+    a = 123
+    b = 2.4
+
+    @timer
+    def test(self):
+        tl = TubeList((self.a, self.b), depth=3)
+        print(tl)
+        tl.append(5)
+
+mt = mdtesting()
+mt.test()

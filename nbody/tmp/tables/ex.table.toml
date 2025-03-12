@@ -1,2 +1,0 @@
-[objects]
-obj1 = {Name = "Sun", type = "Dynamic", mass = 680, r_polar = [0.0, 0.0, 0.0], v_polar = [0.0, 0.0, 0.0], color = 0xDEADBEEF}

@@ -3,7 +3,7 @@ from typing import Final, Iterable
 import math
 import numpy as np
 
-from nbody.modules.core.mydatatypes import TubeList
+from mydatatypes import TubeList
 
 # CONSTANTS
 G: Final = 0.0001184069  # 09138
@@ -137,6 +137,8 @@ def decart_to_polar(decart: list[float]) -> list[float]:
 # FIXME make tubelists of vels, poss as inputs
 
 class numeric_methods:
+
+    # FIXME strange NM class, uncertain about it
 
     def __init__(self, order=1) -> None:
         self.order = order

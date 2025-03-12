@@ -1,1 +1,0 @@
-from mylinal import *
