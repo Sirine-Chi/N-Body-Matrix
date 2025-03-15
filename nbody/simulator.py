@@ -2,6 +2,12 @@
 import esper
 import mylinal as l
 import mymath
+from loguru import logger
+
+logger.add(lambda msg: print(msg, end=""), level="TRACE") # FIXME move to main / entry point
+is_logs: bool = True
+if is_logs == True:
+    logger.add("dev/logs/trace_{time}.log", level="TRACE")
 
 # --- --- --- --- --- COMPONENTS
 

@@ -112,9 +112,10 @@ class Array(Mx):
         """Constructor for arrays in polar coordinates
         """
         return Array(np.array(polar_to_decart(args) ))
-
-    def scal(self) -> float:
-        return np.linalg.norm(self.m, ord=2)
+    
+    @staticmethod
+    def scal(v: Array) -> float:
+        return np.linalg.norm(v.m, ord=2)
 
     def unitise(self) -> Array:
         return self.m / Array.scal(self.m)
