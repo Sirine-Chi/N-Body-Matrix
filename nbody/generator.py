@@ -23,6 +23,7 @@ class Pattern:
     medium_value_vel: float = 0.0
     velocity_crit_delta: float = 0.0
 
+# FIXME test and check all toml imports
     @staticmethod
     def get_pattern_from_toml( path_to_pattern: str = DEFAULT_PATH+'/pattern.toml'):
         p = markup_manager.get_toml(path_to_pattern)
