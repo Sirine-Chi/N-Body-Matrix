@@ -11,20 +11,6 @@ import mymath
 # if is_logs == True:
 #     logger.add("dev/logs/trace_{time}.log", level="TRACE")
 
-def euler(x_n, y_n, f: callable, h: float):
-    """Euler's nm
-
-    Args:
-        x_n (MATH): previous X
-        y_n (MATH): previous Y
-        f (callable): function f(x_n, y_n)
-        h (float): step dx
-
-    Returns:
-        MATH: returns x_n type
-    """
-    return x_n + h*f(x_n, y_n)/2
-
 # --- --- --- --- --- COMPONENTS
 
 @component
@@ -216,10 +202,10 @@ class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
  
 class VisualProcessor(esper.Processor):
-    def process(self) -> None:
+    def process(self):
         vis_positions = []
         for ent, (pos, vis) in esper.get_components(Position, Visualised):
-            vis_positions.append(esper.try_component(ent, pos[-1]))
+            vis_positions.append(pos[-1])
         
         print(f"all positions: {vis_positions}")
             # call to visualiser
@@ -258,6 +244,7 @@ for force_id, force in ForceProcessor.all_funcs.items():
                         print(f"f1:: {f1}")
                         f1 += force(ent1, ent2)
 
+# FIXME adding Acceleration Component error
 # for ent in esper.get_component(Force):
 #     esper.add_component(ent, Acceleration)
 
