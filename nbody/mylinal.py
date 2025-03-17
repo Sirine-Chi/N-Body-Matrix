@@ -23,7 +23,7 @@ class Mx:
 
     # print
     def __str__(self) -> str:
-        return f"Matrix: {self.m}"
+        return f"Matrix: {self.m.tolist()}"
 
 	# +
     def __add__(self, other) -> Mx:
@@ -99,7 +99,7 @@ class Array(Mx):
         self.m = np.array(ms)
 
     def __str__(self) -> str:
-        return f"Array: {self.m}"
+        return f"Array: {self.m.tolist()}"
 
     @staticmethod
     def cartesian_array(args: list[float]) -> Array:
