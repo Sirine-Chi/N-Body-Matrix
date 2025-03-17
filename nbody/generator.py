@@ -3,13 +3,13 @@ from typing import Final
 import copy
 from numpy import random
 from loguru import logger
-from nbody.modules.data.data_manager import YamlManager
+import markup_manager
 from mylinal import Array
 
-# FIXME move to TOML
 # FIXME rethink the way of generating patterns
 
-DEFAULT_PATH: str = "nbody/tmp/patterns"
+DEFAULT_PATH: str = "dev/tmp"
+tmp_path = "dev/tmp/pattern.benchmark.toml"
 
 @dataclass
 class Pattern:
@@ -22,21 +22,21 @@ class Pattern:
     center_mass_vel: Array = Array.cartesian_array([0.0, 0.0, 0.0])
     medium_value_vel: float = 0.0
     velocity_crit_delta: float = 0.0
-    
-    def get_pattern_from_yaml(self, path_to_pattern: str = DEFAULT_PATH+'/pattern.yaml'):
-        p = YamlManager.get_yaml(path_to_pattern)
+
+    @staticmethod
+    def get_pattern_from_toml( path_to_pattern: str = DEFAULT_PATH+'/pattern.toml'):
+        p = markup_manager.get_toml(path_to_pattern)
         p["center"] = Array.new_mx_from_list(p["center"])
         p["mass center velocity"] = Array.new_mx_from_list(p["mass center velocity"])
         if Pattern.pattern_is_valid(p):
-            self.pattern = p
-            return self.pattern # FIXME - return OR update SELF ?
-    
-    def __init__(self, pattern = get_pattern_from_yaml()):
+            return p
+
+    def __init__(self, pattern = get_pattern_from_toml(tmp_path)):
         self.pattern = pattern
 
     def __str__(self) -> str:
         return self.pattern
-    
+
     @staticmethod
     def pattern_is_valid(pattern: dict):
         DEFAULT_GENERATING_PATTERN: Final = {
@@ -69,8 +69,8 @@ class TableGenerator:
         object_type = "dynamic"
         for i in range(0, pattern["number of objects"]):
             st_der = pattern["crit mass delta"] / 3
-            position = pattern["center"] + Array.randarr_fixed_length(pattern["medium radius"])
-            velocity = pattern["mass center velocity"] + Array.randarr_fixed_length(pattern["medium velocity scalar"])
+            position = Array(pattern["center"]) + Array.randarr_fixed_length(pattern["medium radius"])
+            velocity = Array(pattern["mass center velocity"]) + Array.randarr_fixed_length(pattern["medium velocity scalar"])
             objects_data.append(
                 [
                     str(i),
@@ -83,4 +83,5 @@ class TableGenerator:
         # print(*objects_data, sep="\n")
         return objects_data
 
-print( Pattern.get_pattern_from_yaml() )
+
+print( Pattern.get_pattern_from_yaml(tmp_path) )
