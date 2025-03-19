@@ -8,14 +8,21 @@ from mydatatypes import timer
 # parentness: Mx -> arr? -> 3d -> 2d
 
 class Mx:
-    """Matrix class
     """
+    Matrix class
+    """
+    # FIXME int/float * Mx ERROR
 	
     def __init__(self, ms : np.array):
         """Matrix constructor
         """
 		
         self.m : np.array = ms
+    
+    # class NonMxTypeError(TypeError):
+    #     def __init__(self, msg="Not a linal.Mx type"):
+    #         self.msg = msg
+    #         super().__init__(self.msg)
     
     @staticmethod
     def new_mx_from_list( m: list):
@@ -51,7 +58,18 @@ class Mx:
 
     # dot product
     def __mul__(self, other) -> Mx:
-        return Mx(np.dot(self.m, other.m))
+        if isinstance(other, Mx):
+            return Mx(np.dot(self.m, other.m))
+        else:
+            try:
+                return Mx(np.dot(self.m, other))
+            except TypeError:
+                print("Oops! Not a matrix type")
+                # FIXME do something with cringy prints
+        #     #     raise Mx.NonMxTypeError
+    
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     # hadamar %
     def __mod__(self, other) -> Mx:
@@ -62,6 +80,7 @@ class Mx:
                 return Mx(np.multiply(self.m, other))
             except TypeError:
                 print("Oops! Not a matrix type")
+            #     raise Mx.NonMxTypeError
 
     # transpose
     def transpose(self) -> Mx:
@@ -179,3 +198,15 @@ class Array(Mx):
 
 # lt = LinalTest()
 # lt.test_add()
+
+# ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
+# bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
+
+# cl =  np.array( (0.7, 1.2) )
+
+# a = Mx(ap)
+# b = Mx(bp)
+# c = Array(cl)
+# # print(np.dot(0, c.m))
+# print(a*0)
+# # print(Array.__mul__)
