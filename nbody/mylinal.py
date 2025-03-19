@@ -45,9 +45,9 @@ class Mx:
     # +=
     def __iadd__(self, other) -> None:
         if isinstance(other, Mx):
-            self.m += other.m
+            self.m = self.m + other.m
         else:
-            self.m += other
+            self.m = self.m + other
 
     # -
     def __sub__(self, other) -> Mx:
@@ -67,9 +67,15 @@ class Mx:
                 print("Oops! Not a matrix type")
                 # FIXME do something with cringy prints
         #     #     raise Mx.NonMxTypeError
-    
+
     def __rmul__(self, other):
         return self.__mul__(other)
+    
+    def __truediv__(self, other):
+        if other != 0:
+            return self.__mul__(1/other)
+        else:
+            raise ArithmeticError
 
     # hadamar %
     def __mod__(self, other) -> Mx:
