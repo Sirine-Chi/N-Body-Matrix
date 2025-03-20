@@ -21,15 +21,11 @@ class Name:
 class Mass:
     # pass
     mass: float
-    # def __init__(self, mass: float) -> None:
-    #     self.mass = mass
 
 @component
 class Position:
     # pass
     positions: list[l.Array] # = [l.Array.cartesian_array([0.0, 0.0, 0.0])]
-    # def __init__(self, position: l.Array = l.Array.cartesian_array([0.0, 0.0, 0.0]) ) -> None:
-    #     super().append(position)
     def __str__(self):
         return self.positions.__str__()
 
@@ -38,30 +34,21 @@ class Position:
 class Velocity:
     # pass
     velocities: list[l.Array] # = [l.Array.cartesian_array([0.0, 0.0, 0.0])]
-    # def __init__(self, velocity: l.Array) -> None:
-    #     super().append(velocity)
 
 @component
 class Acceleration:
     # pass
-    accelerations: list[l.Array] # = [l.Array.cartesian_array([0.0, 0.0, 0.0])]
-
-    # def __str__(self):
-    #     return self.accelerations.__str__()
-    # def __init__(self, acceleration: l.Array) -> None:
-    #     super().append(acceleration)
+    accelerations: list[l.Array] # = [l.Array.cartesian_array([0.0, 0.0, 0.0])])
 
 @component
 class Force:
     """ Just the current force vector """
     force: l.Array
 
-    # def __str__(self):
-    #     return self.force.__str__()
-
 @component
 class ForceMap:
-    pass # TODO implement logic
+    force_map: dict[str, tuple[bool]] = {"1": (1, 1), "2": (0, 0)}
+    # TODO implement logic
 
 @component
 class UpdatesAnalytically:
@@ -118,31 +105,6 @@ class ForceHandler:
         st_lenght = 1.0
         return 0.0 * ( (r1 - r2) / l.Array.scal(r1 - r2) - st_lenght)
 
-    # def gravityforce_2(self, p1, p2) -> l.Array:
-    #     """
-    #     Calculate the gravitational force between two particles.
-
-    #     Args:
-    #         r1 (l.Array): Position vector of the first particle.
-    #         r2 (l.Array): Position vector of the second particle.
-    #         m1 (Mass): Mass of the first particle.
-    #         m2 (Mass): Mass of the second particle.
-
-    #     Returns:
-    #         l.Array: Gravitational force vector acting on the first particle due to the second particle.
-    #     """
-    #     r1, m1 = esper.get_components(p1, Position, Mass)
-    #     r2, m2 = esper.get_components(p2, Position, Mass)
-
-    #     return mymath.G * m1 * m2 * (r1 - r2) / ((r1 - r2).l.scal())**3
-
-    # def coulombforce(self, p1, p2) -> l.Array:
-    #     r1, q1 = esper.get_components(p1, Position, Charge)
-    #     r2, q2 = esper.get_components(p2, Position, Charge)
-
-    #     return mymath.K * q1 * q2 * (r1 - r2) / ((r1 - r2).l.scal())**3
-
-
 # --- --- --- --- --- PROCESSORS
 
 class ForceProcessor(esper.Processor):
@@ -175,8 +137,6 @@ class ForceProcessor(esper.Processor):
                         if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
                             if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                                 f1.force = f1.force + force_f(ent1, ent2)
-                                # print(f"FFFFFFFFFFFFFFFF {f1.force}")
-                                # esper.component_for_entity(ent1, Force) # = force(ent1, ent2)
 
         for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
             acc.accelerations.append(frc.force/m.mass)
@@ -210,12 +170,10 @@ class AnalyticCoordinateUpdateProcessor(esper.Processor):
 class VisualProcessor(esper.Processor):
     def process(self):
         vis_positions = []
-        for ent, (pos, vis) in esper.get_components(Position, Visualised):
+        for ent, (vis, pos) in esper.get_components(Visualised, Position):
             vis_positions.append([ent, pos.positions[-1]])
-            print(pos.positions[-1])
-        
         print(f"all positions: {vis_positions}")
-            # call to visualiser
+            # call to visualiser, send all_positions to Vis module
 
 # --- --- --- --- --- ENT INITIALISATION
 
@@ -234,7 +192,7 @@ for i in range(1, 10):
     esper.add_component(particle, Force(pp * 0.0))
     # print("tttype", type(esper.try_component(particle, Force).force)) # why force is Mx, and v[-1] is Array?
     esper.add_component(particle, Acceleration([pp * 0.0]))
-    esper.add_component(particle, Visualised)
+    esper.add_component(particle, Visualised(color="some"))
 
                             # esper.component_for_entity(ent1, Force) # = force(ent1, ent2)
                             # print("force:" + force(ent1, ent2))
