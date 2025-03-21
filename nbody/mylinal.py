@@ -11,29 +11,35 @@ class Mx:
     """
     Matrix class
     """
-    # FIXME int/float * Mx ERROR
-	
+
     def __init__(self, ms : np.array):
         """Matrix constructor
         """
 		
         self.m : np.array = ms
-    
+
     # class NonMxTypeError(TypeError):
     #     def __init__(self, msg="Not a linal.Mx type"):
     #         self.msg = msg
     #         super().__init__(self.msg)
-    
+
     @staticmethod
     def new_mx_from_list( m: list):
         return Mx(np.array(m))
 
+    def give_tuple(self):
+        return tuple(self.m.tolist())
+
     # print
     def __str__(self) -> str:
         return f"Matrix: {self.m.tolist()}"
-    
+
     def __repr__(self) -> str:
         return f"Array: {self.m.tolist()}"
+
+    def len(self) -> int:
+        return f"{self.m.size()}"
+
 
 	# +
     def __add__(self, other) -> Mx:
@@ -131,6 +137,9 @@ class Array(Mx):
     
     def __repr__(self) -> str:
         return f"Array: {self.m.tolist()}"
+
+    def len(self) -> int:
+        return f"{self.m.size()}"
 
     @staticmethod
     def cartesian_array(args: list[float]) -> Array:
