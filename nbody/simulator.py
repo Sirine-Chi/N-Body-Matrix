@@ -3,13 +3,15 @@ from random import randrange
 import esper
 import mylinal as l
 import mymath
+import vis
+# import threading
 # import inspect
-# from loguru import logger
+from loguru import logger
 
-# logger.add(lambda msg: print(msg, end=""), level="TRACE")
-# is_logs: bool = True
-# if is_logs == True:
-#     logger.add("dev/logs/trace_{time}.log", level="TRACE")
+logger.add(lambda msg: print(msg, end=""), level="TRACE")
+is_logs: bool = True
+if is_logs == True:
+    logger.add("dev/logs/trace_{time}.log", level="TRACE")
 
 # --- --- --- --- --- COMPONENTS
 
@@ -47,7 +49,8 @@ class Force:
 
 @component
 class ForceMap:
-    force_map: dict[str, tuple[bool]] = {"1": (1, 1), "2": (0, 0)}
+    pass
+    # force_map: dict[str, tuple[bool]] = {"1": (1, 1), "2": (0, 0)}
     # TODO implement logic
 
 @component
@@ -56,8 +59,6 @@ class UpdatesAnalytically:
 
 @component
 class Visualised:
-    # pass
-    # isvisualised: bool
     color: str
 
 @component
@@ -68,23 +69,6 @@ class Monitoring:
 class ForceHandler:
 
     @staticmethod
-    def gravityforce_1(r1:l.Array, r2:l.Array, m1:Mass, m2:Mass) -> l.Array:
-        """
-        Calculate the gravitational force between two particles.
-
-        Args:
-            r1 (l.Array): Position vector of the first particle.
-            r2 (l.Array): Position vector of the second particle.
-            m1 (Mass): Mass of the first particle.
-            m2 (Mass): Mass of the second particle.
-
-        Returns:
-            l.Array: Gravitational force vector acting on the first particle due to the second particle.
-        """
-
-        return mymath.G * m1 * m2 * (r1 - r2) / ((r1 - r2).l.scal())**3
-
-    @staticmethod
     def gravity_force_ent(ent1: int, ent2: int) -> l.Array:
         m1 = esper.try_component(ent1, Mass).mass
         m2 = esper.try_component(ent2, Mass).mass
@@ -92,11 +76,6 @@ class ForceHandler:
         r2 = esper.try_component(ent2, Position).positions[-1]
 
         return mymath.G * m1 * m2 * (r1 - r2) / (l.Array.scal(r1 - r2))**3
-
-    @staticmethod
-    def hooke_force(r1: l.Array, r2:l.Array):
-        st_lenght = 1.0
-        return mymath.K * ( (r1 - r2) / l.Array.scal(r1 - r2) - st_lenght)
 
     @staticmethod
     def hooke_force_ent(ent1: int, ent2: int) -> l.Array:
@@ -122,10 +101,6 @@ class ForceProcessor(esper.Processor):
         self. timestep = timestep
 
     def process(self):
-        # for ent2, (pos2, mass2) in esper.get_components(Position, Mass): # here we get entities, with ForceSelfOnOthers
-        #     for ent1, (pos1, mass1) in esper.get_components(Position, Mass):
-        #         if ent1 != ent2:
-        #             force = ForceHandler().gravityforce_1(pos1[-1], pos2[-1], mass1, mass2)
 
         for ent, (frc) in esper.get_component(Force): # nullling force before each tick-cycle
             frc.force = 0.0*frc.force
@@ -168,20 +143,27 @@ class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
  
 class VisualProcessor(esper.Processor):
+    def __init__(self):
+        self.vinst = vis.viswind()
+
     def process(self):
         vis_positions = []
         for ent, (vis, pos) in esper.get_components(Visualised, Position):
-            vis_positions.append([ent, pos.positions[-1]])
-        print(f"all positions: {vis_positions}")
+            vis_positions.append(pos.positions[-1].give_tuple())
+            # print(pos.positions[-1].len)
+        # logger.trace(f"all positions: {vis_positions[1]}")
+        # print(f"all positions: {vis_positions[1]}")
+
+        self.vinst.window_tick(vis_positions)
             # call to visualiser, send all_positions to Vis module
 
 # --- --- --- --- --- ENT INITIALISATION
 
-for i in range(1, 10):
+for i in range(1, 100):
     particle = esper.create_entity()
 
     # FIXME dimensional independent INIT'ion
-    pp = l.Array.cartesian_array([randrange(1, 10), randrange(1, 10), randrange(1, 10)])
+    pp = l.Array.cartesian_array([randrange(-10, 10), randrange(-10, 10), randrange(-10, 10)])
     pv = l.Array.cartesian_array([randrange(1, 10), randrange(1, 10), randrange(1, 10)])
     # pa = l.Array.cartesian_array([randrange(1, 10), randrange(1, 10), randrange(1, 10)])
 
@@ -221,8 +203,8 @@ for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
 # --- --- --- --- --- PROCESSORS INITIALISATION
 
 t = 0
-t_end = 1
-step = 0.1
+t_end = 100000000
+step = 0.01
 
 # forcecollectingprocessor = ForceCollectingProcessor()
 # forceapplictionprocessor = ForceApplicationProcessor()
@@ -238,8 +220,24 @@ esper.add_processor(visualprocessor, priority=1)
 
 # --- --- --- --- --- PROCESSING
 
+# class Loop(threading.Thread):
+#     def __init__(self, id):
+#         super().__init__()
+#         self.id = id
+
+#     def run(self, t, t_end, step):
+#         while t < t_end:
+#             esper.process()
+#             # print(f"t={t}, {esper.try_component(1, Position)}")
+#             t += step
+#         print(f"Thread {self.id} finished!")
+
+# loop_inst = Loop(1)
+# loop_inst.start()
+
 while t < t_end:
     esper.process()
     # print(f"t={t}, {esper.try_component(1, Position)}")
     t += step
+
 # print(esper.list_worlds())
