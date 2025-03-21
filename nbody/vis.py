@@ -1,0 +1,97 @@
+import pygame
+from pygame.locals import *
+import esper
+
+print(esper.list_worlds())
+
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
+points = [
+    (1.0, 2.0, 3.0),
+    (4.0, 5.0, 6.0),
+    (7.0, 8.0, 9.0),
+]
+
+def draw_points(points):
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glEnable(GL_POINT_SMOOTH)
+    glPointSize(5.0)
+
+    glBegin(GL_POINTS)
+    for point in points:
+        glVertex3f(point[0], point[1], point[2])
+    glEnd()
+
+verticies = (
+    (1, -1, -1),
+    (1, 1, -1),
+    (-1, 1, -1),
+    (-1, -1, -1),
+    (1, -1, 1),
+    (1, 1, 1),
+    (-1, -1, 1),
+    (-1, 1, 1)
+    )
+
+edges = (
+    (0,1),
+    (0,3),
+    (0,4),
+    (2,1),
+    (2,3),
+    (2,7),
+    (6,3),
+    (6,4),
+    (6,7),
+    (5,1),
+    (5,4),
+    (5,7)
+    )
+
+def Cube():
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+
+    glBegin(GL_LINES)
+    for edge in edges:
+        for vertex in edge:
+            glVertex3fv(verticies[vertex])
+    glEnd()
+
+class viswind():
+    def __init__(self):
+        pygame.init()
+        display = (800,600)
+        pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+
+        gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+        glTranslatef(0.0,0.0, -10)
+
+    def window_tick(self, points):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEWHEEL: # FIXME some bug
+                zoom = event.y
+                glTranslatef(zoom, zoom, zoom)
+                # glScale(zoom, zoom, zoom)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mouse.set_cursor = pygame.SYSTEM_CURSOR_HAND
+                if event.type == pygame.MOUSEMOTION:
+                    pos = event.pos
+                    glTranslatef(0.1*pos[0], 0.1*pos[1], 0)
+        # glScale(2, 2, 2)
+        glRotatef(1, 3, 1, 1)
+
+        draw_points(points)
+        # Cube()
+        pygame.display.flip()
+        pygame.time.wait(10)
+
+
+# v = viswind()
+# while True:
+#     v.window_tick(points)
