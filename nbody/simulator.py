@@ -5,7 +5,6 @@ import mylinal as l
 import mymath
 import vis
 # import threading
-# import inspect
 # from loguru import logger
 
 # logger.add(lambda msg: print(msg, end=""), level="TRACE")
@@ -93,12 +92,7 @@ class ForceHandler:
 
 class ForceProcessor(esper.Processor):
 
-    funcs: dict[str, callable]  = {
-            "1" : ForceHandler.gravity_force_ent,
-            "2": ForceHandler.hooke_force_ent
-            }
-
-    def __init__(self, timestep: float = 1.0, all_funcs: dict[str, callable] = funcs):
+    def __init__(self, all_funcs: dict[str, callable], timestep: float = 1.0):
         self. timestep = timestep
         self.all_funcs = all_funcs
 
@@ -114,6 +108,15 @@ class ForceProcessor(esper.Processor):
                         if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
                             if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                                 f1.force = f1.force + force_f(ent1, ent2)
+
+        # --- --- FORCE APPLICATION
+
+        for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
+            acc.accelerations.append(frc.force/m.mass)
+
+        for ent, (acc, vel, pos) in esper.get_components(Acceleration, Velocity, Position):
+            vel.velocities.append(vel.velocities[-1] + acc.accelerations[-1]*self.timestep)
+            pos.positions.append(pos.positions[-1] + vel.velocities[-1]*self.timestep)
 
 class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
@@ -134,6 +137,11 @@ class VisualProcessor(esper.Processor):
             # call to visualiser, send all_positions to Vis module
 
 # --- --- --- --- --- ENT INITIALISATION
+
+funcs: dict[str, callable] = {
+        "1" : ForceHandler.gravity_force_ent,
+        "2": ForceHandler.hooke_force_ent
+        }
 
 for i in range(1, 100):
     particle = esper.create_entity()
@@ -156,7 +164,7 @@ for i in range(1, 100):
 
 # --- --- --- --- --- FIRST FORCE COLLECTION
 
-for force_id, force_f in ForceProcessor.all_funcs.items():
+for force_id, force_f in funcs.items():
     # print(f"F ID: {force_id}")
     for ent2, (f2) in esper.get_component(Force):
         for ent1, (f1) in esper.get_component(Force):
@@ -165,7 +173,6 @@ for force_id, force_f in ForceProcessor.all_funcs.items():
                 if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
                     if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                         f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value
-                        # print(f"f1 {ent1}:: {f1.force}")
 
 for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
     acc.accelerations.append(frc.force/m.mass)
@@ -176,7 +183,7 @@ t = 0
 t_end = 100000000
 step = 0.01
 
-forceprocessor = ForceProcessor(timestep=step)
+forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
 # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
 visualprocessor = VisualProcessor()
 
