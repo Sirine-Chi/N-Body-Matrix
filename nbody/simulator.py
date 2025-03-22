@@ -151,11 +151,6 @@ for i in range(1, 100):
     esper.add_component(particle, Acceleration([pp * 0.0]))
     esper.add_component(particle, Visualised(color="some"))
 
-                            # esper.component_for_entity(ent1, Force) # = force(ent1, ent2)
-                            # print("force:" + force(ent1, ent2))
-                            # print(f"Force: {esper.try_component(particle, Force)}")
-    # esper.add_component(particle, Acceleration(esper.try_component(particle, Force) / esper.try_component(particle, Mass)))
-
     print(f"INIT:")
     print(*esper.try_components(particle, Name, Mass, Position, Force), sep="   ")
 
