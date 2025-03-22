@@ -141,14 +141,13 @@ for i in range(1, 100):
     # FIXME dimensional independent INIT'ion
     pp = l.Array.cartesian_array([uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)])
     pv = l.Array.cartesian_array([uniform(0, 2), uniform(0, 2), uniform(0, 2)])
-    # pa = l.Array.cartesian_array([uniform(1, 10), uniform(1, 10), uniform(1, 10)])
 
     esper.add_component(particle, Name(f"Particle n. {particle}"))
     esper.add_component(particle, Mass(uniform(1, 100)))
     esper.add_component(particle, Position([pp]))
     esper.add_component(particle, Velocity([pv]))
     esper.add_component(particle, Force(pp * 0.0))
-    # print("tttype", type(esper.try_component(particle, Force).force)) # why force is Mx, and v[-1] is Array?
+        # print("tttype", type(esper.try_component(particle, Force).force)) # why force is Mx, and v[-1] is Array?
     esper.add_component(particle, Acceleration([pp * 0.0]))
     esper.add_component(particle, Visualised(color="some"))
 
