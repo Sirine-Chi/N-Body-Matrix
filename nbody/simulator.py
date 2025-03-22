@@ -1,17 +1,21 @@
 from dataclasses import dataclass as component
-from random import randrange
+from random import uniform
 import esper
 import mylinal as l
 import mymath
 import vis
 # import threading
 # import inspect
-from loguru import logger
+# from loguru import logger
 
-logger.add(lambda msg: print(msg, end=""), level="TRACE")
-is_logs: bool = True
-if is_logs == True:
-    logger.add("dev/logs/trace_{time}.log", level="TRACE")
+# logger.add(lambda msg: print(msg, end=""), level="TRACE")
+# is_logs: bool = True
+# if is_logs == True:
+#     logger.add("dev/logs/trace_{time}.log", level="TRACE")
+
+# FIXME forceprocessor -> collection , application processor ? 
+# Doesn't connected with analytic processor
+# For simplicity one processor will be used
 
 # --- --- --- --- --- COMPONENTS
 
@@ -75,7 +79,7 @@ class ForceHandler:
         r1 = esper.try_component(ent1, Position).positions[-1]
         r2 = esper.try_component(ent2, Position).positions[-1]
 
-        return mymath.G * m1 * m2 * (r1 - r2) / (l.Array.scal(r1 - r2))**3
+        return mymath.G * m1 * m2 * (r2 - r1) / (l.Array.scal(r1 - r2))**3
 
     @staticmethod
     def hooke_force_ent(ent1: int, ent2: int) -> l.Array:
@@ -86,19 +90,39 @@ class ForceHandler:
 
 # --- --- --- --- --- PROCESSORS
 
-class ForceProcessor(esper.Processor):
-    """
+# class ForceProcessor(esper.Processor):
 
-    Args:
-        esper (_type_): _description_
-    """
-    all_funcs: dict[str, callable]  = {
+    # all_funcs: dict[str, callable]  = {
+    #         "1" : ForceHandler.gravity_force_ent,
+    #         "2": ForceHandler.hooke_force_ent
+    #         }
+
+    # def __init__(self, timestep: float = 1.0, all_funcs: dict[str, callable] = funcs):
+    #     self. timestep = timestep
+    #     self.all_funcs = all_funcs
+
+    # def process(self):
+
+    #     for ent, (frc) in esper.get_component(Force): # nullling force before each tick-cycle
+    #         frc.force = 0.0*frc.force
+
+    #     for force_id, force_f in self.all_funcs.items():
+    #         for ent2, (f2) in esper.get_component(Force):
+    #             for ent1, (f1) in esper.get_component(Force):
+    #                 if ent1 != ent2:
+    #                     if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
+    #                         if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
+    #                             f1.force = f1.force + force_f(ent1, ent2)
+
+class ForceCollectingProcessor(esper.Processor):
+    funcs: dict[str, callable]  = {
             "1" : ForceHandler.gravity_force_ent,
             "2": ForceHandler.hooke_force_ent
             }
 
-    def __init__(self, timestep: float = 1.0):
+    def __init__(self, timestep: float = 1.0, all_funcs: dict[str, callable] = funcs):
         self. timestep = timestep
+        self.all_funcs = all_funcs
 
     def process(self):
 
@@ -113,31 +137,19 @@ class ForceProcessor(esper.Processor):
                             if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                                 f1.force = f1.force + force_f(ent1, ent2)
 
+class ForceApplicationProcessor(esper.Processor):
+
+    def __init__(self, timestep: float = 1.0):
+        self. timestep = timestep
+
+    def process(self):
+
         for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
             acc.accelerations.append(frc.force/m.mass)
         
         for ent, (acc, vel, pos) in esper.get_components(Acceleration, Velocity, Position):
             vel.velocities.append(vel.velocities[-1] + acc.accelerations[-1]*self.timestep)
             pos.positions.append(pos.positions[-1] + vel.velocities[-1]*self.timestep)
-
-
-# class ForceCollectingProcessor(esper.Processor):
-#     """
-
-#     Args:
-#         esper (_type_): _description_
-#     """
-#     def process(self, timestep: float):
-#         for ent, (pos, mass) in esper.get_components(Position, Mass, ForceSelfOnOthers): # here we get entities, with ForceSelfOnOthers
-#             for ent2, (pos2, mass2) in esper.get_components(Position, Mass, ForceOthersOnSelf):
-                # pass
-    
-
-# class ForceApplicationProcessor(esper.Processor):
-#     def process(self, timestep: float):
-#         for ent, (acc, vel, pos) in esper.get_components(Acceleration, Velocity, Position):
-#             vel.append(vel[-1] + acc*timestep)
-#             pos.append(pos[-1] + vel*timestep)
 
 class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
@@ -163,12 +175,12 @@ for i in range(1, 100):
     particle = esper.create_entity()
 
     # FIXME dimensional independent INIT'ion
-    pp = l.Array.cartesian_array([randrange(-10, 10), randrange(-10, 10), randrange(-10, 10)])
-    pv = l.Array.cartesian_array([randrange(1, 10), randrange(1, 10), randrange(1, 10)])
-    # pa = l.Array.cartesian_array([randrange(1, 10), randrange(1, 10), randrange(1, 10)])
+    pp = l.Array.cartesian_array([uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)])
+    pv = l.Array.cartesian_array([uniform(0, 2), uniform(0, 2), uniform(0, 2)])
+    # pa = l.Array.cartesian_array([uniform(1, 10), uniform(1, 10), uniform(1, 10)])
 
     esper.add_component(particle, Name(f"Particle n. {particle}"))
-    esper.add_component(particle, Mass(randrange(1, 10)))
+    esper.add_component(particle, Mass(uniform(1, 100)))
     esper.add_component(particle, Position([pp]))
     esper.add_component(particle, Velocity([pv]))
     esper.add_component(particle, Force(pp * 0.0))
