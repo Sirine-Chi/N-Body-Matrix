@@ -32,6 +32,7 @@ class Mass:
 class Position:
     # pass
     positions: list[l.Array] # = [l.Array.cartesian_array([0.0, 0.0, 0.0])]
+
     def __str__(self):
         return self.positions.__str__()
 
@@ -92,7 +93,7 @@ class ForceHandler:
 
 class ForceProcessor(esper.Processor):
 
-    all_funcs: dict[str, callable]  = {
+    funcs: dict[str, callable]  = {
             "1" : ForceHandler.gravity_force_ent,
             "2": ForceHandler.hooke_force_ent
             }
