@@ -90,32 +90,9 @@ class ForceHandler:
 
 # --- --- --- --- --- PROCESSORS
 
-# class ForceProcessor(esper.Processor):
+class ForceProcessor(esper.Processor):
 
-    # all_funcs: dict[str, callable]  = {
-    #         "1" : ForceHandler.gravity_force_ent,
-    #         "2": ForceHandler.hooke_force_ent
-    #         }
-
-    # def __init__(self, timestep: float = 1.0, all_funcs: dict[str, callable] = funcs):
-    #     self. timestep = timestep
-    #     self.all_funcs = all_funcs
-
-    # def process(self):
-
-    #     for ent, (frc) in esper.get_component(Force): # nullling force before each tick-cycle
-    #         frc.force = 0.0*frc.force
-
-    #     for force_id, force_f in self.all_funcs.items():
-    #         for ent2, (f2) in esper.get_component(Force):
-    #             for ent1, (f1) in esper.get_component(Force):
-    #                 if ent1 != ent2:
-    #                     if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
-    #                         if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
-    #                             f1.force = f1.force + force_f(ent1, ent2)
-
-class ForceCollectingProcessor(esper.Processor):
-    funcs: dict[str, callable]  = {
+    all_funcs: dict[str, callable]  = {
             "1" : ForceHandler.gravity_force_ent,
             "2": ForceHandler.hooke_force_ent
             }
@@ -136,20 +113,6 @@ class ForceCollectingProcessor(esper.Processor):
                         if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
                             if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                                 f1.force = f1.force + force_f(ent1, ent2)
-
-class ForceApplicationProcessor(esper.Processor):
-
-    def __init__(self, timestep: float = 1.0):
-        self. timestep = timestep
-
-    def process(self):
-
-        for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
-            acc.accelerations.append(frc.force/m.mass)
-        
-        for ent, (acc, vel, pos) in esper.get_components(Acceleration, Velocity, Position):
-            vel.velocities.append(vel.velocities[-1] + acc.accelerations[-1]*self.timestep)
-            pos.positions.append(pos.positions[-1] + vel.velocities[-1]*self.timestep)
 
 class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
@@ -218,14 +181,10 @@ t = 0
 t_end = 100000000
 step = 0.01
 
-# forcecollectingprocessor = ForceCollectingProcessor()
-# forceapplictionprocessor = ForceApplicationProcessor()
 forceprocessor = ForceProcessor(timestep=step)
 # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
 visualprocessor = VisualProcessor()
 
-# esper.add_processor(forcecollectingprocessor)
-# esper.add_processor(forceapplictionprocessor)
 esper.add_processor(forceprocessor, priority=10)
 # esper.add_processor(analyticcoordinateupdateprocessor)
 esper.add_processor(visualprocessor, priority=1)

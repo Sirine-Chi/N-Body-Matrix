@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import esper
 
-print(esper.list_worlds())
+# print(esper.list_worlds())
 
 
 from OpenGL.GL import *
@@ -60,16 +60,31 @@ def Cube():
             glVertex3fv(verticies[vertex])
     glEnd()
 
+def window_resize(window, width, height):
+    glViewport(0, 0, width, height)
+
+def key_callback(window, key, scandone, action, mode):
+    if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
+        glfw.set_window_should_close(window, True)
+
 class viswind():
     def __init__(self):
         pygame.init()
         display = (800,600)
         pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont("Arial" , 18 , bold = True)
 
         gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
-        glTranslatef(0.0,0.0, -10)
+        glTranslatef(0.0,0.0, -50)
 
     def window_tick(self, points):
+
+        # def fps_in_window(self):
+        #     fps = str(int(self.clock.get_fps()))
+        #     fps_t = self.font.render(fps , 1, pygame.Color("RED"))
+        #     window.blit(fps_t,(0,0))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -84,12 +99,14 @@ class viswind():
                     pos = event.pos
                     glTranslatef(0.1*pos[0], 0.1*pos[1], 0)
         # glScale(2, 2, 2)
-        glRotatef(1, 3, 1, 1)
+        # glRotatef(1, 3, 1, 1)
+        self.clock.tick()
+        print(f"fps: {int(self.clock.get_fps())}")
 
         draw_points(points)
         # Cube()
         pygame.display.flip()
-        pygame.time.wait(10)
+        pygame.time.wait(1)
 
 
 # v = viswind()

@@ -23,9 +23,14 @@ class TubeList(MutableSequence):
 
     def __init__(self, thelist: Iterable, depth: int):
         self.depth: int = depth
-        self.tube = thelist
-        
-        # FIXME #12 tube inherits thelist type, which causes error, if it's tuple
+        intype = type(thelist)
+        if intype == list:
+            self.tube = thelist
+        else:
+            try:
+                self.tube = list(thelist)
+            except TypeError:
+                raise TypeError(f"Trying to make tubelist from {intype} object")
 
         if len(thelist) > depth:
             raise ValueError
@@ -133,18 +138,22 @@ def timer(func):
         return result
     return wrapper
 
-# class mdtesting:
-#     # ap = np.array( (0.7, 1.2) )
-#     # bp = np.array( (1.0, 2.0) )
+class mdtesting:
+    # ap = np.array( (0.7, 1.2) )
+    # bp = np.array( (1.0, 2.0) )
 
-#     a = 123
-#     b = 2.4
+    a = 123
+    b = 2.4
 
-#     @timer
-#     def test(self):
-#         tl = TubeList((self.a, self.b), depth=3)
-#         print(tl)
-#         tl.append(5)
+    base_list = [a, b]
+    base_tuple = (a, b)
+    base_dict = {"a": a, "b": b}
 
-# mt = mdtesting()
-# mt.test()
+    @timer
+    def test(self):
+        tl = TubeList(self.base_dict, depth=3)
+        print(tl)
+        tl.append(5)
+
+mt = mdtesting()
+mt.test()
