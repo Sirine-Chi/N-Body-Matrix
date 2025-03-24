@@ -4,17 +4,12 @@ import esper
 import mylinal as l
 import mymath
 import vis
-# import threading
 # from loguru import logger
 
 # logger.add(lambda msg: print(msg, end=""), level="TRACE")
 # is_logs: bool = True
 # if is_logs == True:
 #     logger.add("dev/logs/trace_{time}.log", level="TRACE")
-
-# FIXME forceprocessor -> collection , application processor ? 
-# Doesn't connected with analytic processor
-# For simplicity one processor will be used
 
 # --- --- --- --- --- COMPONENTS
 
@@ -193,24 +188,8 @@ esper.add_processor(visualprocessor, priority=1)
 
 # --- --- --- --- --- PROCESSING
 
-# class Loop(threading.Thread):
-#     def __init__(self, id):
-#         super().__init__()
-#         self.id = id
-
-#     def run(self, t, t_end, step):
-#         while t < t_end:
-#             esper.process()
-#             # print(f"t={t}, {esper.try_component(1, Position)}")
-#             t += step
-#         print(f"Thread {self.id} finished!")
-
-# loop_inst = Loop(1)
-# loop_inst.start()
-
 while t < t_end:
     esper.process()
-    # print(f"t={t}, {esper.try_component(1, Position)}")
     t += step
 
 # print(esper.list_worlds())
