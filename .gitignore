@@ -162,3 +162,4 @@ nbody/Results
 .idea/
 dev*
 nbody/__pycache__*
+.vscode*
