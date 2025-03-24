@@ -4,6 +4,10 @@ import esper
 
 # print(esper.list_worlds())
 
+# FIXME grid, axes
+# FIXME zoom
+# FIXME propper scaling
+
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
