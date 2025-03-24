@@ -11,7 +11,6 @@ virtualenv
 numba
 tqdm
 pyopengl
-# pyopencl
 loguru
 esper
 sympy
@@ -22,3 +21,5 @@ tomlkit
 # tensorflow
 # tensorflow-metal
 
+pyopencl
+siphash24
