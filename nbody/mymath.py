@@ -88,6 +88,17 @@ class Angle(float):
         return radians*360/(2*math.pi)
 
 def polar_to_decart(polar: list[float]) -> list[float]:
+    """
+    Converts a list of polar coordinates to Cartesian coordinates.
+    Args:
+        polar (list[float]): A list of polar coordinates, [0] is radius
+                             and the subsequent elements are the angles in degrees.
+    Returns:
+        list[float]: A list of Cartesian coordinates corresponding to the given polar coordinates.
+    Example:
+        polar_to_decart([5, 45, 30]) -> [3.5355339059327378, 2.5, 4.330127018922193]
+    """
+
     lenght: int = len(polar) # phi_i = pol[i]
     d: list = [None] * lenght
     r = polar[0]
@@ -135,49 +146,3 @@ def decart_to_polar(decart: list[float]) -> list[float]:
     return decart
 
 # FIXME make tubelists of vels, poss as inputs
-
-class numeric_methods:
-
-    # FIXME strange NM class, uncertain about it
-
-    def __init__(self, order=1) -> None:
-        self.order = order
-
-    #input: previous Y, previous X, Step, Order
-    # input: vel, pos, step, order
-
-    @staticmethod
-    def euler(x_nm, y_n, h):
-        return x_nm + h * y_n
-    
-    @staticmethod
-    def eiler(pos: TubeList,
-              vel: TubeList,
-              step: float): # order: int = 1
-        return pos[-1] + step*vel[-1]
-        # if order != 1:
-        #     raise IndexError(f"Method with order 1 was called with order {order}")
-    
-    @staticmethod
-    def adams(pos: TubeList,
-              vel: TubeList,
-              step: float): # order: int = 2
-        return pos[-1] + step * 3 / 2 * vel[-1] - step / 2 * vel[-2]
-        # if order != 2:
-        #     raise IndexError(f"Method with order 1 was called with order {order}")
-
-
-    # @staticmethod
-    # def runge_kutta(pos: TubeList, vel: TubeList, step: float, func, order: int):
-    #     def 
-    #     sum_bk = []
-    #     for i in range(order):
-    #         sum_ak = []
-    #         for i in range(i-1):
-    #             sum_ak.append(a_i_1*k_1)
-    #         k_i = func(t_n + c_i*step, y_n + (sum(sum_ak)))
-    #         sum_bk.append(b(i) * k_i)
-    #     y_n = y_nm + step*sum(sum_bk)
-
-        
-    #     pass
