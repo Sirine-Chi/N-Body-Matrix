@@ -131,8 +131,16 @@ def polar_to_decart(polar: list[float]) -> list[float]:
     return d
 
 def decart_to_polar(decart: list[float]) -> list[float]:
-    """Cartesian to polar coordinates connversion, angles in radians, using atan2
     """
+    Convert Cartesian coordinates to polar coordinates, angles in radians, using atan2
+
+    Args:
+        decart (list[float]): A list of Cartesian coordinates.
+    Returns:
+        list[float]: A list of polar coordinates where the first element is the radius (r) 
+                     and the subsequent elements are the angles (theta) in radians.
+    """
+    
     lenght: int = len(decart)
     pol: list = [None] * lenght
     r = float(np.linalg.norm(np.array(decart), ord=2))
@@ -144,5 +152,3 @@ def decart_to_polar(decart: list[float]) -> list[float]:
         pol[i] = math.atan2((sum(lmap(square, decart[i+1:lenght])))**0.5, decart[i])
         
     return decart
-
-# FIXME make tubelists of vels, poss as inputs

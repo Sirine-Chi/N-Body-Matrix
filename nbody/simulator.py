@@ -6,6 +6,9 @@ import mymath
 import vis
 # from loguru import logger
 
+# TODO implement tubelist
+# TODO isolate data
+
 # logger.add(lambda msg: print(msg, end=""), level="TRACE")
 # is_logs: bool = True
 # if is_logs == True:

@@ -26,3 +26,9 @@ Recommended python 3.11.11 with venv
 5. Check them:
 
     mac: `pip list`
+
+# Config
+
+Configs are in [TOML format](https://toml.io/en/). Here's the basic [config](nbody/config.toml) example.
+
+Somehow parse data from [NASA's SPICE system](https://naif.jpl.nasa.gov/naif/spiceconcept.html)

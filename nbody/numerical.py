@@ -28,6 +28,15 @@ class Method:
             raise IndexError(f"Method require depth {self.order},but len xs={len(self.xs)}, len ys={len(self.ys)} < {self.order}")
 
 def new_method(order: int):
+    """
+    Numerical Method decorator factory
+
+    Args:
+        order (int): method order
+    Returns:
+        Callable: method function
+    """
+    
     def dec(func: callable):
         return Method(order, func)
     return dec
@@ -37,13 +46,13 @@ def new_method(order: int):
 
 @new_method(order=1)
 def euler(xs:list, ys:list, f: callable, h: float):
-    """_summary_
+    """Euler method
 
     Args:
         xs (list): _description_
         ys (list): _description_
-        f (callable): _description_
-        h (float): _description_
+        f (callable): function
+        h (float): step
 
     Returns:
         _type_: _description_
@@ -51,7 +60,7 @@ def euler(xs:list, ys:list, f: callable, h: float):
     return xs[-1] + h*f(xs[-1], ys[-1])/2
 
 @new_method(order=1)
-def euler_improved(xs:list, ys:list, f:callable, h: float):
+def euler_improved(xs:list, ys:list, f: callable, h: float):
     """
     (Euler)[https://en.wikipedia.org/wiki/Euler_method]
 
@@ -69,7 +78,7 @@ def euler_improved(xs:list, ys:list, f:callable, h: float):
     return ys[-1] + (k1+k2)/2
 
 @new_method(order=2)
-def two_step(xs: list, ys: list, f:callable, h: float):
+def two_step(xs: list, ys: list, f: callable, h: float):
     """
     (Two step nm)[]
 
@@ -83,6 +92,10 @@ def two_step(xs: list, ys: list, f:callable, h: float):
         MATH: returns x_n type
     """
     return ys[-2] + 2*h*f(xs[-1], ys[-1])
+
+@new_method(order=1)
+def adams(xs: list, ys: list, f: callable, h:float):
+    return xs[-1] + h * 3 / 2 * ys[-1] - h /2 * ys[-2]
 
 # --- --- --- TESTING
 

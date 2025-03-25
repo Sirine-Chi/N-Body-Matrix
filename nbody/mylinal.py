@@ -123,7 +123,7 @@ class Mx:
         for i in m:
             for j in i:
                 j = np.random.normal(0, rrange, size=1)
-        
+                # FIXME try decorator pattern wrapping for passing any distribution
         return m
 
 
@@ -150,6 +150,13 @@ class Array(Mx):
     @staticmethod
     def polar_array(args: list[float]) -> Array:
         """Constructor for arrays in polar coordinates
+
+        Args:
+            args (list[float]): [0] - R, [1, 2, ...] - Angles in degrees
+
+        Returns:
+            Array: _description_
+        """        """Constructor for arrays in polar coordinates
         """
         return Array(np.array(polar_to_decart(args) ))
     
