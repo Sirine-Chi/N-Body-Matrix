@@ -138,6 +138,12 @@ def timer(func):
         return result
     return wrapper
 
+def print_dict(smth: dict):
+    """Printing dict multiline
+    """
+    for key, value in smth.items():
+        print(f"{key}: {value} \n")
+
 class mdtesting:
     # ap = np.array( (0.7, 1.2) )
     # bp = np.array( (1.0, 2.0) )
@@ -155,5 +161,5 @@ class mdtesting:
         print(tl)
         tl.append(5)
 
-mt = mdtesting()
-mt.test()
+# mt = mdtesting()
+# mt.test()

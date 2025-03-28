@@ -8,6 +8,9 @@ Has some methods, new methods can be declared there
 import inspect
 
 class Method:
+    """to add new method, just add @new_method(order:int) decorator =)
+    """
+
     def __init__(self, order: int, func: callable):
         self.order = order
         self.func = func

@@ -3,6 +3,8 @@ from random import uniform
 import esper
 import mylinal as l
 import mymath
+import markup_manager as mm
+from mydatatypes import print_dict
 import vis
 # from loguru import logger
 
@@ -32,7 +34,6 @@ class Position:
 
     def __str__(self):
         return self.positions.__str__()
-
 
 @component
 class Velocity:
@@ -134,31 +135,100 @@ class VisualProcessor(esper.Processor):
         self.vinst.window_tick(vis_positions)
             # call to visualiser, send all_positions to Vis module
 
-# --- --- --- --- --- ENT INITIALISATION
+# --- --- --- --- --- CONSTANTS
 
 funcs: dict[str, callable] = {
         "1" : ForceHandler.gravity_force_ent,
         "2": ForceHandler.hooke_force_ent
         }
+n = 20
+t = 0
+t_end = 100000000
+step = 0.01
 
-for i in range(1, 100):
-    particle = esper.create_entity()
+# --- --- --- --- --- ENT CREATION
 
-    # FIXME dimensional independent INIT'ion
-    pp = l.Array.cartesian_array([uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)])
-    pv = l.Array.cartesian_array([uniform(0, 2), uniform(0, 2), uniform(0, 2)])
+def init_ent(name: str, color: str, mass: float, pos: l.Array, vel: l.Array):
+    id: int = esper.create_entity()
 
-    esper.add_component(particle, Name(f"Particle n. {particle}"))
-    esper.add_component(particle, Mass(uniform(1, 100)))
-    esper.add_component(particle, Position([pp]))
-    esper.add_component(particle, Velocity([pv]))
-    esper.add_component(particle, Force(pp * 0.0))
-        # print("tttype", type(esper.try_component(particle, Force).force)) # why force is Mx, and v[-1] is Array?
-    esper.add_component(particle, Acceleration([pp * 0.0]))
-    esper.add_component(particle, Visualised(color="some"))
+    esper.add_component(id, Name(name))
+    esper.add_component(id, Mass(mass))
+    esper.add_component(id, Position([pos]))
+    esper.add_component(id, Velocity([vel]))
+
+    esper.add_component(id, Force(pos * 0.0))
+    esper.add_component(id, Acceleration([pos * 0.0]))
+    esper.add_component(id, Visualised(color))
+
+    return id
+
+def get_bodies(path) -> list[dict]:
+    result = mm.get_toml(path)["Bodies"]
+
+    objects = []
+    for key, obj in result.items():
+        obj["Name"] = key
+        objects.append(obj)
+
+    return objects
+
+path = 'nbody/system.toml'
+objects = get_bodies(path)
+
+# for o in objects:
+#     print_dict(o)
+
+# objects = [
+#     {
+#         "Name": "Sun",
+#         "Mass": 332840,
+#         "R (polar)": [0.0, 0.0, 0.0],
+#         "V (polar)": [0.0, 0.0, 0.0],
+#         "Color": "yellow",
+#         "force_1 (to, from)": [1, 1],
+#         "force_2 (to, from)": [0, 0],
+#         "force_3 (to, from)": [0, 0],
+#         "force_4 (to, from)": [0, 0]
+#     },
+#     {
+#         "Name" : "Earth",
+#         "Mass" : 1,
+#         "R (polar)" : [1.496e+11, 0.0, 0.0],
+#         "V (polar)" : [0.0, 2.978e+4, 0.0],
+#         "Color" : "blue",
+#         "force_1 (to, from)" : [1, 1],
+#         "force_2 (to, from)" : [0, 0],
+#         "force_3 (to, from)" : [0, 0],
+#         "force_4 (to, from)" : [0, 0]
+#     }
+# ]
+
+# objects = []
+# for i in range(1, n+1):
+
+#     # FIXME dimensional independent INIT'ion
+#     pl = [uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)]
+#     vl = [uniform(-1, 1), uniform(-1, 1), uniform(-1, 1)]
+#     pp = l.Array.cartesian_array(pl)
+#     pv = 0.1 * l.Array.cartesian_array(vl)
+
+#     o = {
+#         "Name": f"Particle n. {i}",
+#         "Color": "some color",
+#         "Mass": uniform(1, 100),
+#         "R (polar)" : pl,
+#         "V (polar)" : vl,
+#         "force_1 (to, from)" : "1, 1"
+#         }
+#     objects.append(o)
+
+# --- --- --- --- --- ENT INITIALISATION
+
+for o in objects:
+    p = init_ent(o["Name"], o["Color"], o["Mass"], l.Array.cartesian_array(o["R (polar)"]), l.Array.cartesian_array(o["V (polar)"]))
 
     print(f"INIT:")
-    print(*esper.try_components(particle, Name, Mass, Position, Force), sep="   ")
+    print(*esper.try_components(p, Name, Mass, Position, Velocity, Force), sep="   ")
 
 # --- --- --- --- --- FIRST FORCE COLLECTION
 
@@ -176,10 +246,6 @@ for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
     acc.accelerations.append(frc.force/m.mass)
 
 # --- --- --- --- --- PROCESSORS INITIALISATION
-
-t = 0
-t_end = 100000000
-step = 0.01
 
 forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
 # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()

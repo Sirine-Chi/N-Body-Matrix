@@ -27,8 +27,18 @@ Recommended python 3.11.11 with venv
 
     mac: `pip list`
 
-# Config
+## Config
 
 Configs are in [TOML format](https://toml.io/en/). Here's the basic [config](nbody/config.toml) example.
 
 Somehow parse data from [NASA's SPICE system](https://naif.jpl.nasa.gov/naif/spiceconcept.html)
+
+## Obj Initialisation
+
+- list of arguments
+- dict of arguments
+
+gen -> dict of args
+then init iterates through the dicts, and creating an oblects from 
+
+let's try to read system.toml, and see what happans

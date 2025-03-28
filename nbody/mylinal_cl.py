@@ -4,6 +4,7 @@ import numpy as np
 from mymath import Plane, Angle, polar_to_decart
 # from random import randrange
 from mydatatypes import timer
+import opencl_ex as ocl
 
 # parentness: Mx -> arr? -> 3d -> 2d
 
@@ -44,31 +45,31 @@ class Mx:
 	# +
     def __add__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(self.m + other.m)
+            return Mx( ocl.add_cl(self.m, other.m) )
         else:
-            return Mx(self.m + other)
+            return Mx( ocl.add_cl(self.m, other) )
 
     # +=
     def __iadd__(self, other) -> None:
         if isinstance(other, Mx):
-            self.m = self.m + other.m
+            self.m = ocl.add_cl(self.m, other.m)
         else:
-            self.m = self.m + other
+            self.m = ocl.add_cl(self.m, other)
 
     # -
     def __sub__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(self.m - other.m)
+            return Mx( ocl.sub_cl(self.m, other.m) )
         else:
-            return Mx(self.m - other)
+            return Mx( ocl.add_cl(self.m, other) )
 
     # dot product
     def __mul__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(np.dot(self.m, other.m))
+            return Mx( ocl.dot_cl(self.m, other.m) )
         else:
             try:
-                return Mx(np.dot(self.m, other))
+                return Mx( ocl.dot_cl(self.m, other) )
             except TypeError:
                 print("Oops! Not a matrix type")
                 # FIXME do something with cringy prints
@@ -86,10 +87,10 @@ class Mx:
     # hadamar %
     def __mod__(self, other) -> Mx:
         if isinstance(other, Mx):
-            return Mx(np.multiply(self.m, other.m))
+            return Mx( ocl.hadamar_cl(self.m, other.m) )
         else:
             try:
-                return Mx(np.multiply(self.m, other))
+                return Mx( ocl.hadamar_cl(self.m, other) )
             except TypeError:
                 print("Oops! Not a matrix type")
             #     raise Mx.NonMxTypeError

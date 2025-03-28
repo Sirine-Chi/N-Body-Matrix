@@ -273,8 +273,8 @@ def sum_np(a_host, b_host):
 # --- --- --- --- --- TESTING
 
 # # Define matrix dimensions
-# rows = 2
-# cols = 2
+# rows = 1
+# cols = 1
 
 # # Create host matrices
 # a_host = np.random.rand(rows, cols).astype(np.float32)
@@ -287,16 +287,16 @@ def sum_np(a_host, b_host):
 # print(b_host)
 # print("\nMatrix C (A + B):")
 # res = add_cl(a_host, b_host)
-# # print(res)
+# print(res)
 
 # #Verify the result
 # print("\nNumpy result:")
 # res_np = sum_np(a_host, b_host)
-# # print(res_np)
+# print(res_np)
 
-# res_dot_cl = dot_cl(a_host, b_host)
-# print(f"Dot cl {res_dot_cl}")
+# # res_dot_cl = dot_cl(a_host, b_host)
+# # print(f"Dot cl {res_dot_cl}")
 
-# print(f"Dot np {np.dot(a_host, b_host)}")
+# # print(f"Dot np {np.dot(a_host, b_host)}")
 
-# print("\nResult verification:", np.allclose(res, res_np))
+# # print("\nResult verification:", np.allclose(res, res_np))

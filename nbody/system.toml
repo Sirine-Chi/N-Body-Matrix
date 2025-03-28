@@ -1,0 +1,3 @@
+["Bodies"]
+"Sun" = {"Mass" = 332840, "R (polar)" = [0.0, 0.0, 0.0], "V (polar)" = [0.0, 0.0, 0.0], "Color" = "yellow", "force_1 (to, from)" = [1, 0], "force_2 (to, from)" = [0, 0], "force_3 (to, from)" = [0, 0], "force_4 (to, from)" = [0, 0]}
+"Earth" = {"Mass" = 1, "R (polar)" = [1.496e+11, 0.0, 0.0], "V (polar)" = [0.0, 2.978e+4, 0.0], "Color" = "blue", "force_1 (to, from)" = [0, 1], "force_2 (to, from)" = [0, 0], "force_3 (to, from)" = [0, 0], "force_4 (to, from)" = [0, 0]}
