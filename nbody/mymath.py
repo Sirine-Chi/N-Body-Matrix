@@ -7,6 +7,7 @@ from mydatatypes import TubeList
 
 # CONSTANTS
 G: Final = 0.0001184069  # 09138
+# G: Final = 4 * (math.pi**2)
 K: Final = 4.0
 
 def mul(args: Iterable):

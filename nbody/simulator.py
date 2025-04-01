@@ -4,7 +4,7 @@ import esper
 import mylinal as l
 import mymath
 import markup_manager as mm
-from mydatatypes import print_dict
+from mydatatypes import print_dict, color4f
 import vis
 # from loguru import logger
 
@@ -62,7 +62,7 @@ class UpdatesAnalytically:
 
 @component
 class Visualised:
-    color: str
+    color: color4f
 
 @component
 class Monitoring:
@@ -92,7 +92,7 @@ class ForceHandler:
 class ForceProcessor(esper.Processor):
 
     def __init__(self, all_funcs: dict[str, callable], timestep: float = 1.0):
-        self. timestep = timestep
+        self.timestep = timestep
         self.all_funcs = all_funcs
 
     def process(self):
@@ -114,20 +114,22 @@ class ForceProcessor(esper.Processor):
             acc.accelerations.append(frc.force/m.mass)
 
         for ent, (acc, vel, pos) in esper.get_components(Acceleration, Velocity, Position):
-            vel.velocities.append(vel.velocities[-1] + acc.accelerations[-1]*self.timestep)
-            pos.positions.append(pos.positions[-1] + vel.velocities[-1]*self.timestep)
+            vel.velocities.append(vel.velocities[-1] + self.timestep*acc.accelerations[-1])
+            pos.positions.append(pos.positions[-1] + self.timestep*vel.velocities[-1])
 
 class AnalyticCoordinateUpdateProcessor(esper.Processor):
     pass
- 
+
 class VisualProcessor(esper.Processor):
     def __init__(self):
         self.vinst = vis.viswind()
 
     def process(self):
         vis_positions = []
+        # vis_colors = []
         for ent, (vis, pos) in esper.get_components(Visualised, Position):
-            vis_positions.append(pos.positions[-1].give_tuple())
+            vis_positions.append( [pos.positions[-1].give_tuple(), vis.color] )
+            # vis_colors.append( vis.color )
             # print(pos.positions[-1].len)
         # logger.trace(f"all positions: {vis_positions[1]}")
         # print(f"all positions: {vis_positions[1]}")
@@ -141,14 +143,14 @@ funcs: dict[str, callable] = {
         "1" : ForceHandler.gravity_force_ent,
         "2": ForceHandler.hooke_force_ent
         }
-n = 20
+n = 4
 t = 0
-t_end = 100000000
-step = 0.01
+t_end = 10
+step = 5e-5
 
 # --- --- --- --- --- ENT CREATION
 
-def init_ent(name: str, color: str, mass: float, pos: l.Array, vel: l.Array):
+def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array):
     id: int = esper.create_entity()
 
     esper.add_component(id, Name(name))
@@ -158,7 +160,7 @@ def init_ent(name: str, color: str, mass: float, pos: l.Array, vel: l.Array):
 
     esper.add_component(id, Force(pos * 0.0))
     esper.add_component(id, Acceleration([pos * 0.0]))
-    esper.add_component(id, Visualised(color))
+    esper.add_component(id, Visualised(color.get_tuple))
 
     return id
 
@@ -184,7 +186,7 @@ objects = get_bodies(path)
 #         "Mass": 332840,
 #         "R (polar)": [0.0, 0.0, 0.0],
 #         "V (polar)": [0.0, 0.0, 0.0],
-#         "Color": "yellow",
+#         "Color": [1.0, 1.0, 0.0],
 #         "force_1 (to, from)": [1, 1],
 #         "force_2 (to, from)": [0, 0],
 #         "force_3 (to, from)": [0, 0],
@@ -195,7 +197,7 @@ objects = get_bodies(path)
 #         "Mass" : 1,
 #         "R (polar)" : [1.496e+11, 0.0, 0.0],
 #         "V (polar)" : [0.0, 2.978e+4, 0.0],
-#         "Color" : "blue",
+#         "Color" : [0.0, 0.0, 1.0],
 #         "force_1 (to, from)" : [1, 1],
 #         "force_2 (to, from)" : [0, 0],
 #         "force_3 (to, from)" : [0, 0],
@@ -214,7 +216,7 @@ objects = get_bodies(path)
 
 #     o = {
 #         "Name": f"Particle n. {i}",
-#         "Color": "some color",
+#         "Color": [uniform(0, 1), uniform(0, 1), uniform(0, 1)],
 #         "Mass": uniform(1, 100),
 #         "R (polar)" : pl,
 #         "V (polar)" : vl,
@@ -225,10 +227,10 @@ objects = get_bodies(path)
 # --- --- --- --- --- ENT INITIALISATION
 
 for o in objects:
-    p = init_ent(o["Name"], o["Color"], o["Mass"], l.Array.cartesian_array(o["R (polar)"]), l.Array.cartesian_array(o["V (polar)"]))
+    p = init_ent(o["Name"], color4f(o["Color"][0], o["Color"][1], o["Color"][2]), o["Mass"], l.Array.cartesian_array(o["R (polar)"]), l.Array.cartesian_array(o["V (polar)"]))
 
     print(f"INIT:")
-    print(*esper.try_components(p, Name, Mass, Position, Velocity, Force), sep="   ")
+    print(*esper.try_components(p, Name, Mass, Position, Velocity, Force, Visualised), sep="   ")
 
 # --- --- --- --- --- FIRST FORCE COLLECTION
 
@@ -237,7 +239,6 @@ for force_id, force_f in funcs.items():
     for ent2, (f2) in esper.get_component(Force):
         for ent1, (f1) in esper.get_component(Force):
             if ent1 != ent2:
-                # store force_map in force or in ent? - In ent!
                 if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
                     if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                         f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value

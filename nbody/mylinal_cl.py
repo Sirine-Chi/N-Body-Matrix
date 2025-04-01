@@ -77,7 +77,7 @@ class Mx:
 
     def __rmul__(self, other):
         return self.__mul__(other)
-    
+
     def __truediv__(self, other):
         if other != 0:
             return self.__mul__(1/other)
@@ -206,30 +206,30 @@ class Array(Mx):
         
         return Array.polar_array(args)
 
-# class LinalTest:
+class LinalTest:
 
-#     ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
-#     bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
+    ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
+    bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
 
-#     a = Mx(ap)
-#     b = Mx(bp)
+    a = Mx(ap)
+    b = Mx(bp)
 
-#     @timer
-#     def test_add(self):
-#         print(self.a + self.b)
+    @timer
+    def test_add(self):
+        print(self.a + self.b)
     
 
-# lt = LinalTest()
-# lt.test_add()
+lt = LinalTest()
+lt.test_add()
 
-# ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
-# bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
+ap = np.array( ((0.7, 1.2), (3.0, 4.0)) )
+bp = np.array( ((1.0, 2.0), (0.1, 0.3)) )
 
-# cl =  np.array( (0.7, 1.2) )
+cl =  np.array( (0.7, 1.2) )
 
-# a = Mx(ap)
-# b = Mx(bp)
-# c = Array(cl)
-# # print(np.dot(0, c.m))
-# print(a*0)
-# # print(Array.__mul__)
+a = Mx(ap)
+b = Mx(bp)
+c = Array(cl)
+# print(np.dot(0, c.m))
+print(a*0)
+# print(Array.__mul__)

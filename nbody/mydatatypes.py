@@ -60,7 +60,7 @@ class TubeList(MutableSequence):
         else:
             raise IndexError
 
-class PseudoEnum:
+class PseudoEnum: # FIXME WTF is this? Add example to docstring
     """
     Special type for creating declared Enums
     """
@@ -143,6 +143,22 @@ def print_dict(smth: dict):
     """
     for key, value in smth.items():
         print(f"{key}: {value} \n")
+
+class color4f:
+    c = [0.0, 0.0, 0.0, 1.0]
+    def __init__(self, r, g, b, a=1.0):
+        self.c[0] = r
+        self.c[1] = g
+        self.c[2] = b
+        self.c[3] = a
+
+    # TODO implement
+    def new_from_string(self):
+        pass
+
+    @property
+    def get_tuple(self):
+        return tuple(self.c)
 
 class mdtesting:
     # ap = np.array( (0.7, 1.2) )
