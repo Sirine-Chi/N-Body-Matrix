@@ -6,6 +6,7 @@ import mymath
 import markup_manager as mm
 from mydatatypes import print_dict, color4f
 import vis
+from tqdm import tqdm
 # from loguru import logger
 
 # TODO implement tubelist
@@ -144,8 +145,8 @@ funcs: dict[str, callable] = {
         "2": ForceHandler.hooke_force_ent
         }
 n = 4
-t = 0
-t_end = 10
+t_start = 0
+t_end = 1
 step = 5e-5
 
 # --- --- --- --- --- ENT CREATION
@@ -160,6 +161,7 @@ def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array)
 
     esper.add_component(id, Force(pos * 0.0))
     esper.add_component(id, Acceleration([pos * 0.0]))
+
     esper.add_component(id, Visualised(color.get_tuple))
 
     return id
@@ -258,8 +260,21 @@ esper.add_processor(visualprocessor, priority=1)
 
 # --- --- --- --- --- PROCESSING
 
-while t < t_end:
-    esper.process()
-    t += step
+def loop(t_start: float, t_end: float, is_pb: bool):
+    t = t_start
+    total = t_end - t_start
+    if is_pb:
+        with tqdm(total=total) as pbar:
+            while t < t_end:
+                esper.process()
+                t += step
+
+                pbar.update(step)
+    else:
+        while t < t_end:
+            esper.process()
+            t += step
+
+loop(t_start, t_end, is_pb=True)
 
 # print(esper.list_worlds())
