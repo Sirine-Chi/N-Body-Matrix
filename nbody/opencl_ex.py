@@ -180,7 +180,7 @@ def dot_cl(a:np.array, b:np.array) -> np.array:
     b_rows = np.size(b, axis=0)
     b_cols = np.size(b, axis=1)
 
-    if a_rows != b_cols or a_cols != b_rows:
+    if (a_rows != b_cols) or (a_cols != b_rows):
         raise TypeError(f"Matrices have unpropper dimensions: \nA: {a_rows}:{a_cols}, B: {b_rows}:{b_cols}")
     else:
         c = np.zeros((a_rows, b_cols), dtype=np.float32)
@@ -272,31 +272,37 @@ def sum_np(a_host, b_host):
 
 # --- --- --- --- --- TESTING
 
-# # Define matrix dimensions
-# rows = 1
-# cols = 1
+# Define matrix dimensions
+rows = 1
+cols = 1
 
-# # Create host matrices
-# a_host = np.random.rand(rows, cols).astype(np.float32)
-# b_host = np.random.rand(rows, cols).astype(np.float32)
+# Create host matrices
+a_host = np.random.rand(rows, cols).astype(np.float32)
+b_host = np.random.rand(rows, cols).astype(np.float32)
 
-# # Print the results
-# print("Matrix A:")
-# print(a_host)
-# print("\nMatrix B:")
-# print(b_host)
-# print("\nMatrix C (A + B):")
-# res = add_cl(a_host, b_host)
+some_a = np.array([1.0])
+
+# Print the results
+print("Matrix A:")
+print(a_host)
+print("\nMatrix B:")
+print(b_host)
+print("\nMatrix C (A + B):")
+res = add_cl(a_host, b_host)
 # print(res)
 
-# #Verify the result
-# print("\nNumpy result:")
-# res_np = sum_np(a_host, b_host)
+#Verify the result
+print("\nNumpy result:")
+res_np = sum_np(a_host, b_host)
 # print(res_np)
 
-# # res_dot_cl = dot_cl(a_host, b_host)
-# # print(f"Dot cl {res_dot_cl}")
 
-# # print(f"Dot np {np.dot(a_host, b_host)}")
+print(np.dot(some_a, 0))
+print(dot_cl(some_a, np.array([1])))
 
-# # print("\nResult verification:", np.allclose(res, res_np))
+# res_dot_cl = dot_cl(a_host, b_host)
+# print(f"Dot cl {res_dot_cl}")
+
+# print(f"Dot np {np.dot(a_host, b_host)}")
+
+# print("\nResult verification:", np.allclose(res, res_np))
