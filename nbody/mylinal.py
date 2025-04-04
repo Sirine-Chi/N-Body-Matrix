@@ -5,7 +5,7 @@ from mymath import Plane, Angle, polar_to_decart
 # from random import randrange
 from mydatatypes import timer
 
-# parentness: Mx -> arr? -> 3d -> 2d
+# parentness: Mx -> Arr
 
 class Mx:
     """
