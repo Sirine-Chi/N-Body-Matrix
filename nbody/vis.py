@@ -13,7 +13,7 @@ from OpenGL.GLUT import *
 
 def draw_points(points):
     glEnable(GL_POINT_SMOOTH)
-    glPointSize(5.0)
+    glPointSize(4.0)
 
     glBegin(GL_POINTS)
     for point in points:
