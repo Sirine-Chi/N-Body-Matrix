@@ -163,3 +163,4 @@ nbody/Results
 dev*
 nbody/__pycache__*
 .vscode*
+nbody/tmp*
