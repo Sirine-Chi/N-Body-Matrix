@@ -6,7 +6,10 @@ import mymath
 import markup_manager as mm
 from mydatatypes import print_dict, color4f
 import vis
+
 from tqdm import tqdm
+from datetime import datetime
+import csv
 # from loguru import logger
 
 # TODO implement tubelist
@@ -65,9 +68,9 @@ class UpdatesAnalytically:
 class Visualised:
     color: color4f
 
-@component
-class Monitoring:
-    pass
+# @component
+# class Monitoring:
+#     pass
 
 
 class ForceHandler:
@@ -96,17 +99,17 @@ class ForceProcessor(esper.Processor):
         self.timestep = timestep
         self.all_funcs = all_funcs
 
-    def process(self):
+    def process(self, t_cur: float):
 
         for ent, (frc) in esper.get_component(Force): # nullling force before each tick-cycle
             frc.force = 0.0*frc.force
 
         for force_id, force_f in self.all_funcs.items():
-            for ent2, (f2) in esper.get_component(Force):
-                for ent1, (f1) in esper.get_component(Force):
+            for ent2, (f2, fm2) in esper.get_components(Force, ForceMap):
+                for ent1, (f1, fm1) in esper.get_components(Force, ForceMap):
                     if ent1 != ent2:
-                        if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
-                            if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
+                        if fm1.force_map[force_id][0]: # если тело2 действует на
+                            if fm2.force_map[force_id][1]: # если действуют на тело 1
                                 f1.force = f1.force + force_f(ent1, ent2)
 
         # --- --- FORCE APPLICATION
@@ -125,7 +128,7 @@ class VisualProcessor(esper.Processor):
     def __init__(self):
         self.vinst = vis.viswind()
 
-    def process(self):
+    def process(self, t_cur: float):
         vis_positions = []
         # vis_colors = []
         for ent, (vis, pos) in esper.get_components(Visualised, Position):
@@ -138,16 +141,37 @@ class VisualProcessor(esper.Processor):
         self.vinst.window_tick(vis_positions)
             # call to visualiser, send all_positions to Vis module
 
+class MonitoringProcessor(esper.Processor):
+    def __init__(self):
+        self.pairs = []
+
+    def process(self, t_cur: float):
+        kinetics = []
+        for ent, (vel, m) in esper.get_components(Velocity, Mass):
+            kinetics.append(l.Array.scal(vel.velocities[-1]) * m.mass)
+
+
+        self.pairs.append( (t_cur, 0.5 * l.np.sum(kinetics)) )
+        # print(f"t: {t_cur}, kinetic: {0.5 * l.np.sum(kinetics)}")
+
+    def save(self, path_tmp: str):
+        with open(path_tmp+datetime.now().strftime("%H:%M:%S")+'.csv', "w") as f:
+            writer = csv.writer(f)
+            writer.writerows(self.pairs)
+
+
+
 # --- --- --- --- --- CONSTANTS
 
 funcs: dict[str, callable] = {
         "1" : ForceHandler.gravity_force_ent,
         "2": ForceHandler.hooke_force_ent
         }
-n = 4
+# n = 20
 t_start = 0
 t_end = 1
 step = 5e-5
+is_pbar = False
 
 # --- --- --- --- --- ENT CREATION
 
@@ -161,6 +185,7 @@ def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array,
 
     esper.add_component(id, Force(pos * 0.0))
     esper.add_component(id, Acceleration([pos * 0.0]))
+    esper.add_component(id, ForceMap(force_map))
 
     esper.add_component(id, Visualised(color.get_tuple))
 
@@ -178,9 +203,6 @@ def get_bodies(path) -> list[dict]:
 
 path = 'nbody/system.toml'
 objects = get_bodies(path)
-
-# for o in objects:
-#     print_dict(o)
 
 # objects = [
 #     {
@@ -210,21 +232,21 @@ objects = get_bodies(path)
 # objects = []
 # for i in range(1, n+1):
 
-#     # FIXME dimensional independent INIT'ion
-#     pl = [uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)]
-#     vl = [uniform(-1, 1), uniform(-1, 1), uniform(-1, 1)]
-#     pp = l.Array.cartesian_array(pl)
-#     pv = 0.1 * l.Array.cartesian_array(vl)
+    # # FIXME dimensional independent INIT'ion
+    # pl = [uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)]
+    # vl = [uniform(-1, 1), uniform(-1, 1), uniform(-1, 1)]
+    # pp = l.Array.cartesian_array(pl)
+    # pv = 0.1 * l.Array.cartesian_array(vl)
 
-#     o = {
-#         "Name": f"Particle n. {i}",
-#         "Color": [uniform(0, 1), uniform(0, 1), uniform(0, 1)],
-#         "Mass": uniform(1, 100),
-#         "R (polar)" : pl,
-#         "V (polar)" : vl,
-#         "force_1 (to, from)" : "1, 1"
-#         }
-#     objects.append(o)
+    # o = {
+    #     "Name": f"Particle n. {i}",
+    #     "Color": [uniform(0, 1), uniform(0, 1), uniform(0, 1)],
+    #     "Mass": uniform(1, 100),
+    #     "R (polar)" : pl,
+    #     "V (polar)" : vl,
+    #     "force_1 (to, from)" : "1, 1"
+    #     }
+    # objects.append(o)
 
 # --- --- --- --- --- ENT INITIALISATION
 
@@ -235,7 +257,7 @@ for o in objects:
         o["Mass"],
         l.Array.cartesian_array(o["R (polar)"]),
         l.Array.cartesian_array(o["V (polar)"]),
-        {"1": (1, 1)}
+        force_map={"1": (1, 1), "2": (0, 0)}
         )
 
     print(f"INIT:")
@@ -248,10 +270,8 @@ for force_id, force_f in funcs.items():
     for ent2, (f2, fm2) in esper.get_components(Force, ForceMap):
         for ent1, (f1, fm1) in esper.get_components(Force, ForceMap):
             if ent1 != ent2:
-                if fm1[force_id][0]: # если тело2 действует на
-                    if fm2[force_id][1]: # если действуют на тело 1
-                # if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
-                #     if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
+                if fm1.force_map[force_id][0]: # если тело2 действует на
+                    if fm2.force_map[force_id][1]: # если действуют на тело 1
                         f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value
 
 for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
@@ -262,10 +282,12 @@ for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
 forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
 # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
 visualprocessor = VisualProcessor()
+monitoringprocessor = MonitoringProcessor()
 
 esper.add_processor(forceprocessor, priority=10)
 # esper.add_processor(analyticcoordinateupdateprocessor)
 esper.add_processor(visualprocessor, priority=1)
+esper.add_processor(monitoringprocessor, priority=0)
 
 # --- --- --- --- --- PROCESSING
 
@@ -275,15 +297,17 @@ def loop(t_start: float, t_end: float, is_pb: bool):
     if is_pb:
         with tqdm(total=total) as pbar:
             while t < t_end:
-                esper.process()
+                esper.process(t_cur = t)
                 t += step
 
                 pbar.update(step)
     else:
         while t < t_end:
-            esper.process()
+            esper.process(t_cur= t)
             t += step
 
-loop(t_start, t_end, is_pb=True)
+loop(t_start, t_end, is_pb=is_pbar)
+
+monitoringprocessor.save('nbody/tmp/')
 
 # print(esper.list_worlds())
