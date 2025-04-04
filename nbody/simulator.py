@@ -53,8 +53,8 @@ class Force:
 
 @component
 class ForceMap:
-    pass
-    # force_map: dict[str, tuple[bool]] = {"1": (1, 1), "2": (0, 0)}
+    # pass
+    force_map: dict[str, tuple[bool]] # = {"1": (1, 1), "2": (0, 0)}
     # TODO implement logic
 
 @component
@@ -151,7 +151,7 @@ step = 5e-5
 
 # --- --- --- --- --- ENT CREATION
 
-def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array):
+def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array, force_map: dict[str, tuple[bool]]) -> int:
     id: int = esper.create_entity()
 
     esper.add_component(id, Name(name))
@@ -229,7 +229,14 @@ objects = get_bodies(path)
 # --- --- --- --- --- ENT INITIALISATION
 
 for o in objects:
-    p = init_ent(o["Name"], color4f(o["Color"][0], o["Color"][1], o["Color"][2]), o["Mass"], l.Array.cartesian_array(o["R (polar)"]), l.Array.cartesian_array(o["V (polar)"]))
+    p = init_ent(
+        o["Name"],
+        color4f(o["Color"][0], o["Color"][1], o["Color"][2]),
+        o["Mass"],
+        l.Array.cartesian_array(o["R (polar)"]),
+        l.Array.cartesian_array(o["V (polar)"]),
+        {"1": (1, 1)}
+        )
 
     print(f"INIT:")
     print(*esper.try_components(p, Name, Mass, Position, Velocity, Force, Visualised), sep="   ")
@@ -238,11 +245,13 @@ for o in objects:
 
 for force_id, force_f in funcs.items():
     # print(f"F ID: {force_id}")
-    for ent2, (f2) in esper.get_component(Force):
-        for ent1, (f1) in esper.get_component(Force):
+    for ent2, (f2, fm2) in esper.get_components(Force, ForceMap):
+        for ent1, (f1, fm1) in esper.get_components(Force, ForceMap):
             if ent1 != ent2:
-                if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
-                    if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
+                if fm1[force_id][0]: # если тело2 действует на
+                    if fm2[force_id][1]: # если действуют на тело 1
+                # if isinstance(ent1, int) and isinstance(force_id, str): # если тело2 действует на
+                #     if isinstance(ent2, int) and isinstance(force_id, str): # если действуют на тело 1
                         f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value
 
 for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
