@@ -45,7 +45,7 @@ def plot_data(x_data, y_data):
     plt.tight_layout()
     plt.show()
 
-with open('nbody/tmp/00:23:12.csv', 'r') as f:
+with open('nbody/tmp/01:07:34.csv', 'r') as f:
     reader = csv.reader(f)
     data = list(reader)
 

@@ -169,9 +169,9 @@ funcs: dict[str, callable] = {
         }
 # n = 20
 t_start = 0
-t_end = 1
+t_end = 10
 step = 5e-5
-is_pbar = False
+is_pbar = True
 
 # --- --- --- --- --- ENT CREATION
 
@@ -279,15 +279,20 @@ for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
 
 # --- --- --- --- --- PROCESSORS INITIALISATION
 
-forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
-# analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
-visualprocessor = VisualProcessor()
-monitoringprocessor = MonitoringProcessor()
+if True:
+    forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
+    esper.add_processor(forceprocessor, priority=10)
 
-esper.add_processor(forceprocessor, priority=10)
-# esper.add_processor(analyticcoordinateupdateprocessor)
-esper.add_processor(visualprocessor, priority=1)
-esper.add_processor(monitoringprocessor, priority=0)
+    # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
+    # esper.add_processor(analyticcoordinateupdateprocessor)
+
+if True:
+    visualprocessor = VisualProcessor()
+    esper.add_processor(visualprocessor, priority=1)
+
+if True:
+    monitoringprocessor = MonitoringProcessor()
+    esper.add_processor(monitoringprocessor, priority=0)
 
 # --- --- --- --- --- PROCESSING
 
