@@ -1,0 +1,53 @@
+["Main options"]
+"Mode" = "Simulation" # Simulation, Series, Field
+# "Output" = "Console" # Console, File, Both
+"path" = "system.csv" # realtive from current folder
+"Logs" = false
+"Visualisation" = false
+
+["Simulation options"]
+"End time" = 1e+1
+"Time step" = 5e-5
+"Time direction" = +1
+
+["Constants"]
+"G" = 6.67430e-11
+"k" = 8.9875517873681764e+9
+
+# Here add your force functions
+# --- CONVENTION ---
+# Format: "f1", 1 - body on which force is acting, 2 - body from which force is acting
+# any value must be a CONSTANT or a CSV column NAME or ST
+# ST: r, v, a, f - position, velocity, acceleration in current moment
+# SYMPY notaion
+# --- EXAMPLE ---
+# "f1 = G * mass_1 * mass_2 * (r_1 - r_2) / scal(r_1 - r_2)**3"
+["Forces"]
+"Gravity force" =  "f1 = G * mass_1 * mass_2 * (r_1 - r_2) / scal(r1 - r2)**3"
+"Columb force" = "f1 = k * charge_1 * charge_2 * (r_1 - r_2) / scal(r1 - r2)**3"
+
+["Monitoring options"]
+"Pulse table" = false
+
+["Numerical integraion options"]
+"Method" = "Euler"
+"Order" = "1"
+
+# For series of simulations mode
+["Series options"]
+"Series per delta" = 0
+"Delta start" = "0"
+"Delta end" = "0"
+"Delta step" = "0"
+
+["Field options"]
+"Field net step (Resolution)" = 0.01
+"Devider" = 4
+
+# ["Bodies"]
+# "Sun" = {"Mass" = 332840, "R (polar)" = [0.0, 0.0, 0.0], "V (polar)" = [0.0, 0.0, 0.0], "Color" = "yellow", "force_1 (to, from)" = "1, 0", "force_2 (to, from)" = "0, 0", "force_3 (to, from)" = "0, 0", "force_4 (to, from)" = "0, 0"}
+
+# ["Bodies"]
+# "Sun" = {"Mass" = 332840, "R (polar)" = [0.0, 0.0, 0.0], "V (polar)" = [0.0, 0.0, 0.0], "Color" = "yellow", "force_1 (to, from)" = "1, 0", "force_2 (to, from)" = "0, 0", "force_3 (to, from)" = "0, 0", "force_4 (to, from)" = "0, 0"}
+# "Earth" = {"Mass" = 1, "R (polar)" = [1.496e+11, 0.0, 0.0], "V (polar)" = [0.0, 2.978e+4, 0.0], "Color" = "blue", "force_1 (to, from)" = "0, 1", "force_2 (to, from)" = "0, 0", "force_3 (to, from)" = "0, 0", "force_4 (to, from)" = "0, 0"}
+

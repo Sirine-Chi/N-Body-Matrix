@@ -1,0 +1,4 @@
+["Bodies"]
+"Vertex_A" = {"Mass" = 1.0, "R (polar)" = [0.0, 1.0, 0.0], "V (polar)" = [-1.0, 0.0, 0.0], "Color" = [1.0, 0.0, 0.0], "force_1 (to, from)" = [2, 2], "force_2 (to, from)" = [3, 3], "force_3 (to, from)" = [0, 0], "force_4 (to, from)" = [0, 0]}
+"Vertex_B" = {"Mass" = 1.0, "R (polar)" = [-0.866, -0.5, 0.0], "V (polar)" = [0.5, -0.866, 0.0], "Color" = [0.0, 1.0, 0.0], "force_1 (to, from)" = [1, 1], "force_2 (to, from)" = [3, 3], "force_3 (to, from)" = [0, 0], "force_4 (to, from)" = [0, 0]}
+"Vertex_C" = {"Mass" = 1.0, "R (polar)" = [0.866, -0.5, 0.0], "V (polar)" = [0.5, 0.866, 0.0], "Color" = [0.0, 0.0, 1.0], "force_1 (to, from)" = [1, 1], "force_2 (to, from)" = [2, 2], "force_3 (to, from)" = [0, 0], "force_4 (to, from)" = [0, 0]}
