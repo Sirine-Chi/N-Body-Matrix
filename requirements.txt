@@ -1,0 +1,25 @@
+click
+datetime3
+matplotlib
+numpy
+panda
+PyYAML
+random2
+scipy
+Sphinx
+virtualenv
+numba
+tqdm
+pyopengl
+loguru
+esper
+sympy
+tomlkit
+# pyspbla
+# pyviennacl
+# tomllib
+# tensorflow
+# tensorflow-metal
+
+pyopencl
+siphash24
