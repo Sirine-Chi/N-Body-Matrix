@@ -1,0 +1,2 @@
+"Name: str", "Mass: float", "R (polar): list of float", "V (polar): list of float", "Color: hex", "force_1 (to, from)", "force_2 (to, from)", "force_3 (to, from)", "force_4 (to, from)"
+Sun, 332840, 0.0 0.0 0.0, 0.0 0.0 0.0, yellow, 11, 00, 00, 00

@@ -1,0 +1,20 @@
+---
+Mode: Simulation
+Force function: Gravity
+Method: Euler
+Order: !!float 1
+
+End time: !!float 1e+1
+Time step: !!float 5e-5
+Time direction: !!int +1
+Pulse table: false
+
+Progons options:
+  Progons per delta: !!int 0
+  Delta start: !!float 0
+  Delta end: !!float 0
+  Delta step: !!float 0
+
+Field options:
+  Field net step (Resolution): !!float 0.01
+  Devider: !!int 4
