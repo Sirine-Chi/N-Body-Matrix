@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import esper
 
+pygame.init()
+
 # print(esper.list_worlds())
 
 # FIXME zoom
