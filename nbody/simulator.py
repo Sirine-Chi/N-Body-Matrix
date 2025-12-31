@@ -4,7 +4,7 @@ import esper
 import mylinal as l
 import mymath
 import markup_manager as mm
-from mydatatypes import print_dict, color4f
+from mydatatypes import print_dict, color4f, timer
 import vis
 
 from tqdm import tqdm
@@ -24,7 +24,7 @@ import csv
 
 @component
 class Name:
-    mame: str
+    name: str
 
 @component
 class Mass:
@@ -205,50 +205,6 @@ def get_bodies(path) -> list[dict]:
 path = 'nbody/system.toml'
 objects = get_bodies(path)
 
-# objects = [
-#     {
-#         "Name": "Sun",
-#         "Mass": 332840,
-#         "R (polar)": [0.0, 0.0, 0.0],
-#         "V (polar)": [0.0, 0.0, 0.0],
-#         "Color": [1.0, 1.0, 0.0],
-#         "force_1 (to, from)": [1, 1],
-#         "force_2 (to, from)": [0, 0],
-#         "force_3 (to, from)": [0, 0],
-#         "force_4 (to, from)": [0, 0]
-#     },
-#     {
-#         "Name" : "Earth",
-#         "Mass" : 1,
-#         "R (polar)" : [1.496e+11, 0.0, 0.0],
-#         "V (polar)" : [0.0, 2.978e+4, 0.0],
-#         "Color" : [0.0, 0.0, 1.0],
-#         "force_1 (to, from)" : [1, 1],
-#         "force_2 (to, from)" : [0, 0],
-#         "force_3 (to, from)" : [0, 0],
-#         "force_4 (to, from)" : [0, 0]
-#     }
-# ]
-
-# objects = []
-# for i in range(1, n+1):
-
-    # # FIXME dimensional independent INIT'ion
-    # pl = [uniform(-5, 5), uniform(-5, 5), uniform(-5, 5)]
-    # vl = [uniform(-1, 1), uniform(-1, 1), uniform(-1, 1)]
-    # pp = l.Array.cartesian_array(pl)
-    # pv = 0.1 * l.Array.cartesian_array(vl)
-
-    # o = {
-    #     "Name": f"Particle n. {i}",
-    #     "Color": [uniform(0, 1), uniform(0, 1), uniform(0, 1)],
-    #     "Mass": uniform(1, 100),
-    #     "R (polar)" : pl,
-    #     "V (polar)" : vl,
-    #     "force_1 (to, from)" : "1, 1"
-    #     }
-    # objects.append(o)
-
 # --- --- --- --- --- ENT INITIALISATION
 
 for o in objects:
@@ -297,6 +253,7 @@ if True:
 
 # --- --- --- --- --- PROCESSING
 
+@timer
 def loop(t_start: float, t_end: float, is_pb: bool):
     t = t_start
     total = t_end - t_start
