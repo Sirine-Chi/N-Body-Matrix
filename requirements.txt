@@ -15,6 +15,8 @@ loguru
 esper
 sympy
 tomlkit
+pygame
+torch
 # pyspbla
 # pyviennacl
 # tomllib
