@@ -169,7 +169,7 @@ funcs: dict[str, callable] = {
         }
 # n = 20
 t_start = 0
-t_end = 10
+t_end = 2
 step = 5e-5
 direction_multiplier = 1
 is_pbar = False

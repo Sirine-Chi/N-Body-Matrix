@@ -9,11 +9,11 @@ from mylinal import Array
 # FIXME rethink the way of generating patterns
 
 DEFAULT_PATH: str = "dev/tmp"
-tmp_path = "dev/tmp/pattern.benchmark.toml"
+tmp_path = "dev/tmp/pattern_benchmark.toml"
 
 @dataclass
 class Pattern:
-    number_of_objects: int = 2
+    number_of_objects: int = 1000
     center_pos: Array = Array.cartesian_array([0.0, 0.0, 0.0])
     medium_radius: float = 1.0
     crit_radius_delta: float = 0.25
@@ -84,5 +84,6 @@ class TableGenerator:
         # print(*objects_data, sep="\n")
         return objects_data
 
+# TableGenerator().spherical()
 
 print( Pattern.get_pattern_from_toml(tmp_path) )
