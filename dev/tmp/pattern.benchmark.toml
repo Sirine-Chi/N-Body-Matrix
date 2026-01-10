@@ -1,9 +1,0 @@
-"number of objects" = 1_000
-"center_pos" = [ 0, 0, 0 ]
-"medium radius" = 50
-"crit radius delta" = 0
-"medium mass" = 10
-"crit mass delta" = 0
-"center_mass_vel" = [ 0, 0, 0 ]
-"medium velocity scalar" = 2
-"velocity crit delta" = 0

@@ -1,0 +1,10 @@
+["Pattern"]
+"number_of_objects" = 1000
+"center_pos" = [0, 0, 0]
+"medium_radius" = 50
+"crit_radius_delta" = 0
+"medium_mass" = 10
+"crit_mass_delta" = 0
+"center_mass_vel" = [0, 0, 0]
+"medium_velocity_scalar" = 2
+"velocity_crit_delta" = 0

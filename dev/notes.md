@@ -110,3 +110,20 @@ How to speed up the VIS??
 Make a natural factor like 
 
 *1 of N frames is drawn*
+
+## Generator
+
+- Actually I want each function to have it's own parameters
+
+SO there would be no such thing as general pattern
+
+Where we must store systems?
+
+class Generator:
+
+    self.data = 
+    self.used_method = 
+
+    def spherical(args...):
+
+    def cube(args...):
