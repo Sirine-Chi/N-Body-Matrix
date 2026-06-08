@@ -5,5 +5,27 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "click>=8.3.1",
+    "datetime3>=3.8.0",
+    "esper>=3.4",
+    "loguru>=0.7.3",
+    "matplotlib>=3.10.8",
+    "numba>=0.63.1",
+    "numpy>=2.3.5",
+    "panda>=0.3.1",
+    "pygame>=2.6.1",
+    "pyopencl>=2026.1.2",
+    "pyopengl>=3.1.10",
+    "pyyaml>=6.0.3",
+    "random2>=1.0.2",
+    "requests>=2.32.5",
     "ruff>=0.14.11",
+    "scipy>=1.17.0",
+    "siphash24>=1.8",
+    "sphinx>=9.1.0",
+    "sympy>=1.14.0",
+    "tomlkit>=0.14.0",
+    "torch>=2.10.0",
+    "tqdm>=4.67.1",
+    "virtualenv>=20.36.1",
 ]

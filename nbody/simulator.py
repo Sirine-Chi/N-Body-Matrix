@@ -1,11 +1,13 @@
 from dataclasses import dataclass as component
 from random import uniform
 import esper
-import mylinal as l
+import mylinal_torch as l
 import mymath
 import markup_manager as mm
 from mydatatypes import print_dict, color4f, timer
 import vis
+
+from time import perf_counter, sleep
 
 from tqdm import tqdm
 from datetime import datetime
@@ -159,21 +161,6 @@ class MonitoringProcessor(esper.Processor):
             writer = csv.writer(f)
             writer.writerows(self.pairs)
 
-
-
-# --- --- --- --- --- CONSTANTS
-
-funcs: dict[str, callable] = {
-        "1" : ForceHandler.gravity_force_ent,
-        "2": ForceHandler.hooke_force_ent
-        }
-# n = 20
-t_start = 0
-t_end = 2
-step = 5e-5
-direction_multiplier = 1
-is_pbar = False
-
 # --- --- --- --- --- ENT CREATION
 
 def init_ent(name: str, color: color4f, mass: float, pos: l.Array, vel: l.Array, force_map: dict[str, tuple[bool]]) -> int:
@@ -202,58 +189,9 @@ def get_bodies(path) -> list[dict]:
 
     return objects
 
-path = 'nbody/system.toml'
-objects = get_bodies(path)
+# --- --- --- --- --- LOOP FUNCTION
 
-# --- --- --- --- --- ENT INITIALISATION
-
-for o in objects:
-    p = init_ent(
-        o["Name"],
-        color4f(o["Color"][0], o["Color"][1], o["Color"][2]),
-        o["Mass"],
-        l.Array.cartesian_array(o["R (polar)"]),
-        l.Array.cartesian_array(o["V (polar)"]),
-        force_map={"1": (1, 1), "2": (0, 0)}
-        )
-
-    print(f"INIT:")
-    print(*esper.try_components(p, Name, Mass, Position, Velocity, Force, Visualised), sep="   ")
-
-# --- --- --- --- --- FIRST FORCE COLLECTION
-
-for force_id, force_f in funcs.items():
-    # print(f"F ID: {force_id}")
-    for ent2, (f2, fm2) in esper.get_components(Force, ForceMap):
-        for ent1, (f1, fm1) in esper.get_components(Force, ForceMap):
-            if ent1 != ent2:
-                if fm1.force_map[force_id][0]: # если тело2 действует на
-                    if fm2.force_map[force_id][1]: # если действуют на тело 1
-                        f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value
-
-for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
-    acc.accelerations.append(frc.force/m.mass)
-
-# --- --- --- --- --- PROCESSORS INITIALISATION
-
-if True:
-    forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
-    esper.add_processor(forceprocessor, priority=10)
-
-    # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
-    # esper.add_processor(analyticcoordinateupdateprocessor)
-
-if True:
-    visualprocessor = VisualProcessor()
-    esper.add_processor(visualprocessor, priority=1)
-
-if True:
-    monitoringprocessor = MonitoringProcessor()
-    esper.add_processor(monitoringprocessor, priority=0)
-
-# --- --- --- --- --- PROCESSING
-
-@timer
+# @timer
 def loop(t_start: float, t_end: float, is_pb: bool):
     t = t_start
     total = t_end - t_start
@@ -269,8 +207,97 @@ def loop(t_start: float, t_end: float, is_pb: bool):
             esper.process(t_cur= t)
             t += (step*direction_multiplier)
 
-loop(t_start, t_end, is_pb=is_pbar)
+# --- --- --- --- --- --- --- --- --- --- EVALUATION
 
-monitoringprocessor.save('nbody/tmp/')
+# --- --- --- --- --- CONSTANTS
 
-# print(esper.list_worlds())
+funcs: dict[str, callable] = {
+        "1" : ForceHandler.gravity_force_ent,
+        "2": ForceHandler.hooke_force_ent
+        }
+# n = 20
+t_start = 0
+t_end = 1 # 0.01
+step = 5e-5
+direction_multiplier = 1
+is_pbar = False
+
+path = 'nbody/system.toml'
+# path = "nbody/systems/2026-01-11 21:48:06.650238.toml"
+# path = "nbody/systems/2026-01-11 21:55:16.457133.toml"
+objects = get_bodies(path)
+
+def simulation_loop(objects):
+
+    # --- --- --- --- --- ENT INITIALISATION
+
+    for o in objects:
+        p = init_ent(
+            o["Name"],
+            color4f(o["Color"][0], o["Color"][1], o["Color"][2]),
+            o["Mass"],
+            l.Array.cartesian_array(o["R (polar)"]),
+            l.Array.cartesian_array(o["V (polar)"]),
+            force_map={"1": (1, 1), "2": (0, 0)}
+            )
+
+        print(f"INIT:")
+        print(*esper.try_components(p, Name, Mass, Position, Velocity, Force, Visualised), sep="   ")
+
+    # --- --- --- --- --- FIRST FORCE COLLECTION
+
+    for force_id, force_f in funcs.items():
+        # print(f"F ID: {force_id}")
+        for ent2, (f2, fm2) in esper.get_components(Force, ForceMap):
+            for ent1, (f1, fm1) in esper.get_components(Force, ForceMap):
+                if ent1 != ent2:
+                    if fm1.force_map[force_id][0]: # if force acts from body 2
+                        if fm2.force_map[force_id][1]: # if body 1 accepts force
+                            f1.force = f1.force + force_f(ent1, ent2) # force_f returns GOOD Value
+
+    for ent, (frc, acc, m) in esper.get_components(Force, Acceleration, Mass):
+        acc.accelerations.append(frc.force/m.mass)
+
+    # --- --- --- --- --- PROCESSORS INITIALISATION
+
+    if True:
+        forceprocessor = ForceProcessor(all_funcs=funcs, timestep=step)
+        esper.add_processor(forceprocessor, priority=10)
+
+        # analyticcoordinateupdateprocessor = AnalyticCoordinateUpdateProcessor()
+        # esper.add_processor(analyticcoordinateupdateprocessor)
+
+    if True:
+        visualprocessor = VisualProcessor()
+        esper.add_processor(visualprocessor, priority=1)
+
+    if True:
+        monitoringprocessor = MonitoringProcessor()
+        esper.add_processor(monitoringprocessor, priority=0)
+
+    # --- --- --- --- --- ACTUAL PROCESSING
+
+    loop(t_start, t_end, is_pb=is_pbar)
+
+    monitoringprocessor.save('nbody/tmp/')
+
+    # print(esper.list_worlds())
+
+def serial(objects):
+
+    num_time_list = []
+    for i in range(2, len(objects), 10):
+        f_t_start = perf_counter()
+        simulation_loop( objects[:i] )
+        f_t_eval = perf_counter() - f_t_start
+        num_time_list.append( [i, f_t_eval] )
+        sleep(10)
+
+    with open('list_torch_2.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["N", "Time"])
+        writer.writerows(num_time_list)
+
+simulation_loop(objects)
+
+# serial(objects[0:30])

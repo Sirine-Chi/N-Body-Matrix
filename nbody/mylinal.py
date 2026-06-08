@@ -29,6 +29,9 @@ class Mx:
 
     def give_tuple(self):
         return tuple(self.m.tolist())
+    
+    def give_list(self):
+        return self.m.tolist()
 
     # print
     def __str__(self) -> str:
@@ -188,9 +191,10 @@ class Array(Mx):
     def randarr_fixed_length(lenght: float, dimensions: int = 3 ) -> Array:
         """Random array with fixed lenght
         """
-        args: list[float] = [lenght]
+        args: list[float]
+        args[0] = [lenght]
         for i in range(1, dimensions):
-            args.append(np.random.uniform(0.0, 2 * math.pi))
+            args.append(np.random.uniform(-math.pi, math.pi))
         
         return Array.polar_array(args)
 
@@ -201,7 +205,7 @@ class Array(Mx):
         r = np.random.uniform(0.0, lenght)
         args: list[float] = [r]
         for i in range(1, dimensions):
-            args.append(np.random.uniform(0.0, 2 * math.pi))
+            args.append(np.random.uniform(-math.pi, math.pi))
         
         return Array.polar_array(args)
 
